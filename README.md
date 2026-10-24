@@ -10,7 +10,7 @@ PromptLab is a local-first web app: you write prompts with dynamic `{{variables}
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)
 ![Tests](https://img.shields.io/badge/tested_with-Vitest-6E9F18?logo=vitest&logoColor=white)
 
-> **Live demo:** https://prompt-lab-ivory.vercel.app/
+> **Live demo:** [your-app.vercel.app] ( https://prompt-lab-ivory.vercel.app/)
 
 > **Status:** the core app (library, editor, versions, compare, templates, favorites, settings) is complete. **AI features are under development**, see the [Roadmap](#roadmap).
 
@@ -214,7 +214,7 @@ The first version intentionally works **without any AI service**, so the library
 - [ ] **Task type, tone and answer length** controls for these actions
 - [ ] Clear **loading, error and rate-limit** states for every AI request, with tests for API failures
 - [ ] A small **secure proxy service** between the app and the AI provider (TanStack Query + Axios on the client)
-- [ ] Production deployment on **Vercel**
+
 
 > **Security note:** the AI provider's secret key will never be placed in the React app or in `VITE_*` variables, because those are bundled into the browser. Requests will go through a server-side proxy that keeps the key private.
 
