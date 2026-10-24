@@ -1,0 +1,1 @@
+export { ListPagination as HistoryPagination } from '@/components/common/ListPagination'
