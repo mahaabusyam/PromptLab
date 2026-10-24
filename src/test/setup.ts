@@ -26,3 +26,38 @@ if (typeof window === 'undefined') {
 afterEach(() => {
   cleanup()
 })
+
+if (typeof window !== 'undefined') {
+  // jsdom has no matchMedia. Report "reduced motion" so GSAP animations are skipped in tests.
+  if (typeof window.matchMedia !== 'function') {
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: (query: string) => ({
+        matches: query.includes('prefers-reduced-motion'),
+        media: query,
+        onchange: null,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        addListener: () => {},
+        removeListener: () => {},
+        dispatchEvent: () => false,
+      }),
+    })
+  }
+
+  // jsdom doesn't implement the modal methods of <dialog>
+  if (typeof HTMLDialogElement !== 'undefined') {
+    const proto = HTMLDialogElement.prototype
+    if (typeof proto.showModal !== 'function') {
+      proto.showModal = function showModal(this: HTMLDialogElement) {
+        this.setAttribute('open', '')
+      }
+    }
+    if (typeof proto.close !== 'function') {
+      proto.close = function close(this: HTMLDialogElement) {
+        this.removeAttribute('open')
+        this.dispatchEvent(new Event('close'))
+      }
+    }
+  }
+}

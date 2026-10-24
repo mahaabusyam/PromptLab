@@ -68,7 +68,7 @@ export function AiRunCard({ hasContent, unresolved, isPending, error, data, onRu
       </button>
 
       <p className="text-label-sm text-outline">
-        {hint ?? 'Sends the final prompt (with your variable values) to a real AI model. Uses API quota.'}
+         {hint ?? 'Sends the final prompt (with your variable values) to the app’s AI model, not the model selected above. Uses API quota.'}
       </p>
 
       {error && (

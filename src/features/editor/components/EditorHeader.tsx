@@ -203,7 +203,7 @@ useEffect(() => {
   onClick={onRun}
   disabled={running || !draft.content.trim()}
   aria-busy={running}
-  title="Simulation: previews the final prompt. No AI model is called."
+  title="Simulation: previews the final prompt. No AI model is called. Use “Run with AI” for a real answer."
   className="inline-flex items-center gap-2 rounded-xl bg-secondary-container px-4 py-2 font-headline-sm text-headline-sm font-semibold text-on-secondary-container shadow-lg transition-[filter,scale] hover:brightness-110 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
 >
   {running ? <Loader2 aria-hidden className="size-5 animate-spin" /> : <Play aria-hidden className="size-5" fill="currentColor" />}

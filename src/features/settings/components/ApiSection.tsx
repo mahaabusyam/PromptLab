@@ -2,7 +2,7 @@ import { Cloud, KeyRound, ShieldCheck } from 'lucide-react';
 import { SettingsCard } from './SettingsParts';
 
 const tiles = [
-  { icon: Cloud, label: 'AI features', value: 'Not connected', hint: 'Improve, Variations and real runs arrive with the secure proxy.' },
+  { icon: Cloud, label: 'AI features', value: 'Optional', hint: 'Improve, Variations and Run with AI go through a secure server-side proxy. Your API key never reaches the browser.' },
   { icon: KeyRound, label: 'API keys', value: 'None stored', hint: 'Secret keys must never live in the browser or in VITE_* variables.' },
   { icon: ShieldCheck, label: 'Data location', value: 'This browser only', hint: 'No backend: everything is saved in localStorage.' },
 ];
@@ -13,7 +13,7 @@ export function ApiSection() {
       id="api"
       icon={KeyRound}
       title="API & Security"
-      description="Where your data lives and how AI features will connect later."
+      description="Where your data lives and how AI features connect."
     >
       <ul className="grid grid-cols-1 gap-3 md:grid-cols-3">
         {tiles.map(({ icon: Icon, label, value, hint }) => (

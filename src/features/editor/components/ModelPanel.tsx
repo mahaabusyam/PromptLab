@@ -103,10 +103,13 @@ export function ModelPanel({ draft, onChange }: ModelPanelProps) {
       icon={BrainCircuit}
       title="Model Hyperparameters"
       action={
-        <span className="shrink-0 rounded-full bg-surface-container-high px-2 py-0.5 text-label-sm font-semibold text-outline">
-          Simulation mode
+        <span
+          title="These settings are saved with the prompt and used for the simulated run and its estimates. “Run with AI” uses the server's model and only applies Max Tokens."
+          className="shrink-0 rounded-full bg-surface-container-high px-2 py-0.5 text-label-sm font-semibold text-outline"
+        >
+          Simulation settings
         </span>
-      }
+            }
     >
       <div className="flex flex-col gap-1">
         <span className="text-label-sm text-outline">Active Foundation Model</span>

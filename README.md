@@ -12,7 +12,7 @@ PromptLab is a local-first web app: you write prompts with dynamic `{{variables}
 
 > **Live demo:** [your-app.vercel.app] ( https://prompt-lab-ivory.vercel.app/)
 
-> **Status:** the core app (library, editor, versions, compare, templates, favorites, settings) is complete. **AI features are under development**, see the [Roadmap](#roadmap).
+> **Status:** all features are complete, including the optional **AI tools** (Improve, Variations, Run with AI). The app works fully offline without them, see [AI setup](#ai-setup).
 
 ---
 
@@ -38,7 +38,15 @@ PromptLab is a local-first web app: you write prompts with dynamic `{{variables}
 - **Prompt editor** built on CodeMirror, with `{{variable}}` highlighting and a side panel for variables, model and settings.
 - **Dynamic variables**: values are filled in a panel and the final text is previewed before use. An **Auto-Fill** button fills the empty ones with sample values.
 - **Autosave** for existing prompts. New prompts stay drafts until you click **Create Prompt**, and leaving an unsaved draft asks for confirmation.
-- **Simulated run**: the console shows the resolved prompt with estimated tokens and cost. It is clearly labeled as a simulation until real AI integration lands.
+- **Simulated run**: the console resolves the prompt with your variable values and shows estimated tokens and cost. It is free, instant and works offline.
+
+### AI assistance 
+- **Improve with AI**: pick a task, tone and length, then compare your prompt with the suggestion side by side and apply it with one click.
+- **Generate Variations**: get three alternative versions with different approaches, copy one or use it in the editor.
+- **Run with AI**: send the final prompt (with your variable values) to a real model and see the answer, latency and token usage.
+- It always uses the model configured on the server (`GEMINI_MODEL`). The model and temperature shown in the editor's Model panel apply to the simulated run only; Max Tokens is sent with real runs.
+- **Variable safety**: if a suggestion removes or adds a `{{variable}}`, you get a warning before applying it.
+- Clear **loading, error and rate-limit** states. If the AI service is unavailable, everything else keeps working.
 
 ### Organize
 - **Prompt Library** in grid or compact list view, with instant search (title, description, content, tags), filters (category, model provider, tag), sorting and pagination.
@@ -91,7 +99,7 @@ PromptLab is a local-first web app: you write prompts with dynamic `{{variables}
 | Motion | GSAP + ScrollTrigger, Lenis smooth scrolling |
 | Dates | date-fns |
 | Testing | Vitest, React Testing Library, jsdom |
-| Reserved for the AI phase | TanStack Query, Axios |
+| AI integration | TanStack Query, Axios, Vercel Functions, Gemini API |
 
 The visual design was created in **Google Stitch** (the "Obsidian Kinetic" design system) and implemented with design tokens that support both dark and light themes.
 
@@ -115,6 +123,33 @@ npm run dev
 
 Then open the URL printed in the terminal (usually `http://localhost:5173`). The app starts with a few demo prompts; use **Settings → Reset demo data** to restore them at any time.
 
+## AI setup
+
+The AI tools are optional. Without any setup the app still works, and the AI buttons show a friendly "not available" message.
+
+AI requests go through small serverless functions in `api/`, so **the secret key never reaches the browser**.
+
+1. Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/apikey).
+2. Add it to your Vercel project (**Settings → Environment Variables**), then redeploy:
+
+   | Variable | Required | Description |
+   | --- | --- | --- |
+   | `GEMINI_API_KEY` | yes | Server-side key. Never prefix it with `VITE_`. |
+   | `GEMINI_MODEL` | no | Model id (default: `gemini-3.5-flash-lite`). |
+
+3. For local development, `npm run dev` does not run `api/`. Either proxy `/api` to a deployed copy in `vite.config.ts`:
+
+   ```ts
+   server: {
+     proxy: { '/api': { target: 'https://your-app.vercel.app', changeOrigin: true } },
+   },
+   ```
+
+   or run `npx vercel dev` (needs the Vercel CLI and the same environment variables).
+
+The functions validate input with Zod, cap prompt length at 8,000 characters and apply a basic per-IP rate limit.
+
+
 ### Scripts
 
 | Command | What it does |
@@ -134,6 +169,10 @@ Before deploying, run `npm run lint && npm run build && npx vitest run`.
 The code is organized **by feature**. Business logic (filters, diffing, validation, import/export) lives in small pure functions that are unit-tested, separate from the UI.
 
 ```text
+api/                # Vercel Functions: secure proxy to the AI provider
+├── improve.ts
+├── variations.ts
+└── run.ts
 src/
 ├── app/            # router, providers, route error handling
 ├── components/
@@ -143,7 +182,7 @@ src/
 ├── features/
 │   ├── dashboard/  ├── library/    ├── editor/     ├── prompts/
 │   ├── versions/   ├── history/    ├── compare/    ├── templates/
-│   ├── favorites/  ├── settings/   └── search/
+│   ├── favorites/  ├── settings/   └── search/     ├── ai/
 ├── pages/          # one file per route
 ├── stores/         # Zustand stores (prompts, templates, settings, theme...)
 ├── hooks/          # shared hooks
@@ -170,7 +209,7 @@ src/
 
 ## Data and privacy
 
-All data stays in your browser. PromptLab uses these `localStorage` keys:
+Your prompts and versions are stored in your browser. PromptLab uses these `localStorage` keys:
 
 | Key | Contents |
 | --- | --- |
@@ -181,6 +220,7 @@ All data stays in your browser. PromptLab uses these `localStorage` keys:
 | `promptlab-library`, `promptlab-favorites-view` | View preferences |
 
 Clearing your browser data removes your prompts, so **export a backup** from Settings regularly. Every imported file is validated with Zod before it can touch the app's state.
+**AI features and privacy:** only when you click an AI button (Improve, Variations or Run with AI) the prompt text, plus your chosen options, is sent through the app's server function to the Gemini API. Nothing is sent otherwise, and the app does not store AI requests or answers on a server.
 
 ---
 
@@ -195,28 +235,31 @@ The suite covers the logic the app depends on most:
 - **import / export** parsing, validation and backup checksums
 - templates and favorites logic
 - a React Testing Library component test (variables panel)
+- the **AI layer**: API failures (rate limits, timeouts, unavailable service, malformed responses) and the AI dialogs' loading, error and apply flows
 
 ```bash
 npx vitest run
 ```
 
-Tests for AI request failures (timeouts, rate limits, errors) will be added together with the AI integration.
-
 ---
 
 ## Roadmap
 
-The first version intentionally works **without any AI service**, so the library, editor and versioning are fully usable offline. AI features are **in development** and will be optional:
+Done:
 
-- [ ] **Improve Prompt**: suggest improvements to the current text
-- [ ] **Generate Variations**: create alternative versions of a prompt
-- [ ] **Real Run Test**: send a prompt to a model and show the result, replacing the current simulation
-- [ ] **Task type, tone and answer length** controls for these actions
-- [ ] Clear **loading, error and rate-limit** states for every AI request, with tests for API failures
-- [ ] A small **secure proxy service** between the app and the AI provider (TanStack Query + Axios on the client)
+- [x] **Improve Prompt**, **Generate Variations** and **Run with AI**
+- [x] **Task, tone and length** controls
+- [x] Loading, error and rate-limit states, with tests for API failures
+- [x] A **secure proxy** between the app and the AI provider
+- [x] Deployment on **Vercel**
 
+Ideas:
 
-> **Security note:** the AI provider's secret key will never be placed in the React app or in `VITE_*` variables, because those are bundled into the browser. Requests will go through a server-side proxy that keeps the key private.
+- [ ] A stronger rate limit (shared daily quota)
+- [ ] Streaming answers
+- [ ] Saving AI answers next to each version
+
+> **Security note:** the AI provider's secret key is never placed in the React app or in `VITE_*` variables, because those are bundled into the browser. Requests go through a server-side proxy that keeps the key private.
 
 ---
 
