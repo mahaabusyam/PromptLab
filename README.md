@@ -10,7 +10,7 @@ PromptLab is a local-first web app: you write prompts with dynamic `{{variables}
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)
 ![Tests](https://img.shields.io/badge/tested_with-Vitest-6E9F18?logo=vitest&logoColor=white)
 
-> **Live demo:** _coming soon, the link will be added after the Vercel deployment._
+> **Live demo:** https://prompt-lab-ivory.vercel.app/
 
 > **Status:** the core app (library, editor, versions, compare, templates, favorites, settings) is complete. **AI features are under development**, see the [Roadmap](#roadmap).
 
@@ -103,7 +103,7 @@ The visual design was created in **Google Stitch** (the "Obsidian Kinetic" desig
 
 ```bash
 # 1. Clone
-git clone https://github.com/mahaabusyam/promptlab.git
+git clone https://github.com/mahaabusyam/PromptLab
 cd promptlab
 
 # 2. Install dependencies
