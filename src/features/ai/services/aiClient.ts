@@ -1,7 +1,8 @@
 import axios from 'axios'
+import type { ZodType } from 'zod'
 import { AiError, toAiError } from '../errors'
-import { improveResponseSchema } from '../schemas'
-import type { ImproveRequest, ImproveResponse } from '../types'
+import { improveResponseSchema, runResponseSchema } from '../schemas'
+import type { ImproveRequest, ImproveResponse, RunRequest, RunResponse } from '../types'
 
 export const aiHttp = axios.create({
   baseURL: '/api',
@@ -9,10 +10,10 @@ export const aiHttp = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-export async function improvePrompt(request: ImproveRequest): Promise<ImproveResponse> {
+async function post<T>(path: string, body: unknown, schema: ZodType<T>): Promise<T> {
   try {
-    const { data } = await aiHttp.post<unknown>('/improve', request)
-    const parsed = improveResponseSchema.safeParse(data)
+    const { data } = await aiHttp.post<unknown>(path, body)
+    const parsed = schema.safeParse(data)
     if (!parsed.success) {
       throw new AiError('invalid_response', 'Unexpected response shape.')
     }
@@ -20,4 +21,12 @@ export async function improvePrompt(request: ImproveRequest): Promise<ImproveRes
   } catch (error) {
     throw toAiError(error)
   }
+}
+
+export function improvePrompt(request: ImproveRequest): Promise<ImproveResponse> {
+  return post('/improve', request, improveResponseSchema)
+}
+
+export function runPrompt(request: RunRequest): Promise<RunResponse> {
+  return post('/run', request, runResponseSchema)
 }

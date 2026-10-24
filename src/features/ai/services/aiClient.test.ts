@@ -1,7 +1,7 @@
 import type { AxiosResponse } from 'axios'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ImproveRequest } from '../types'
-import { aiHttp, improvePrompt } from './aiClient'
+import { aiHttp, improvePrompt, runPrompt } from './aiClient'
 
 const request: ImproveRequest = {
   prompt: 'Write about {{topic}}',
@@ -28,5 +28,24 @@ describe('improvePrompt', () => {
   it('rejects with a typed AiError when the request fails', async () => {
     vi.spyOn(aiHttp, 'post').mockRejectedValue(new Error('boom'))
     await expect(improvePrompt(request)).rejects.toMatchObject({ name: 'AiError', code: 'upstream_error' })
+  })
+})
+describe('runPrompt', () => {
+  const runRequest = { prompt: 'Hello Maha', maxTokens: 512 }
+  const okBody = { output: 'Hi!', model: 'gemini-test', latencyMs: 900, inputTokens: 3, outputTokens: 2 }
+
+  it('returns the model answer on success', async () => {
+    vi.spyOn(aiHttp, 'post').mockResolvedValue({ data: okBody } as AxiosResponse)
+    await expect(runPrompt(runRequest)).resolves.toEqual(okBody)
+  })
+
+  it('rejects with invalid_response when the answer is missing', async () => {
+    vi.spyOn(aiHttp, 'post').mockResolvedValue({ data: { model: 'x' } } as AxiosResponse)
+    await expect(runPrompt(runRequest)).rejects.toMatchObject({ code: 'invalid_response' })
+  })
+
+  it('rejects with a typed AiError when the request fails', async () => {
+    vi.spyOn(aiHttp, 'post').mockRejectedValue(new Error('boom'))
+    await expect(runPrompt(runRequest)).rejects.toMatchObject({ name: 'AiError', code: 'upstream_error' })
   })
 })

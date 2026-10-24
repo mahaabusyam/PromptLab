@@ -7,3 +7,11 @@ export const improveResponseSchema = z.object({
 export const errorBodySchema = z.object({
   error: z.object({ code: z.string(), message: z.string() }),
 })
+
+export const runResponseSchema = z.object({
+  output: z.string().min(1),
+  model: z.string(),
+  latencyMs: z.number(),
+  inputTokens: z.number().optional(),
+  outputTokens: z.number().optional(),
+})

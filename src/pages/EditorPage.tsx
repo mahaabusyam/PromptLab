@@ -15,8 +15,11 @@ import { getVersionLabel } from '@/features/prompts/utils'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard'
 import { usePromptStore } from '@/stores/promptStore'
-import { extractVariables } from '@/utils/promptVariables'
+import { extractVariables , fillTemplate } from '@/utils/promptVariables'
 import { ImprovePromptDialog } from '@/features/ai/components/ImprovePromptDialog'
+import { useAiRun } from '@/features/ai/hooks/useAiRun'
+import { clampMaxTokens } from '@/features/ai/limits'
+import { AiRunCard } from '@/features/editor/components/AiRunCard'
 
 // مصفوفة ثابتة للـ Prompt الجديد (بدل [] جديدة كل render)
 const NO_VERSIONS: PromptVersion[] = []
@@ -42,6 +45,16 @@ function EditorWorkspace({ prompt }: { prompt?: Prompt }) {
   const latest = versions[versions.length - 1]
   const canSaveVersion = !editor.isNew && latest !== undefined && latest.content !== draft.content
   const variableNames = useMemo(() => extractVariables(draft.content), [draft.content])
+    const aiRun = useAiRun()
+  const unresolved = useMemo(
+    () => variableNames.filter((name) => !draft.variableValues[name]?.trim()),
+    [variableNames, draft.variableValues],
+  )
+  const runWithAi = () =>
+    aiRun.mutate({
+      prompt: fillTemplate(draft.content, draft.variableValues),
+      maxTokens: clampMaxTokens(draft.settings.maxTokens),
+    })
 
   // Ctrl/⌘ + Enter خارج المحرر. جوّا المحرر بيتعامل معه CodeMirror
   useEffect(() => {
@@ -104,6 +117,14 @@ function EditorWorkspace({ prompt }: { prompt?: Prompt }) {
             modelName={draft.model.name}
             temperature={draft.settings.temperature}
             maxTokens={draft.settings.maxTokens}
+          />
+          <AiRunCard
+            hasContent={draft.content.trim().length > 0}
+            unresolved={unresolved}
+            isPending={aiRun.isPending}
+            error={aiRun.error}
+            data={aiRun.data}
+            onRun={runWithAi}
           />
         </div>
       </div>

@@ -20,6 +20,19 @@ export interface ImproveResponse {
   improved: string
 }
 
+export interface RunRequest {
+  prompt: string
+  maxTokens: number
+}
+
+export interface RunResponse {
+  output: string
+  model: string
+  latencyMs: number
+  inputTokens?: number
+  outputTokens?: number
+}
+
 export type AiErrorCode =
   | 'bad_request'
   | 'rate_limited'
