@@ -16,4 +16,9 @@ export default defineConfig({
     include: ['src/**/*.test.{ts,tsx}'], 
     setupFiles: ['./src/test/setup.ts'],
   },
+  server: {
+  proxy: {
+    '/api': { target: 'https://prompt-lab-ivory.vercel.app', changeOrigin: true },
+  },
+},
 })

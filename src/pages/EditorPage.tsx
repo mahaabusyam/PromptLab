@@ -16,6 +16,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal'
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard'
 import { usePromptStore } from '@/stores/promptStore'
 import { extractVariables } from '@/utils/promptVariables'
+import { ImprovePromptDialog } from '@/features/ai/components/ImprovePromptDialog'
 
 // مصفوفة ثابتة للـ Prompt الجديد (بدل [] جديدة كل render)
 const NO_VERSIONS: PromptVersion[] = []
@@ -27,6 +28,7 @@ function EditorWorkspace({ prompt }: { prompt?: Prompt }) {
   const { status, result, run } = useSimulatedRun(editor.draft)
   const { draft, update } = editor
   const [saveOpen, setSaveOpen] = useState(false)
+  const [improveOpen, setImproveOpen] = useState(false)
 
   // Snapshot of the draft when the page opened (useState initializer runs once)
   const [initialSnapshot] = useState(() => JSON.stringify(editor.draft))
@@ -76,6 +78,8 @@ function EditorWorkspace({ prompt }: { prompt?: Prompt }) {
         running={status === 'running'}
         onSaveVersion={() => setSaveOpen(true)}
         canSaveVersion={canSaveVersion}
+        onImprove={() => setImproveOpen(true)}
+        canImprove={draft.content.trim().length > 0}
       />
 
       <div className="grid grid-cols-1 gap-space-md lg:grid-cols-12">
@@ -112,6 +116,17 @@ function EditorWorkspace({ prompt }: { prompt?: Prompt }) {
           onSave={(values) => {
             editor.saveVersion(values)
             setSaveOpen(false)
+          }}
+        />
+      )}
+
+      {improveOpen && (
+        <ImprovePromptDialog
+          prompt={draft.content}
+          onClose={() => setImproveOpen(false)}
+          onApply={(improved) => {
+            update({ content: improved })
+            setImproveOpen(false)
           }}
         />
       )}

@@ -24,7 +24,7 @@ const categoryOptions: DropdownOption<PromptCategory>[] = categoryOrder.map((val
 const actionBtn =
   'inline-flex items-center gap-1.5 rounded-xl bg-surface-container-high px-3 py-2 text-body-sm font-medium text-on-surface shadow-sm transition-[background-color,scale] hover:bg-surface-bright active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100'
 
-const AI_HINT = 'AI features connect later through a secure proxy'
+const AI_HINT = 'Coming soon'
 
 interface EditorHeaderProps {
   draft: EditorDraft
@@ -38,6 +38,8 @@ interface EditorHeaderProps {
   running: boolean
   onSaveVersion: () => void 
   canSaveVersion: boolean
+  onImprove: () => void
+  canImprove: boolean
 }
 
 export function EditorHeader({
@@ -52,6 +54,8 @@ export function EditorHeader({
   running,
   onSaveVersion,
   canSaveVersion,
+  onImprove,
+  canImprove,
 }: EditorHeaderProps) {
   const now = useNow()
   const { copied, copy } = useCopyToClipboard()
@@ -145,8 +149,9 @@ useEffect(() => {
       <div className="flex flex-wrap items-center gap-2 xl:justify-end">
         <button
           type="button"
-          disabled
-          title={AI_HINT}
+          onClick={onImprove}
+          disabled={!canImprove}
+          title={canImprove ? 'Suggest improvements with AI' : 'Write some prompt text first'}
           className="inline-flex items-center gap-1.5 rounded-xl bg-linear-to-r from-primary-container via-secondary-container to-tertiary-container px-3.5 py-2 text-title-md font-semibold text-white shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Sparkles aria-hidden className="size-[18px] text-tertiary-fixed" />
