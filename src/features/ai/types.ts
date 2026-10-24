@@ -32,6 +32,12 @@ export interface RunResponse {
   inputTokens?: number
   outputTokens?: number
 }
+export type AiOptions = Omit<ImproveRequest, 'prompt'>
+export type VariationsRequest = ImproveRequest
+
+export interface VariationsResponse {
+  variations: string[]
+}
 
 export type AiErrorCode =
   | 'bad_request'

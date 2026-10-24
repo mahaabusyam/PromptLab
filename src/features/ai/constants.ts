@@ -1,4 +1,4 @@
-import type { AiLength, AiTask, AiTone } from './types'
+import type { AiLength, AiTask, AiTone , AiOptions} from './types'
 
 export const taskLabels: Record<AiTask, string> = {
   general: 'General',
@@ -21,3 +21,4 @@ export const lengthLabels: Record<AiLength, string> = {
   medium: 'Medium',
   long: 'Detailed',
 }
+export const DEFAULT_AI_OPTIONS: AiOptions = { task: 'general', tone: 'neutral', length: 'medium' }

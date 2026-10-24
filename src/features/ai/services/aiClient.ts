@@ -1,8 +1,15 @@
 import axios from 'axios'
 import type { ZodType } from 'zod'
 import { AiError, toAiError } from '../errors'
-import { improveResponseSchema, runResponseSchema } from '../schemas'
-import type { ImproveRequest, ImproveResponse, RunRequest, RunResponse } from '../types'
+import { improveResponseSchema, runResponseSchema, variationsResponseSchema } from '../schemas'
+import type {
+  ImproveRequest,
+  ImproveResponse,
+  RunRequest,
+  RunResponse,
+  VariationsRequest,
+  VariationsResponse,
+} from '../types'
 
 export const aiHttp = axios.create({
   baseURL: '/api',
@@ -10,9 +17,11 @@ export const aiHttp = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-async function post<T>(path: string, body: unknown, schema: ZodType<T>): Promise<T> {
+const SLOW_REQUEST_TIMEOUT_MS = 55_000
+
+async function post<T>(path: string, body: unknown, schema: ZodType<T>, timeout?: number): Promise<T> {
   try {
-    const { data } = await aiHttp.post<unknown>(path, body)
+    const { data } = await aiHttp.post<unknown>(path, body, timeout ? { timeout } : undefined)
     const parsed = schema.safeParse(data)
     if (!parsed.success) {
       throw new AiError('invalid_response', 'Unexpected response shape.')
@@ -29,4 +38,8 @@ export function improvePrompt(request: ImproveRequest): Promise<ImproveResponse>
 
 export function runPrompt(request: RunRequest): Promise<RunResponse> {
   return post('/run', request, runResponseSchema)
+}
+
+export function generateVariations(request: VariationsRequest): Promise<VariationsResponse> {
+  return post('/variations', request, variationsResponseSchema, SLOW_REQUEST_TIMEOUT_MS)
 }

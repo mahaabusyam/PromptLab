@@ -20,6 +20,7 @@ import { ImprovePromptDialog } from '@/features/ai/components/ImprovePromptDialo
 import { useAiRun } from '@/features/ai/hooks/useAiRun'
 import { clampMaxTokens } from '@/features/ai/limits'
 import { AiRunCard } from '@/features/editor/components/AiRunCard'
+import { VariationsDialog } from '@/features/ai/components/VariationsDialog'
 
 // مصفوفة ثابتة للـ Prompt الجديد (بدل [] جديدة كل render)
 const NO_VERSIONS: PromptVersion[] = []
@@ -32,6 +33,7 @@ function EditorWorkspace({ prompt }: { prompt?: Prompt }) {
   const { draft, update } = editor
   const [saveOpen, setSaveOpen] = useState(false)
   const [improveOpen, setImproveOpen] = useState(false)
+    const [variationsOpen, setVariationsOpen] = useState(false)
 
   // Snapshot of the draft when the page opened (useState initializer runs once)
   const [initialSnapshot] = useState(() => JSON.stringify(editor.draft))
@@ -93,6 +95,7 @@ function EditorWorkspace({ prompt }: { prompt?: Prompt }) {
         canSaveVersion={canSaveVersion}
         onImprove={() => setImproveOpen(true)}
         canImprove={draft.content.trim().length > 0}
+        onVariations={() => setVariationsOpen(true)}
       />
 
       <div className="grid grid-cols-1 gap-space-md lg:grid-cols-12">
@@ -148,6 +151,16 @@ function EditorWorkspace({ prompt }: { prompt?: Prompt }) {
           onApply={(improved) => {
             update({ content: improved })
             setImproveOpen(false)
+          }}
+        />
+      )}
+            {variationsOpen && (
+        <VariationsDialog
+          prompt={draft.content}
+          onClose={() => setVariationsOpen(false)}
+          onUse={(content) => {
+            update({ content })
+            setVariationsOpen(false)
           }}
         />
       )}

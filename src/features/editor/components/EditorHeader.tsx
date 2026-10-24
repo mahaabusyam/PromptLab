@@ -24,7 +24,6 @@ const categoryOptions: DropdownOption<PromptCategory>[] = categoryOrder.map((val
 const actionBtn =
   'inline-flex items-center gap-1.5 rounded-xl bg-surface-container-high px-3 py-2 text-body-sm font-medium text-on-surface shadow-sm transition-[background-color,scale] hover:bg-surface-bright active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100'
 
-const AI_HINT = 'Coming soon'
 
 interface EditorHeaderProps {
   draft: EditorDraft
@@ -40,6 +39,7 @@ interface EditorHeaderProps {
   canSaveVersion: boolean
   onImprove: () => void
   canImprove: boolean
+  onVariations: () => void
 }
 
 export function EditorHeader({
@@ -56,6 +56,7 @@ export function EditorHeader({
   canSaveVersion,
   onImprove,
   canImprove,
+  onVariations,
 }: EditorHeaderProps) {
   const now = useNow()
   const { copied, copy } = useCopyToClipboard()
@@ -157,7 +158,13 @@ useEffect(() => {
           <Sparkles aria-hidden className="size-[18px] text-tertiary-fixed" />
           Improve with AI
         </button>
-        <button type="button" disabled title={AI_HINT} className={actionBtn}>
+                <button
+          type="button"
+          onClick={onVariations}
+          disabled={!canImprove}
+          title={canImprove ? 'Generate 3 alternative versions' : 'Write some prompt text first'}
+          className={actionBtn}
+        >
           <Split aria-hidden className="size-[18px] text-outline" />
           Variations
         </button>

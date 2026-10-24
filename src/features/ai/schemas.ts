@@ -15,3 +15,6 @@ export const runResponseSchema = z.object({
   inputTokens: z.number().optional(),
   outputTokens: z.number().optional(),
 })
+export const variationsResponseSchema = z.object({
+  variations: z.array(z.string().min(1)).min(1).max(5),
+})

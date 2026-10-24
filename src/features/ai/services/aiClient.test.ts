@@ -1,7 +1,7 @@
 import type { AxiosResponse } from 'axios'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ImproveRequest } from '../types'
-import { aiHttp, improvePrompt, runPrompt } from './aiClient'
+import { aiHttp, improvePrompt, runPrompt , generateVariations } from './aiClient'
 
 const request: ImproveRequest = {
   prompt: 'Write about {{topic}}',
@@ -47,5 +47,25 @@ describe('runPrompt', () => {
   it('rejects with a typed AiError when the request fails', async () => {
     vi.spyOn(aiHttp, 'post').mockRejectedValue(new Error('boom'))
     await expect(runPrompt(runRequest)).rejects.toMatchObject({ name: 'AiError', code: 'upstream_error' })
+  })
+})
+describe('generateVariations', () => {
+  const variationsRequest = { prompt: 'Write about {{topic}}', task: 'writing', tone: 'friendly', length: 'medium' } as const
+
+  it('returns the list of variations', async () => {
+    vi.spyOn(aiHttp, 'post').mockResolvedValue({ data: { variations: ['A {{topic}}', 'B {{topic}}', 'C {{topic}}'] } } as AxiosResponse)
+    const result = await generateVariations(variationsRequest)
+    expect(result.variations).toHaveLength(3)
+  })
+
+  it('rejects when the list is empty', async () => {
+    vi.spyOn(aiHttp, 'post').mockResolvedValue({ data: { variations: [] } } as AxiosResponse)
+    await expect(generateVariations(variationsRequest)).rejects.toMatchObject({ code: 'invalid_response' })
+  })
+
+  it('uses a longer timeout than the other requests', async () => {
+    const post = vi.spyOn(aiHttp, 'post').mockResolvedValue({ data: { variations: ['A'] } } as AxiosResponse)
+    await generateVariations(variationsRequest)
+    expect(post).toHaveBeenCalledWith('/variations', variationsRequest, { timeout: 55_000 })
   })
 })
