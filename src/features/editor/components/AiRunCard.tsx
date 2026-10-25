@@ -82,7 +82,7 @@ export function AiRunCard({ hasContent, unresolved, isPending, error, data, onRu
         <div ref={outputRef} className="flex flex-col gap-space-xs">
           <div
             data-lenis-prevent
-            className="flex max-h-64 flex-col gap-space-xs overflow-y-auto rounded-lg border-l-2 border-tertiary bg-surface-container-lowest p-space-sm text-body-sm leading-relaxed shadow-inner"
+            className="flex max-h-64 flex-col gap-space-xs overflow-y-auto rounded-lg border-s-2 border-tertiary bg-surface-container-lowest p-space-sm text-body-sm leading-relaxed shadow-inner"
           >
             <span className="border-b border-surface-variant/40 pb-1 font-code-md text-[11px] text-outline">
               [LIVE • real model response]

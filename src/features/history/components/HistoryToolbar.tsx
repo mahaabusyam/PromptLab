@@ -55,7 +55,7 @@ export function HistoryToolbar({
         {/* Search */}
         <div className="relative flex-1">
           <Search
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
           />
           <input
@@ -64,7 +64,7 @@ export function HistoryToolbar({
             onChange={(e: ChangeEvent<HTMLInputElement>) => onChange({ query: e.target.value })}
             placeholder="Search by prompt name, commit hash or note..."
             aria-label="Search version logs"
-            className="h-10 w-full rounded-lg border border-border bg-card pl-9 pr-3 text-sm placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-primary"
+            className="h-10 w-full rounded-lg border border-border bg-card ps-9 pe-3 text-sm placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-primary"
           />
         </div>
 
@@ -142,7 +142,7 @@ export function HistoryToolbar({
           <button
             type="button"
             onClick={onReset}
-            className="ml-auto inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-primary"
+            className="ms-auto inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-primary"
           >
             <X className="size-3.5" aria-hidden="true" />
             Clear filters

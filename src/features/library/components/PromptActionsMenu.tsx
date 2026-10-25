@@ -6,7 +6,7 @@ import type { Prompt } from '@/features/prompts/types'
 import { usePromptStore } from '@/stores/promptStore'
 
 const itemClass =
-  'flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-body-sm transition-colors hover:bg-surface-container-highest'
+  'flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-start text-body-sm transition-colors hover:bg-surface-container-highest'
 
 export function PromptActionsMenu({ prompt }: { prompt: Prompt }) {
   const [open, setOpen] = useState(false)
@@ -42,7 +42,7 @@ export function PromptActionsMenu({ prompt }: { prompt: Prompt }) {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-30 mt-1 min-w-40 rounded-xl bg-surface-container-high p-1 shadow-lg"
+          className="absolute end-0 top-full z-30 mt-1 min-w-40 rounded-xl bg-surface-container-high p-1 shadow-lg"
         >
           <button
             type="button"

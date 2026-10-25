@@ -13,7 +13,7 @@ interface HistoryTableProps {
 const iconBtn =
   'inline-flex size-8 items-center justify-center rounded-lg border border-border transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent';
 
-const th = 'px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground';
+const th = 'px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-muted-foreground';
 
 export function HistoryTable({ entries, onRestore, onDelete }: HistoryTableProps) {
   return (
@@ -28,7 +28,7 @@ export function HistoryTable({ entries, onRestore, onDelete }: HistoryTableProps
             <th scope="col" className={th}>Note</th>
             <th scope="col" className={th}>Changes</th>
             <th scope="col" className={th}>When</th>
-            <th scope="col" className={`${th} text-right`}>Actions</th>
+            <th scope="col" className={`${th} text-end`}>Actions</th>
           </tr>
         </thead>
         <tbody>

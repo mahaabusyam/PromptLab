@@ -3,6 +3,7 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import { useThemeStore, type Theme } from '@/stores/themeStore';
 import { accentOptions } from '../constants';
 import { SettingsCard, Switch } from './SettingsParts';
+import { LanguageField } from './LanguageField'
 
 interface ThemeOption {
   id: Theme;
@@ -50,7 +51,7 @@ export function AppearanceSection() {
                 role="radio"
                 aria-checked={selected}
                 onClick={() => setTheme(opt.id)}
-                className={`flex flex-col gap-2 rounded-xl bg-background p-3 text-left transition-shadow focus-visible:outline-2 focus-visible:outline-primary ${
+                className={`flex flex-col gap-2 rounded-xl bg-background p-3 text-start transition-shadow focus-visible:outline-2 focus-visible:outline-primary ${
                   selected ? 'ring-2 ring-primary' : 'ring-1 ring-border hover:ring-primary/50'
                 }`}
               >
@@ -101,6 +102,9 @@ export function AppearanceSection() {
             <p className="text-xs text-muted-foreground">Stronger borders and darker secondary text for easier reading.</p>
           </div>
           <Switch checked={highContrast} onChange={(v) => update({ highContrast: v })} label="Higher contrast" />
+        </div>
+        <div className="border-t border-border pt-4">
+          <LanguageField />
         </div>
       </div>
     </SettingsCard>

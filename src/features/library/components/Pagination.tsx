@@ -26,7 +26,7 @@ export function Pagination({ page, totalPages, total, pageSize, onChange }: Pagi
       {totalPages > 1 && (
         <nav aria-label="Pagination" className="flex items-center gap-1">
           <button type="button" aria-label="Previous page" disabled={page === 1} onClick={() => onChange(page - 1)} className={navBtn}>
-            <ChevronLeft className="size-[18px]" />
+            <ChevronLeft className="rtl:-scale-x-100 size-[18px]" />
           </button>
 
           {getPageItems(page, totalPages).map((item, i) =>
@@ -53,7 +53,7 @@ export function Pagination({ page, totalPages, total, pageSize, onChange }: Pagi
           )}
 
           <button type="button" aria-label="Next page" disabled={page === totalPages} onClick={() => onChange(page + 1)} className={navBtn}>
-            <ChevronRight className="size-[18px]" />
+            <ChevronRight className="rtl:-scale-x-100 size-[18px]" />
           </button>
         </nav>
       )}

@@ -23,7 +23,7 @@ export default function NotFoundPage() {
       ]}
     >
       <Link to="/" className={primaryAction}>
-        <ArrowLeft className="size-4" aria-hidden="true" />
+        <ArrowLeft className="rtl:-scale-x-100 size-4" aria-hidden="true" />
         Back to Dashboard
       </Link>
       <Link to="/library" className={secondaryAction}>

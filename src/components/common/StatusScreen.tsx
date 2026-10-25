@@ -101,7 +101,7 @@ export function StatusScreen({
 
       <dl
         data-enter
-        className="relative grid w-full max-w-2xl grid-cols-1 gap-2 rounded-2xl border border-border bg-card p-3 text-left sm:grid-cols-3"
+        className="relative grid w-full max-w-2xl grid-cols-1 gap-2 rounded-2xl border border-border bg-card p-3 text-start sm:grid-cols-3"
       >
         {details.map((d) => (
           <div key={d.label} className="min-w-0 rounded-xl bg-background px-3 py-2">

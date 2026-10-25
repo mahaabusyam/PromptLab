@@ -63,7 +63,7 @@ export function HistoryLogCard({ entry, onRestore, onDelete }: HistoryLogCardPro
             Rollback
           </span>
         )}
-        <span className="ml-auto">
+        <span className="ms-auto">
           <CommitHash hash={entry.hash} />
         </span>
       </div>
@@ -135,7 +135,7 @@ export function HistoryLogCard({ entry, onRestore, onDelete }: HistoryLogCardPro
 )}
         <button
           type="button"
-          className={`${actionBtn} ml-auto text-red-500`}
+          className={`${actionBtn} ms-auto text-red-500`}
           onClick={() => onDelete(entry)}
           disabled={entry.isCurrent}
           aria-label={`Delete version ${entry.label}`}

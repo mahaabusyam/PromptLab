@@ -16,7 +16,7 @@ export function CompareHeader({ promptId, promptTitle, options, onPromptChange }
           to={`/editor/${promptId}`}
           className="inline-flex items-center gap-1.5 rounded-lg bg-muted px-2 py-1 font-medium transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary"
         >
-          <ArrowLeft className="size-3.5" aria-hidden="true" />
+          <ArrowLeft className="rtl:-scale-x-100 size-3.5" aria-hidden="true" />
           Prompt Editor
         </Link>
         <span aria-hidden="true">/</span>

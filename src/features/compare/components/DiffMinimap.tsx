@@ -30,7 +30,7 @@ export function DiffMinimap({ kinds, scrollRef }: DiffMinimapProps) {
   }
 
   return (
-    <div className="relative hidden w-4 shrink-0 border-l border-border bg-muted/30 md:block">
+    <div className="relative hidden w-4 shrink-0 border-s border-border bg-muted/30 md:block">
       {blocks.map((block) => (
         <button
           key={`${block.start}-${block.end}`}
@@ -42,7 +42,7 @@ export function DiffMinimap({ kinds, scrollRef }: DiffMinimapProps) {
             top: `${(block.start / total) * 100}%`,
             height: `max(${((block.end - block.start) / total) * 100}%, 4px)`,
           }}
-          className={`absolute left-0.5 w-3 rounded-sm opacity-80 transition-opacity hover:opacity-100 focus-visible:outline-2 focus-visible:outline-primary ${blockTone[block.kind]}`}
+          className={`absolute start-0.5 w-3 rounded-sm opacity-80 transition-opacity hover:opacity-100 focus-visible:outline-2 focus-visible:outline-primary ${blockTone[block.kind]}`}
         />
       ))}
     </div>

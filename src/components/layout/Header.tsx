@@ -31,7 +31,7 @@ export function Header({ sidebarOpen, onMenuClick }: HeaderProps) {
     <>
       <header
         className={`fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between gap-space-sm bg-surface-dim/80 px-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.06)] backdrop-blur-xl transition-[left] duration-300 ${
-          sidebarOpen ? 'lg:left-64' : ''
+          sidebarOpen ? 'lg:start-64' : ''
         }`}
       >
         <div className="flex min-w-0 flex-1 items-center gap-space-sm">
@@ -48,14 +48,14 @@ export function Header({ sidebarOpen, onMenuClick }: HeaderProps) {
             onClick={() => setSearchOpen(true)}
             aria-label="Search prompts and templates"
             aria-keyshortcuts="Control+K Meta+K"
-            className="relative flex w-full max-w-96 items-center rounded-lg bg-surface-container-lowest/80 py-2 pl-9 pr-16 text-left text-body-sm text-outline shadow-inner transition-colors hover:text-on-surface focus-visible:outline-2 focus-visible:outline-primary"
+            className="relative flex w-full max-w-96 items-center rounded-lg bg-surface-container-lowest/80 py-2 ps-9 pe-16 text-start text-body-sm text-outline shadow-inner transition-colors hover:text-on-surface focus-visible:outline-2 focus-visible:outline-primary"
           >
             <Search
-              className="pointer-events-none absolute left-space-sm top-1/2 size-5 -translate-y-1/2"
+              className="pointer-events-none absolute start-space-sm top-1/2 size-5 -translate-y-1/2"
               aria-hidden="true"
             />
             <span className="truncate">Search prompts, templates...</span>
-            <kbd className="pointer-events-none absolute right-space-xs top-1/2 -translate-y-1/2 rounded bg-surface-container px-1.5 py-0.5 font-code-md text-code-md text-on-surface-variant">
+            <kbd className="pointer-events-none absolute end-space-xs top-1/2 -translate-y-1/2 rounded bg-surface-container px-1.5 py-0.5 font-code-md text-code-md text-on-surface-variant">
               {SHORTCUT_LABEL}
             </kbd>
           </button>
@@ -64,7 +64,7 @@ export function Header({ sidebarOpen, onMenuClick }: HeaderProps) {
         <div className="flex items-center gap-space-sm">
           <IconButton aria-label="Notifications">
             <Bell className="size-5" />
-            <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-tertiary-container shadow-[0_0_8px_#f751a1]" />
+            <span className="absolute end-1.5 top-1.5 size-2 rounded-full bg-tertiary-container shadow-[0_0_8px_#f751a1]" />
           </IconButton>
           <ThemeToggle />
           <IconButton aria-label="Help">
@@ -75,7 +75,7 @@ export function Header({ sidebarOpen, onMenuClick }: HeaderProps) {
             <span className="grid size-8 place-items-center rounded-full bg-primary-container text-label-md text-on-primary-container">
               M
             </span>
-            <span className="hidden flex-col text-left md:flex">
+            <span className="hidden flex-col text-start md:flex">
               <span className="text-body-sm font-semibold text-on-surface transition-colors group-hover:text-primary">
                 Maha
               </span>

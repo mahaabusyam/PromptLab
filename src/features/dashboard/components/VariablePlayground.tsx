@@ -166,7 +166,7 @@ export function VariablePlayground({ config }: VariablePlaygroundProps) {
           <div
             ref={outputRef}
             role="status"
-            className="flex flex-col gap-2 rounded-lg border-l-2 border-primary bg-surface-container-lowest p-space-sm font-code-md text-label-sm text-on-surface-variant"
+            className="flex flex-col gap-2 rounded-lg border-s-2 border-primary bg-surface-container-lowest p-space-sm font-code-md text-label-sm text-on-surface-variant"
           >
             <div className="flex items-center justify-between text-outline">
               <span className="flex items-center gap-1 font-semibold text-primary">

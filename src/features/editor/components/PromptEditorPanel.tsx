@@ -137,7 +137,7 @@ const hasChanges = latest !== undefined && latest.content !== draft.content
       label: 'Raw Prompt',
       icon: Code,
       badge: (
-        <span className="ml-1 rounded-full bg-secondary-container px-1.5 text-label-sm font-semibold text-on-secondary-container">
+        <span className="ms-1 rounded-full bg-secondary-container px-1.5 text-label-sm font-semibold text-on-secondary-container">
           {'{{ }}'}
         </span>
       ),
@@ -147,7 +147,7 @@ const hasChanges = latest !== undefined && latest.content !== draft.content
       label: 'Live Injected Preview',
       icon: Eye,
       badge: (
-        <span className="ml-1 rounded-full bg-surface-container px-1.5 text-label-sm text-outline">
+        <span className="ms-1 rounded-full bg-surface-container px-1.5 text-label-sm text-outline">
           {variableNames.length} vars
         </span>
       ),
@@ -159,7 +159,7 @@ const hasChanges = latest !== undefined && latest.content !== draft.content
       badge: hasChanges ? (
         <span
           aria-label="Unsaved changes"
-          className="ml-1 size-2 rounded-full bg-tertiary-container"
+          className="ms-1 size-2 rounded-full bg-tertiary-container"
         />
       ) : null,
     },

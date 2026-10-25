@@ -72,7 +72,7 @@ function VersionCard({
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="text-right text-xs">
+        <div className="text-end text-xs">
           <p className="text-muted-foreground">Token Count</p>
           <p className="font-mono font-semibold">
             {snap.tokens} tok{' '}

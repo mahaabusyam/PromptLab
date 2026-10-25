@@ -63,7 +63,7 @@ export function FilterDropdown<T extends string>({
         <div
           role="listbox"
           aria-label={ariaLabel}
-          className="absolute left-0 top-full z-30 mt-1 flex max-h-64 min-w-48 flex-col overflow-y-auto rounded-xl bg-surface-container-high p-1 shadow-lg"
+          className="absolute start-0 top-full z-30 mt-1 flex max-h-64 min-w-48 flex-col overflow-y-auto rounded-xl bg-surface-container-high p-1 shadow-lg"
         >
           {options.map((option) => {
             const isSelected = option.value === value
@@ -78,7 +78,7 @@ export function FilterDropdown<T extends string>({
                   setOpen(false)
                   triggerRef.current?.focus()
                 }}
-                className={`flex items-center justify-between gap-3 rounded-lg px-2.5 py-1.5 text-left text-body-sm transition-colors hover:bg-surface-container-highest ${
+                className={`flex items-center justify-between gap-3 rounded-lg px-2.5 py-1.5 text-start text-body-sm transition-colors hover:bg-surface-container-highest ${
                   isSelected ? 'text-primary' : 'text-on-surface'
                 }`}
               >

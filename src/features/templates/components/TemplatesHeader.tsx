@@ -25,7 +25,7 @@ export function TemplatesHeader({ total, query, onQueryChange }: TemplatesHeader
 
       <div className="relative w-full xl:w-80">
         <Search
-          className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
           aria-hidden="true"
         />
         <input
@@ -34,7 +34,7 @@ export function TemplatesHeader({ total, query, onQueryChange }: TemplatesHeader
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder="Search templates, tags, variables..."
           aria-label="Search templates"
-          className="h-10 w-full rounded-xl border border-border bg-card pl-9 pr-3 text-sm placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-primary"
+          className="h-10 w-full rounded-xl border border-border bg-card ps-9 pe-3 text-sm placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-primary"
         />
       </div>
     </header>

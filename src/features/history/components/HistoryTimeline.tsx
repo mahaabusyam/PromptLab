@@ -52,12 +52,12 @@ export function HistoryTimeline({ entries, onRestore, onDelete }: HistoryTimelin
             </span>
           </div>
 
-          <ol className="relative space-y-4 pl-8 before:absolute before:bottom-2 before:left-[11px] before:top-2 before:w-px before:bg-linear-to-b before:from-primary/60 before:to-transparent">
+          <ol className="relative space-y-4 ps-8 before:absolute before:bottom-2 before:start-[11px] before:top-2 before:w-px before:bg-linear-to-b before:from-primary/60 before:to-transparent">
             {group.entries.map((entry) => (
               <li key={entry.id} data-log className="relative">
                 <span
                   aria-hidden="true"
-                  className={`absolute top-6 -left-[26px] size-3 rounded-full border-2 border-background ${
+                  className={`absolute top-6 -start-[26px] size-3 rounded-full border-2 border-background ${
                     entry.isRollback ? 'bg-red-500' : 'bg-primary'
                   }`}
                 />

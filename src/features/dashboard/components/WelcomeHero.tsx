@@ -13,8 +13,8 @@ export function WelcomeHero({ userName, activeTests, modelCount, efficiencyGain 
       className="relative flex flex-col justify-between gap-space-md overflow-hidden rounded-xl bg-surface-container-low p-space-lg shadow-xl md:flex-row md:items-center"
     >
       {/* وهج الخلفية */}
-      <div className="pointer-events-none absolute -right-16 -top-16 size-80 rounded-full bg-secondary-container/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 left-1/3 size-60 rounded-full bg-primary-container/10 blur-2xl" />
+      <div className="pointer-events-none absolute -end-16 -top-16 size-80 rounded-full bg-secondary-container/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 start-1/3 size-60 rounded-full bg-primary-container/10 blur-2xl" />
 
       <div className="relative z-10 flex max-w-2xl flex-col gap-1">
         <div data-reveal className="flex flex-wrap items-center gap-2">

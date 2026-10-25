@@ -39,7 +39,7 @@ export function TemplateLaunchers({ templates, totalCount }: TemplateLaunchersPr
           className="flex items-center gap-1 text-label-md text-primary transition-colors hover:text-on-surface"
         >
           Explore All {totalCount} Templates
-          <ArrowRight className="size-4" />
+          <ArrowRight className="rtl:-scale-x-100 size-4" />
         </Link>
       </div>
 

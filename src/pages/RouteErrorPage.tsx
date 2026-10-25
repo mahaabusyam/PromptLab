@@ -37,7 +37,7 @@ export default function RouteErrorPage() {
         Reload page
       </button>
       <Link to="/" className={secondaryAction}>
-        <ArrowLeft className="size-4" aria-hidden="true" />
+        <ArrowLeft className="rtl:-scale-x-100 size-4" aria-hidden="true" />
         Back to Dashboard
       </Link>
     </StatusScreen>

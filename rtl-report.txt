@@ -1,0 +1,81 @@
+  2  src/components/common/FilterDropdown.tsx
+  1  src/components/common/StatusScreen.tsx
+  2  src/components/layout/AppLayout.tsx
+  8  src/components/layout/Header.tsx
+  2  src/components/layout/Sidebar.tsx
+  1  src/data/templates.ts
+  1  src/features/compare/components/CompareSummaryCards.tsx
+  6  src/features/compare/components/DiffBody.tsx
+  2  src/features/compare/components/DiffMinimap.tsx
+  1  src/features/compare/components/DiffToolbar.tsx
+  1  src/features/compare/components/DiffViewer.tsx
+  1  src/features/compare/components/VersionPickerBar.tsx
+  1  src/features/dashboard/components/ModelBenchmarks.tsx
+  1  src/features/dashboard/components/VariablePlayground.tsx
+  2  src/features/dashboard/components/WelcomeHero.tsx
+  1  src/features/editor/components/AiRunCard.tsx
+  1  src/features/editor/components/EditorHeader.tsx
+  2  src/features/editor/components/ExecutionConsole.tsx
+  1  src/features/editor/components/ModelPanel.tsx
+  3  src/features/editor/components/PromptEditorPanel.tsx
+  1  src/features/favorites/components/FavoritesSidebar.tsx
+  4  src/features/favorites/components/FavoritesToolbar.tsx
+  2  src/features/history/components/HistoryLogCard.tsx
+  2  src/features/history/components/HistoryTable.tsx
+  3  src/features/history/components/HistoryTimeline.tsx
+  4  src/features/history/components/HistoryToolbar.tsx
+  1  src/features/library/components/CategoryPills.tsx
+  6  src/features/library/components/FolderTree.tsx
+  4  src/features/library/components/LibraryToolbar.tsx
+  2  src/features/library/components/PromptActionsMenu.tsx
+  5  src/features/library/components/PromptTable.tsx
+  1  src/features/settings/components/AppearanceSection.tsx
+  1  src/features/settings/components/SettingsNav.tsx
+  1  src/features/settings/components/SettingsParts.tsx
+  1  src/features/templates/components/FeaturedTemplate.tsx
+  3  src/features/templates/components/TemplatesHeader.tsx
+
+WOULD CHANGE: 81 classes
+
+--- Review by hand (41) ---
+src/components/common/ListPagination.tsx:1  [directional icon: flip in RTL]  import { ChevronLeft, ChevronRight } from 'lucide-react';
+src/components/common/ListPagination.tsx:26  [directional icon: flip in RTL]  <ChevronLeft className="size-4" aria-hidden="true" />
+src/components/common/ListPagination.tsx:49  [directional icon: flip in RTL]  <ChevronRight className="size-4" aria-hidden="true" />
+src/components/common/StatusScreen.tsx:71  [translate-x: add an rtl: variant if it must flip]  className="pointer-events-none absolute left-1/2 top-1/2 size-[28rem] -translate-x-1/2 -translate-y-1/2 rounde
+src/components/common/StatusScreen.tsx:71  [left/right-1/2 kept physical (OK with -translate-x-1/2)]  className="pointer-events-none absolute left-1/2 top-1/2 size-[28rem] -translate-x-1/2 -translate-y-1/2 rounde
+src/components/layout/Sidebar.tsx:25  [GSAP horizontal move: mirror for RTL]  { opacity: 0, x: -16 },
+src/components/layout/Sidebar.tsx:28  [GSAP horizontal move: mirror for RTL]  x: 0,
+src/components/layout/Sidebar.tsx:52  [translate-x: add an rtl: variant if it must flip]  open ? 'translate-x-0' : '-translate-x-full'
+src/features/compare/components/CompareHeader.tsx:1  [directional icon: flip in RTL]  import { ArrowLeft } from 'lucide-react';
+src/features/compare/components/CompareHeader.tsx:19  [directional icon: flip in RTL]  <ArrowLeft className="size-3.5" aria-hidden="true" />
+src/features/compare/components/DiffBody.tsx:91  [space-x / divide-x: check spacing in RTL]  <div className="grid grid-cols-[minmax(18rem,1fr)_minmax(18rem,1fr)] divide-x divide-border">
+src/features/dashboard/components/ModelBenchmarks.tsx:2  [directional icon: flip in RTL]  import { ArrowRight, Gauge } from 'lucide-react'
+src/features/dashboard/components/ModelBenchmarks.tsx:84  [directional icon: flip in RTL]  <ArrowRight className="size-3.5" />
+src/features/dashboard/components/StatsGrid.tsx:54  [gradient direction]  className="h-full rounded-full bg-linear-to-r from-tertiary-container to-tertiary"
+src/features/dashboard/components/TemplateLaunchers.tsx:1  [directional icon: flip in RTL]  import { ArrowRight, ArrowUpRight, BookOpen, FileCode, MailCheck, WandSparkles } from 'lucide-react'
+src/features/dashboard/components/TemplateLaunchers.tsx:42  [directional icon: flip in RTL]  <ArrowRight className="size-4" />
+src/features/dashboard/components/TemplateLaunchers.tsx:56  [gradient direction]  <div className={`h-2 bg-linear-to-r ${accent.bar}`} />
+src/features/dashboard/components/VariablePlayground.tsx:150  [gradient direction]  className="flex items-center gap-2 rounded-lg bg-linear-to-r from-inverse-primary to-secondary-container px-sp
+src/features/dashboard/components/WelcomeHero.tsx:54  [gradient direction]  className="group flex items-center gap-2 rounded-lg bg-linear-to-r from-inverse-primary via-secondary-containe
+src/features/editor/components/EditorHeader.tsx:1  [directional icon: flip in RTL]  import { Bookmark, Check, ChevronRight, Cloud, Copy, Pencil, Play, Plus, Sparkles, Split , Loader2} from 'luci
+src/features/editor/components/EditorHeader.tsx:97  [directional icon: flip in RTL]  <ChevronRight aria-hidden className="size-3.5 text-outline" />
+src/features/editor/components/EditorHeader.tsx:99  [directional icon: flip in RTL]  <ChevronRight aria-hidden className="size-3.5 text-outline" />
+src/features/editor/components/EditorHeader.tsx:156  [gradient direction]  className="inline-flex items-center gap-1.5 rounded-xl bg-linear-to-r from-primary-container via-secondary-con
+src/features/editor/components/ModelPanel.tsx:169  [translate-x: add an rtl: variant if it must flip]  className={`absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow-md transition-[translate] ${settings
+src/features/editor/components/PromptEditorPanel.tsx:99  [directional icon: flip in RTL]  e.key === 'ArrowRight'
+src/features/editor/components/PromptEditorPanel.tsx:101  [directional icon: flip in RTL]  : e.key === 'ArrowLeft'
+src/features/library/components/FolderTree.tsx:5  [directional icon: flip in RTL]  ChevronRight,
+src/features/library/components/FolderTree.tsx:79  [directional icon: flip in RTL]  <ChevronRight className={`size-4 transition-[rotate] ${isOpen ? 'rotate-90' : ''}`} />
+src/features/library/components/LibraryHeader.tsx:65  [gradient direction]  className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-secondary-container via-primary-conta
+src/features/library/components/Pagination.tsx:1  [directional icon: flip in RTL]  import { ChevronLeft, ChevronRight } from 'lucide-react'
+src/features/library/components/Pagination.tsx:29  [directional icon: flip in RTL]  <ChevronLeft className="size-[18px]" />
+src/features/library/components/Pagination.tsx:56  [directional icon: flip in RTL]  <ChevronRight className="size-[18px]" />
+src/features/library/components/StorageCard.tsx:41  [gradient direction]  <div ref={barRef} className="h-full w-0 rounded-full bg-linear-to-r from-secondary to-tertiary" />
+src/features/settings/components/AppearanceSection.tsx:19  [gradient direction]  { id: 'system', label: 'Match System', hint: 'Follows your operating system setting.', surface: 'bg-linear-to-
+src/features/settings/components/SettingsParts.tsx:60  [translate-x: add an rtl: variant if it must flip]  checked ? 'translate-x-5' : 'translate-x-0'
+src/features/templates/components/FeaturedTemplate.tsx:1  [directional icon: flip in RTL]  import { ArrowRight, Sparkles } from 'lucide-react';
+src/features/templates/components/FeaturedTemplate.tsx:58  [directional icon: flip in RTL]  <ArrowRight className="size-4" aria-hidden="true" />
+src/pages/NotFoundPage.tsx:2  [directional icon: flip in RTL]  import { ArrowLeft, Search } from 'lucide-react';
+src/pages/NotFoundPage.tsx:26  [directional icon: flip in RTL]  <ArrowLeft className="size-4" aria-hidden="true" />
+src/pages/RouteErrorPage.tsx:2  [directional icon: flip in RTL]  import { ArrowLeft, RotateCw } from 'lucide-react';
+src/pages/RouteErrorPage.tsx:40  [directional icon: flip in RTL]  <ArrowLeft className="size-4" aria-hidden="true" />

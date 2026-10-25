@@ -83,7 +83,7 @@ export function ExecutionConsole({ status, result, modelName, temperature, maxTo
         <div ref={outputRef} className="flex flex-col gap-space-xs">
           <div
             data-lenis-prevent
-            className="flex max-h-56 flex-col gap-space-xs overflow-y-auto rounded-lg border-l-2 border-primary bg-surface-container-lowest p-space-sm text-body-sm leading-relaxed text-on-surface-variant shadow-inner"
+            className="flex max-h-56 flex-col gap-space-xs overflow-y-auto rounded-lg border-s-2 border-primary bg-surface-container-lowest p-space-sm text-body-sm leading-relaxed text-on-surface-variant shadow-inner"
           >
             <div className="flex items-center justify-between gap-2 border-b border-surface-variant/40 pb-1 font-code-md text-[11px] text-outline">
               <span>[SIMULATED • no AI model was called]</span>
@@ -96,7 +96,7 @@ export function ExecutionConsole({ status, result, modelName, temperature, maxTo
             <p className="text-label-sm text-outline">
               No value for:{' '}
               {result.unresolved.map((name) => (
-                <span key={name} className="variable-chip mr-1">{`{{${name}}}`}</span>
+                <span key={name} className="variable-chip me-1">{`{{${name}}}`}</span>
               ))}
             </p>
           )}

@@ -166,7 +166,7 @@ export function ModelPanel({ draft, onChange }: ModelPanelProps) {
           className={`relative h-5 w-9 rounded-full transition-colors ${settings.strictSchema ? 'bg-secondary-container' : 'bg-surface-container-highest'}`}
         >
           <span
-            className={`absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow-md transition-[translate] ${settings.strictSchema ? 'translate-x-4' : 'translate-x-0'}`}
+            className={`absolute start-0.5 top-0.5 size-4 rounded-full bg-white shadow-md transition-[translate] ${settings.strictSchema ? 'translate-x-4 rtl:-translate-x-4' : 'translate-x-0'}`}
           />
         </button>
       </div>

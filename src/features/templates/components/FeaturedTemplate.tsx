@@ -24,7 +24,7 @@ export function FeaturedTemplate({ item, onUse }: FeaturedTemplateProps) {
       aria-labelledby="featured-title"
       className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 lg:p-8"
     >
-      <div className="pointer-events-none absolute -right-16 -top-24 size-80 rounded-full bg-primary/15 blur-[90px]" aria-hidden="true" />
+      <div className="pointer-events-none absolute -end-16 -top-24 size-80 rounded-full bg-primary/15 blur-[90px]" aria-hidden="true" />
 
       <div className="relative flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
         <div className="max-w-3xl space-y-4">
@@ -55,7 +55,7 @@ export function FeaturedTemplate({ item, onUse }: FeaturedTemplateProps) {
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Launch in Editor
-          <ArrowRight className="size-4" aria-hidden="true" />
+          <ArrowRight className="rtl:-scale-x-100 size-4" aria-hidden="true" />
         </button>
       </div>
     </section>

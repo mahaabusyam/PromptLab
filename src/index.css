@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+@import "@fontsource-variable/cairo";
 @custom-variant dark (&:is(.dark *));
 
 /* ---------- Light (مشتق من توكنات الملف) ---------- */
@@ -363,3 +364,10 @@
 /* ===== High contrast: stronger borders and secondary text ===== */
 :root[data-contrast='high'] { --border: oklch(0.45 0 0); --input: oklch(0.45 0 0); --muted-foreground: oklch(0.3 0 0); --on-surface-variant: #2a2935; --outline-variant: #6b6a7c; }
 :root.dark[data-contrast='high'] { --border: oklch(1 0 0 / 40%); --input: oklch(1 0 0 / 40%); --muted-foreground: oklch(0.88 0 0); --on-surface-variant: #e6e4f2; --outline-variant: #8e8da0; }
+
+/* Arabic: use Cairo everywhere except code, the editor and monospace labels.
+   Specificity is higher than Tailwind's font utilities so they can't win. */
+:root[lang='ar'] body *:not(.cm-editor, .cm-editor *, code, kbd, samp, [class*='font-mono'], [class*='font-code']) {
+  font-family: 'Cairo Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: normal; /* tracking breaks the joined Arabic letters */
+}

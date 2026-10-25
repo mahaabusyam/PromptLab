@@ -94,13 +94,13 @@ useEffect(() => {
           <Link to="/library" className="transition-colors hover:text-on-surface">
             Prompts
           </Link>
-          <ChevronRight aria-hidden className="size-3.5 text-outline" />
+          <ChevronRight aria-hidden className="rtl:-scale-x-100 size-3.5 text-outline" />
           <span>{categoryLabels[draft.category]}</span>
-          <ChevronRight aria-hidden className="size-3.5 text-outline" />
+          <ChevronRight aria-hidden className="rtl:-scale-x-100 size-3.5 text-outline" />
           <span className="max-w-[200px] truncate font-medium text-on-surface">
             {draft.title.trim() || 'Untitled prompt'}
           </span>
-          <span className="ml-space-xs inline-flex items-center rounded-full bg-secondary-container px-2.5 py-0.5 font-semibold text-on-secondary-container" ref={badgeRef} aria-live="polite" >
+          <span className="ms-space-xs inline-flex items-center rounded-full bg-secondary-container px-2.5 py-0.5 font-semibold text-on-secondary-container" ref={badgeRef} aria-live="polite" >
             {versionLabel}
           </span>
         </nav>

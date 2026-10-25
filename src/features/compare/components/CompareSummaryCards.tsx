@@ -118,7 +118,7 @@ export function CompareSummaryCards({ base, target, result }: CompareSummaryCard
               <span className="text-primary">({result.tokenDelta >= 0 ? '+' : ''}{result.tokenDelta})</span>
             </dd>
           </div>
-          <div className="text-right">
+          <div className="text-end">
             <dt className="text-muted-foreground">Est. cost / run</dt>
             <dd className="font-mono font-semibold">{formatUsd(costDelta)}</dd>
           </div>

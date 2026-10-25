@@ -11,11 +11,11 @@ const th = 'px-3 py-2.5 font-semibold'
 export function PromptTable({ prompts }: { prompts: Prompt[] }) {
   return (
     <div className="overflow-x-auto rounded-2xl bg-surface-container-low/85 shadow-md lg:overflow-visible">
-      <table className="w-full text-left text-body-sm">
+      <table className="w-full text-start text-body-sm">
         <caption className="sr-only">Prompts</caption>
         <thead>
           <tr className="text-label-sm uppercase tracking-wider text-outline">
-            <th scope="col" className="w-12 py-2.5 pl-3">
+            <th scope="col" className="w-12 py-2.5 ps-3">
               <span className="sr-only">Favorite</span>
             </th>
             <th scope="col" className={th}>Title</th>
@@ -24,7 +24,7 @@ export function PromptTable({ prompts }: { prompts: Prompt[] }) {
             <th scope="col" className={`${th} hidden md:table-cell`}>Model</th>
             <th scope="col" className={`${th} hidden xl:table-cell`}>Tags</th>
             <th scope="col" className={th}>Updated</th>
-            <th scope="col" className="py-2.5 pr-3">
+            <th scope="col" className="py-2.5 pe-3">
               <span className="sr-only">Actions</span>
             </th>
           </tr>
@@ -32,7 +32,7 @@ export function PromptTable({ prompts }: { prompts: Prompt[] }) {
         <tbody className="divide-y divide-surface-variant/40">
           {prompts.map((p) => (
             <tr key={p.id} data-result-item className="transition-colors hover:bg-surface-container">
-              <td className="py-1.5 pl-3">
+              <td className="py-1.5 ps-3">
                 <FavoriteButton prompt={p} />
               </td>
               <td className="px-3 py-1.5">
@@ -65,7 +65,7 @@ export function PromptTable({ prompts }: { prompts: Prompt[] }) {
                 </span>
               </td>
               <td className="whitespace-nowrap px-3 py-1.5 text-outline">{formatUpdated(p.updatedAt)}</td>
-              <td className="py-1.5 pr-3">
+              <td className="py-1.5 pe-3">
                 <PromptQuickActions prompt={p} />
               </td>
             </tr>

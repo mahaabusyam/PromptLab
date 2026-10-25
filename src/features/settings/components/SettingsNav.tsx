@@ -35,7 +35,7 @@ export function SettingsNav() {
                   type="button"
                   aria-current={isActive ? 'true' : undefined}
                   onClick={() => scrollToSection(id)}
-                  className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-primary ${
+                  className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-start text-sm transition-colors focus-visible:outline-2 focus-visible:outline-primary ${
                     isActive
                       ? 'bg-primary/15 font-semibold text-primary'
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground'

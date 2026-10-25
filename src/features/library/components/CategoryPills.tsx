@@ -34,7 +34,7 @@ export function CategoryPills({ counts }: CategoryPillsProps) {
           onClick={() => setCategory(item.id)}
           className={`${pillBase} ${category === item.id ? pillActive : pillIdle}`}
         >
-          {item.label} <span className="ml-1 text-[11px] font-normal opacity-80">{item.count}</span>
+          {item.label} <span className="ms-1 text-[11px] font-normal opacity-80">{item.count}</span>
         </button>
       ))}
     </div>

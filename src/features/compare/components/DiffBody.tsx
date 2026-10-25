@@ -67,7 +67,7 @@ function CellView({
   void showOldNo;
   return (
     <div className={`flex items-start px-2 ${cellTone[cell.type]}`}>
-      <span aria-hidden="true" className={`w-10 shrink-0 select-none pr-3 text-right ${gutterTone[cell.type]}`}>
+      <span aria-hidden="true" className={`w-10 shrink-0 select-none pe-3 text-end ${gutterTone[cell.type]}`}>
         {cell.lineNo}
       </span>
       <span aria-hidden="true" className={`w-4 shrink-0 select-none text-center font-bold ${gutterTone[cell.type]}`}>
@@ -104,10 +104,10 @@ export function UnifiedBody({ rows, wrap }: { rows: UnifiedRow[]; wrap: boolean 
     <div>
       {rows.map((row, i) => (
         <div key={i} className={`flex items-start px-2 ${cellTone[row.cell.type]}`}>
-          <span aria-hidden="true" className="w-9 shrink-0 select-none pr-2 text-right text-muted-foreground/60">
+          <span aria-hidden="true" className="w-9 shrink-0 select-none pe-2 text-end text-muted-foreground/60">
             {row.oldNo ?? ''}
           </span>
-          <span aria-hidden="true" className="w-9 shrink-0 select-none pr-2 text-right text-muted-foreground/60">
+          <span aria-hidden="true" className="w-9 shrink-0 select-none pe-2 text-end text-muted-foreground/60">
             {row.newNo ?? ''}
           </span>
           <span aria-hidden="true" className={`w-4 shrink-0 select-none text-center font-bold ${gutterTone[row.cell.type]}`}>

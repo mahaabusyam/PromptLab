@@ -23,7 +23,7 @@ export function ListPagination({ result, onPageChange,noun = 'version logs' }: L
       {totalPages > 1 && (
         <div className="flex items-center gap-1.5">
           <button type="button" className={btn} onClick={() => onPageChange(page - 1)} disabled={page === 1} aria-label="Previous page">
-            <ChevronLeft className="size-4" aria-hidden="true" />
+            <ChevronLeft className="rtl:-scale-x-100 size-4" aria-hidden="true" />
           </button>
 
           {getPageNumbers(page, totalPages).map((n, i) =>
@@ -46,7 +46,7 @@ export function ListPagination({ result, onPageChange,noun = 'version logs' }: L
           )}
 
           <button type="button" className={btn} onClick={() => onPageChange(page + 1)} disabled={page === totalPages} aria-label="Next page">
-            <ChevronRight className="size-4" aria-hidden="true" />
+            <ChevronRight className="rtl:-scale-x-100 size-4" aria-hidden="true" />
           </button>
         </div>
       )}

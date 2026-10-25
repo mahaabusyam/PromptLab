@@ -85,7 +85,7 @@ export function DiffViewer({ base, target, result, mode, wrap }: DiffViewerProps
             </span>
             <CopyRaw text={base.content} label={`Copy raw ${base.label}`} />
           </div>
-          <div className="flex items-center justify-between gap-2 px-4 py-2.5 sm:border-l sm:border-border">
+          <div className="flex items-center justify-between gap-2 px-4 py-2.5 sm:border-s sm:border-border">
             <span className="flex items-center gap-2 font-semibold">
               <PlusCircle className="size-4 text-primary" aria-hidden="true" />
               {target.label} (Target)

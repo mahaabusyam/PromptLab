@@ -19,11 +19,11 @@ export function AppLayout() {
   return (
     <div className="min-h-screen text-on-surface">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className={`transition-[padding] duration-300 ${sidebarOpen ? 'lg:pl-64' : ''}`}>
+      <div className={`transition-[padding] duration-300 ${sidebarOpen ? 'lg:ps-64' : ''}`}>
         <Header sidebarOpen={sidebarOpen} onMenuClick={() => setSidebarOpen(true)} />
         <main className="relative px-space-lg pt-16">
           {/* الوهج البنفسجي بالخلفية (من التصميم) */}
-          <div className="pointer-events-none fixed right-0 top-0 -z-10 h-[350px] w-[500px] bg-secondary-container/15 blur-[120px]" />
+          <div className="pointer-events-none fixed end-0 top-0 -z-10 h-[350px] w-[500px] bg-secondary-container/15 blur-[120px]" />
           <div className="py-space-lg">
             <Outlet />
           </div>

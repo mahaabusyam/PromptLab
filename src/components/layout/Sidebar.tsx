@@ -48,7 +48,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
       <aside
         ref={ref}
-        className={`fixed left-0 top-0 z-50 flex h-full w-64 flex-col justify-between bg-surface-container-lowest/90 shadow-[0_1px_8px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-transform duration-300 ${
+        className={`fixed start-0 top-0 z-50 flex h-full w-64 flex-col justify-between bg-surface-container-lowest/90 shadow-[0_1px_8px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-transform duration-300 ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -107,7 +107,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         <div className="p-space-md">
           <button
             type="button"
-            className="flex w-full items-center justify-between rounded-xl bg-surface-container-low p-space-sm text-left shadow-[0_1px_4px_rgba(0,0,0,0.1)] transition-colors hover:bg-surface-container"
+            className="flex w-full items-center justify-between rounded-xl bg-surface-container-low p-space-sm text-start shadow-[0_1px_4px_rgba(0,0,0,0.1)] transition-colors hover:bg-surface-container"
           >
             <span className="flex min-w-0 items-center gap-space-sm">
               <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-surface-container-high font-headline-sm text-headline-sm text-primary">

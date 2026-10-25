@@ -71,7 +71,7 @@ export function ModelBenchmarks({ items }: ModelBenchmarksProps) {
                   style={{ width: `${m.scorePercent}%` }}
                 />
               </div>
-              <span className="w-8 text-right text-label-sm text-outline">{m.scorePercent}%</span>
+              <span className="w-8 text-end text-label-sm text-outline">{m.scorePercent}%</span>
             </div>
           </li>
         ))}
@@ -81,7 +81,7 @@ export function ModelBenchmarks({ items }: ModelBenchmarksProps) {
         <span>Latency index normalized</span>
         <button type="button" className="flex items-center gap-0.5 text-primary hover:underline">
           Detailed matrix
-          <ArrowRight className="size-3.5" />
+          <ArrowRight className="rtl:-scale-x-100 size-3.5" />
         </button>
       </div>
     </section>

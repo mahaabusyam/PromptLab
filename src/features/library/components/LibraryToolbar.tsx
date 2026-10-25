@@ -71,7 +71,7 @@ export function LibraryToolbar({ allTags, categoryCounts, hasActiveFilters }: Li
     >
       <div className="flex flex-col items-stretch justify-between gap-space-sm lg:flex-row lg:items-center">
         <div className="relative min-w-[280px] flex-1">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-5 -translate-y-1/2 text-outline" />
+          <Search className="pointer-events-none absolute start-3.5 top-1/2 size-5 -translate-y-1/2 text-outline" />
           <input
             ref={searchRef}
             type="text"
@@ -79,9 +79,9 @@ export function LibraryToolbar({ allTags, categoryCounts, hasActiveFilters }: Li
             onChange={(e) => setSearch(e.target.value)}
             aria-label="Search prompts"
             placeholder="Search by title, variable, or keyword..."
-            className="w-full rounded-xl bg-surface-container-lowest/90 py-2.5 pl-11 pr-14 text-body-md text-on-surface shadow-inner placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full rounded-xl bg-surface-container-lowest/90 py-2.5 ps-11 pe-14 text-body-md text-on-surface shadow-inner placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary"
           />
-          <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center">
+          <div className="absolute end-3 top-1/2 flex -translate-y-1/2 items-center">
             {search ? (
               <button type="button" aria-label="Clear search" onClick={() => setSearch('')} className="rounded p-0.5 text-outline hover:text-on-surface">
                 <X className="size-4" />

@@ -47,7 +47,7 @@ export function DiffToolbar({ mode, onModeChange, wrap, onWrapChange, children }
         Word wrap: {wrap ? 'ON' : 'OFF'}
       </button>
 
-      <div className="ml-auto flex flex-wrap items-center gap-2">{children}</div>
+      <div className="ms-auto flex flex-wrap items-center gap-2">{children}</div>
     </div>
   );
 }

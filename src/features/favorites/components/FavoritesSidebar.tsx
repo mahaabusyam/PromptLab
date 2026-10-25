@@ -48,7 +48,7 @@ export function FavoritesSidebar({
                     type="button"
                     aria-pressed={active}
                     onClick={() => onFolderChange(active ? null : f.id)}
-                    className={`flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-primary ${
+                    className={`flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-start text-sm transition-colors focus-visible:outline-2 focus-visible:outline-primary ${
                       active
                         ? 'bg-primary/15 font-semibold text-primary'
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground'

@@ -38,7 +38,7 @@ function ScopeRow({ icon: Icon, label, count, active, onClick }: ScopeRowProps) 
       type="button"
       aria-current={active ? 'true' : undefined}
       onClick={onClick}
-      className={`flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-left text-body-sm transition-colors ${active ? rowActive : rowIdle}`}
+      className={`flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-start text-body-sm transition-colors ${active ? rowActive : rowIdle}`}
     >
       <span className="flex min-w-0 items-center gap-2">
         <Icon className={`size-[18px] shrink-0 ${active ? 'text-primary' : 'text-outline'}`} />
@@ -85,7 +85,7 @@ function FolderBranch({ node, scope, expanded, onToggle, onSelect }: FolderBranc
           type="button"
           aria-current={active ? 'true' : undefined}
           onClick={() => onSelect(folder.id)}
-          className="flex min-w-0 flex-1 items-center justify-between gap-2 py-2 pr-2.5 text-left text-body-sm"
+          className="flex min-w-0 flex-1 items-center justify-between gap-2 py-2 pe-2.5 text-start text-body-sm"
         >
           <span className="flex min-w-0 items-center gap-2">
             <Icon className={`size-[18px] shrink-0 ${active ? 'text-primary' : 'text-outline'}`} />
@@ -96,7 +96,7 @@ function FolderBranch({ node, scope, expanded, onToggle, onSelect }: FolderBranc
       </div>
 
       {hasChildren && isOpen && (
-        <div className="ml-4 mt-0.5 flex flex-col gap-0.5 border-l border-surface-variant pl-1.5">
+        <div className="ms-4 mt-0.5 flex flex-col gap-0.5 border-s border-surface-variant ps-1.5">
           {children.map((child) => (
             <FolderBranch
               key={child.folder.id}
