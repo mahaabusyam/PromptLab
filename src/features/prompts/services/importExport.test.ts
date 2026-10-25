@@ -60,13 +60,17 @@ describe('parseImportText', () => {
     expect(result.ok).toBe(false)
     if (!result.ok) expect(result.error).toContain('prompts.0.status')
   })
-    it('reports where a malformed export is wrong', () => {
+  it('reports where a malformed export is wrong', () => {
     const result = parseImportText('{"a":1}')
     expect(result.ok).toBe(false)
+
     if (!result.ok) {
       expect(result.code).toBe('invalid_export')
-      expect(result.where).toBeTruthy()
-      expect(result.detail).toBeTruthy()
+
+      if (result.code === 'invalid_export') {
+        expect(result.where).toBeTruthy()
+        expect(result.detail).toBeTruthy()
+      }
     }
   })
 })
