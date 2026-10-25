@@ -4,12 +4,14 @@ import { useScrollReveal } from '@/hooks/useScrollReveal'
 import { gsap } from '@/utils/gsap'
 import { toneBg, toneText } from '../tones'
 import type { ModelBenchmark } from '../types'
+import { useTranslation } from 'react-i18next'
 
 interface ModelBenchmarksProps {
   items: ModelBenchmark[]
 }
 
 export function ModelBenchmarks({ items }: ModelBenchmarksProps) {
+  const { t } = useTranslation()
   const ref = useScrollReveal<HTMLElement>()
 
   // نمو الأشرطة من 0 للقيمة الفعلية (القيمة مخزنة بـ data-value)
@@ -41,9 +43,9 @@ export function ModelBenchmarks({ items }: ModelBenchmarksProps) {
       <div data-reveal className="mb-space-sm flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Gauge className="size-5 text-tertiary" />
-          <h3 className="text-title-md text-on-surface">Model Benchmarks</h3>
+          <h3 className="text-title-md text-on-surface">{t('dashboard.benchmarks.title')}</h3>
         </div>
-        <span className="text-label-sm text-outline">Live P95</span>
+        <span className="text-label-sm text-outline">{t('dashboard.benchmarks.live')}</span>
       </div>
 
       <ul className="flex flex-col gap-space-sm">
@@ -78,9 +80,9 @@ export function ModelBenchmarks({ items }: ModelBenchmarksProps) {
       </ul>
 
       <div className="mt-space-sm flex items-center justify-between pt-space-xs text-label-sm text-outline">
-        <span>Latency index normalized</span>
+        <span>{t('dashboard.benchmarks.normalized')}</span>
         <button type="button" className="flex items-center gap-0.5 text-primary hover:underline">
-          Detailed matrix
+          {t('dashboard.benchmarks.matrix')}
           <ArrowRight className="rtl:-scale-x-100 size-3.5" />
         </button>
       </div>

@@ -5,6 +5,7 @@ import { gsap } from '@/utils/gsap'
 import { extractVariables, fillTemplate, splitTemplate } from '@/utils/promptVariables'
 import { estimateCostUsd, estimateTokens } from '@/utils/tokens'
 import type { PlaygroundConfig } from '../types'
+import { useTranslation } from 'react-i18next'
 
 type RunStatus = 'idle' | 'running' | 'done'
 
@@ -15,6 +16,7 @@ interface VariablePlaygroundProps {
 }
 
 export function VariablePlayground({ config }: VariablePlaygroundProps) {
+  const { t } = useTranslation()
   const ref = useScrollReveal<HTMLElement>()
   const outputRef = useRef<HTMLDivElement>(null)
   const timer = useRef<number | undefined>(undefined)
@@ -67,7 +69,7 @@ export function VariablePlayground({ config }: VariablePlaygroundProps) {
       >
         <div className="flex items-center gap-2">
           <span className="size-2.5 animate-pulse rounded-full bg-primary" />
-          <h2 className="text-title-md text-on-surface">Variable Playground</h2>
+          <h2 className="text-title-md text-on-surface">{t('dashboard.playground.title')}</h2>
         </div>
         <button
           type="button"
@@ -84,9 +86,9 @@ export function VariablePlayground({ config }: VariablePlaygroundProps) {
         <div className="rounded-lg bg-surface-container-lowest p-space-sm shadow-inner">
           <div className="mb-1 flex items-center justify-end gap-1 text-label-sm text-outline">
             <Code className="size-3.5" />
-            Prompt Template
+             {t('dashboard.playground.promptTemplate')}
           </div>
-          <p className="font-code-md text-code-md leading-relaxed text-on-surface-variant">
+          <p className="font-code-md text-code-md leading-relaxed text-on-surface-variant" dir="auto" >
             {segments.map((segment, i) =>
               segment.kind === 'text' ? (
                 <span key={i}>{segment.text}</span>
@@ -109,8 +111,8 @@ export function VariablePlayground({ config }: VariablePlaygroundProps) {
         {/* حقول المتغيرات */}
         <div className="flex flex-col gap-space-sm">
           <div className="flex items-center justify-between text-label-sm font-semibold uppercase tracking-wider text-outline">
-            <span>Active Variables</span>
-            <span>{variables.length} dynamic tags</span>
+            <span>{t('dashboard.playground.activeVariables')}</span>
+            <span>{t('dashboard.playground.dynamicTags', { total: variables.length })}</span>
           </div>
 
           {variables.map((name) => (
@@ -121,7 +123,7 @@ export function VariablePlayground({ config }: VariablePlaygroundProps) {
               >
                 <span>{asTag(name)}</span>
                 <span className="font-sans text-outline">
-                  {config.requiredVariables.includes(name) ? 'Required' : 'Optional'}
+                  {config.requiredVariables.includes(name) ? t('dashboard.playground.required') : t('dashboard.playground.optional')}
                 </span>
               </label>
               <input
@@ -140,7 +142,7 @@ export function VariablePlayground({ config }: VariablePlaygroundProps) {
           <div className="flex items-center gap-1.5 font-code-md text-label-sm text-outline">
             <Gauge className="size-4 text-primary" />
             <span>
-              ~{tokens} tokens (${estimateCostUsd(tokens).toFixed(4)})
+              {t('dashboard.playground.tokens', { tokens, cost: estimateCostUsd(tokens).toFixed(4) })}
             </span>
           </div>
           <button
@@ -154,12 +156,12 @@ export function VariablePlayground({ config }: VariablePlaygroundProps) {
             ) : (
               <Play className="size-[18px]" />
             )}
-            {status === 'running' ? 'Running…' : 'Run Test'}
+            {status === 'running' ? t('dashboard.playground.running') : t('dashboard.playground.run')}
           </button>
         </div>
 
         {missingRequired && (
-          <p className="text-label-sm text-error">Fill in the required variables to run a test.</p>
+          <p className="text-label-sm text-error">{t('dashboard.playground.fillRequired')}</p>
         )}
 
         {status === 'done' && (
@@ -171,18 +173,18 @@ export function VariablePlayground({ config }: VariablePlaygroundProps) {
             <div className="flex items-center justify-between text-outline">
               <span className="flex items-center gap-1 font-semibold text-primary">
                 <CheckCheck className="size-3.5" />
-                Simulated output (264ms)
+                {t('dashboard.playground.simulated', { ms: 264 })}
               </span>
               <button
                 type="button"
-                aria-label="Close output"
+                aria-label={t('dashboard.playground.closeOutput')}
                 onClick={() => setStatus('idle')}
                 className="transition-colors hover:text-on-surface"
               >
                 <X className="size-3.5" />
               </button>
             </div>
-            <p className="italic text-on-surface">“{config.simulatedOutput}”</p>
+            <p className="italic text-on-surface" dir="auto" >“{config.simulatedOutput}”</p>
           </div>
         )}
       </div>

@@ -5,8 +5,10 @@ import { useScrollReveal } from '@/hooks/useScrollReveal'
 import { ScrollTrigger } from '@/utils/gsap'
 import type { PromptFilter } from '../types'
 import { RecentPromptCard } from './RecentPromptCard'
+import { useTranslation } from 'react-i18next'
 
 export function RecentPrompts() {
+  const { t } = useTranslation()
   const ref = useScrollReveal<HTMLElement>()
   const prompts = usePromptStore((s) => s.prompts)
   const toggleFavorite = usePromptStore((s) => s.toggleFavorite)
@@ -32,11 +34,11 @@ export function RecentPrompts() {
     ScrollTrigger.refresh()
   }, [filter])
 
-  const tabs: { id: PromptFilter; label: string }[] = [
-    { id: 'all', label: `All (${recent.length})` },
-    { id: 'production', label: 'Production' },
-    { id: 'testing', label: 'Testing' },
-    { id: 'draft', label: 'Drafts' },
+    const tabs: { id: PromptFilter; label: string }[] = [
+    { id: 'all', label: t('dashboard.recent.tabs.all', { total: recent.length }) },
+    { id: 'production', label: t('dashboard.recent.tabs.production') },
+    { id: 'testing', label: t('dashboard.recent.tabs.testing') },
+    { id: 'draft', label: t('dashboard.recent.tabs.drafts') },
   ]
 
   return (
@@ -52,15 +54,15 @@ export function RecentPrompts() {
           <Braces className="size-[22px] text-primary" />
           <div>
             <h2 className="font-headline-sm text-headline-sm tracking-tight text-on-surface">
-              Recent Prompts
+              {t('dashboard.recent.title')}
             </h2>
-            <p className="text-body-sm text-outline">Synchronized across production pipelines</p>
+            <p className="text-body-sm text-outline">{t('dashboard.recent.subtitle')}</p>
           </div>
         </div>
 
         <div
           role="tablist"
-          aria-label="Filter prompts"
+          aria-label={t('dashboard.recent.filterLabel')}
           className="inline-flex self-start rounded-xl bg-surface-container-lowest p-1 sm:self-auto"
         >
           {tabs.map((tab) => {
@@ -87,7 +89,7 @@ export function RecentPrompts() {
 
       {visible.length === 0 ? (
         <div className="rounded-lg bg-surface-container-lowest px-space-md py-space-xl text-center text-body-sm text-outline">
-          No prompts in this category yet.
+          {t('dashboard.recent.empty')}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-space-md md:grid-cols-2">
