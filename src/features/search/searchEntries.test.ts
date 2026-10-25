@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Prompt } from '@/features/prompts/types';
 import type { Template } from '@/features/templates/schemas';
-import { SEARCH_LIMIT, searchEntries } from './searchEntries';
+import { SEARCH_LIMIT, searchEntries , DEFAULT_SEARCH_LABELS} from './searchEntries';
 
 function prompt(overrides: Partial<Prompt> & Pick<Prompt, 'id' | 'title'>): Prompt {
   return {
@@ -66,4 +66,12 @@ describe('searchEntries', () => {
     const many = Array.from({ length: 20 }, (_, i) => prompt({ id: `p${i}`, title: `Email ${i}` }));
     expect(searchEntries(many, [], 'email')).toHaveLength(SEARCH_LIMIT);
   });
+  
+  it('matches page names in the labels it is given (another language)', () => {
+  const labels = { ...DEFAULT_SEARCH_LABELS, pages: [{ label: 'المكتبة', to: '/library' }], pageSubtitle: 'انتقال' }
+  const results = searchEntries([], [], 'مكت', 8, labels)
+  expect(results).toEqual([
+    expect.objectContaining({ kind: 'page', to: '/library', title: 'المكتبة', subtitle: 'انتقال' }),
+  ])
+})
 });

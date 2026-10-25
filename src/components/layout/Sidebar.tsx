@@ -6,6 +6,7 @@ import { IconButton } from '@/components/common/IconButton'
 import { navItems } from './nav'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { usePromptStore } from '@/stores/promptStore'
+import { useTranslation } from 'react-i18next'
 
 interface SidebarProps {
   open: boolean
@@ -13,6 +14,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ open, onClose }: SidebarProps) {
+  const { t } = useTranslation()
   const ref = useRef<HTMLElement>(null)
 
   const workspaceName = useSettingsStore((s) => s.settings.workspaceName)
@@ -68,22 +70,22 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               </span>
             </div>
 
-            <IconButton aria-label="Collapse sidebar" onClick={onClose}>
-              <PanelLeft className="size-[18px]" />
+            <IconButton aria-label={t('sidebar.collapse')} onClick={onClose}>
+              <PanelLeft className="size-[18px] rtl:-scale-x-100" />
             </IconButton>
           </div>
 
           <div className="px-space-md pt-space-xs">
             <span className="px-space-xs text-label-sm uppercase tracking-wider text-outline">
-              Platform
+              {t('sidebar.platform')}
             </span>
           </div>
 
           <nav
             className="mt-space-xs flex flex-col gap-1 px-space-md"
-            aria-label="Main"
+            aria-label={t('sidebar.mainNav')}
           >
-            {navItems.map(({ label, to, icon: Icon }) => (
+            {navItems.map(({ labelKey, to, icon: Icon }) => (
               <NavLink
                 key={to}
                 to={to}
@@ -98,7 +100,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 }
               >
                 <Icon className="size-5 transition-colors group-hover:text-primary" />
-                <span className="text-body-md">{label}</span>
+                <span className="text-body-md">{t(labelKey)}</span>
               </NavLink>
             ))}
           </nav>
@@ -120,7 +122,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 </span>
 
                 <span className="truncate text-label-sm text-on-surface-variant">
-                  {`${promptCount} prompts`}
+                  {t('sidebar.promptCount', { total: promptCount })}
                 </span>
               </span>
             </span>

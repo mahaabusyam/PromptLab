@@ -16,6 +16,19 @@ export const SEARCH_PAGES = [
   { label: 'Settings', to: '/settings' },
 ] as const;
 
+/** Texts shown/searched in results. Defaults are English; the UI passes translated ones. */
+export interface SearchLabels {
+  pages: readonly { label: string; to: string }[];
+  pageSubtitle: string;
+  categoryLabel: (category: Prompt['category']) => string;
+}
+
+export const DEFAULT_SEARCH_LABELS: SearchLabels = {
+  pages: SEARCH_PAGES,
+  pageSubtitle: 'Go to page',
+  categoryLabel: (category) => categoryLabels[category],
+};
+
 export type SearchResult =
   | { kind: 'prompt'; key: string; id: string; title: string; subtitle: string }
   | { kind: 'template'; key: string; id: string; title: string; subtitle: string; template: Template }
@@ -40,13 +53,13 @@ function scoreMatch(query: string, title: string, extras: string[]): number {
 const byRecent = (a: Prompt, b: Prompt): number =>
   (Date.parse(b.updatedAt) || 0) - (Date.parse(a.updatedAt) || 0);
 
-function promptResult(p: Prompt): SearchResult {
+function promptResult(p: Prompt, labels: SearchLabels): SearchResult {
   return {
     kind: 'prompt',
     key: `prompt:${p.id}`,
     id: p.id,
     title: p.title,
-    subtitle: `${categoryLabels[p.category]} · ${p.model.name}`,
+    subtitle: `${labels.categoryLabel(p.category)} · ${p.model.name}`,
   };
 }
 
@@ -55,18 +68,21 @@ export function searchEntries(
   templates: Template[],
   rawQuery: string,
   limit: number = SEARCH_LIMIT,
+  labels: SearchLabels = DEFAULT_SEARCH_LABELS,
 ): SearchResult[] {
   const query = rawQuery.trim().toLowerCase();
   const visible = prompts.filter((p) => !p.isArchived);
 
   // No query yet: show the most recently edited prompts
-  if (!query) return [...visible].sort(byRecent).slice(0, RECENT_LIMIT).map(promptResult);
+  if (!query) {
+    return [...visible].sort(byRecent).slice(0, RECENT_LIMIT).map((p) => promptResult(p, labels));
+  }
 
   const scored: Scored[] = [];
 
   for (const p of visible) {
     const score = scoreMatch(query, p.title, [p.description, p.content, ...p.tags]);
-    if (score > 0) scored.push({ result: promptResult(p), score, time: Date.parse(p.updatedAt) || 0 });
+    if (score > 0) scored.push({ result: promptResult(p, labels), score, time: Date.parse(p.updatedAt) || 0 });
   }
 
   for (const t of templates) {
@@ -80,11 +96,11 @@ export function searchEntries(
     }
   }
 
-  for (const page of SEARCH_PAGES) {
+  for (const page of labels.pages) {
     const score = scoreMatch(query, page.label, []);
     if (score > 0) {
       scored.push({
-        result: { kind: 'page', key: `page:${page.to}`, title: page.label, subtitle: 'Go to page', to: page.to },
+        result: { kind: 'page', key: `page:${page.to}`, title: page.label, subtitle: labels.pageSubtitle, to: page.to },
         score,
         time: 0,
       });

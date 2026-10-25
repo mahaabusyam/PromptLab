@@ -1,20 +1,21 @@
+import type { ParseKeys } from 'i18next'
 import {
   LayoutDashboard, FolderOpen, SquareTerminal, LayoutGrid,
   History, Star, Settings, type LucideIcon,
 } from 'lucide-react'
 
 export interface NavItem {
-  label: string
+  labelKey: ParseKeys
   to: string
   icon: LucideIcon
 }
 
 export const navItems: NavItem[] = [
-  { label: 'Dashboard', to: '/', icon: LayoutDashboard },
-  { label: 'Prompt Library', to: '/library', icon: FolderOpen },
-  { label: 'Prompt Editor', to: '/editor', icon: SquareTerminal },
-  { label: 'Templates', to: '/templates', icon: LayoutGrid },
-  { label: 'History', to: '/history', icon: History },
-  { label: 'Favorites', to: '/favorites', icon: Star },
-  { label: 'Settings', to: '/settings', icon: Settings },
+  { labelKey: 'nav.dashboard', to: '/', icon: LayoutDashboard },
+  { labelKey: 'nav.library', to: '/library', icon: FolderOpen },
+  { labelKey: 'nav.editor', to: '/editor', icon: SquareTerminal },
+  { labelKey: 'nav.templates', to: '/templates', icon: LayoutGrid },
+  { labelKey: 'nav.history', to: '/history', icon: History },
+  { labelKey: 'nav.favorites', to: '/favorites', icon: Star },
+  { labelKey: 'nav.settings', to: '/settings', icon: Settings },
 ]
