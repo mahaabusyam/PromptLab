@@ -22,7 +22,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '[data-nav-item]',
-        { opacity: 0, x: -16 },
+        { opacity: 0, x: document.documentElement.dir === 'rtl' ? 16 : -16 },
         {
           opacity: 1,
           x: 0,
@@ -49,7 +49,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       <aside
         ref={ref}
         className={`fixed start-0 top-0 z-50 flex h-full w-64 flex-col justify-between bg-surface-container-lowest/90 shadow-[0_1px_8px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-transform duration-300 ${
-          open ? 'translate-x-0' : '-translate-x-full'
+          open ? 'translate-x-0' : '-translate-x-full rtl:translate-x-full'
         }`}
       >
         <div className="flex flex-col">
