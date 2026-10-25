@@ -1,4 +1,5 @@
 import { useId } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Modal } from './Modal'
 
 export type ConfirmTone = 'danger' | 'primary'
@@ -27,6 +28,7 @@ export function ConfirmDialog({
   onCancel,
   tone = 'danger',
 }: ConfirmDialogProps) {
+  const { t } = useTranslation()
   const titleId = useId() // unique id, so two dialogs can never share the same aria-labelledby
 
   return (
@@ -43,7 +45,7 @@ export function ConfirmDialog({
             onClick={onCancel}
             className="rounded-xl bg-surface-container-highest px-3.5 py-2 text-label-md transition-colors hover:bg-surface-variant"
           >
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             type="button"

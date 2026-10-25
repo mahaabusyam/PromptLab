@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ProviderIcon } from '@/features/prompts/components/ProviderIcon'
 import { StatusBadge } from '@/features/prompts/components/StatusBadge'
@@ -9,6 +10,7 @@ import { FavoriteButton, PromptQuickActions } from './PromptActions'
 import { PromptSnippet } from './PromptSnippet'
 
 export function PromptCard({ prompt }: { prompt: Prompt }) {
+  const { t } = useTranslation()
   const variableCount = extractVariables(prompt.content).length
 
   return (
@@ -26,7 +28,9 @@ export function PromptCard({ prompt }: { prompt: Prompt }) {
               <StatusBadge status={prompt.status} />
             </div>
             <h2 className="line-clamp-2 font-headline-sm text-headline-sm font-semibold text-on-surface transition-colors group-hover:text-primary">
-              <Link to={`/editor/${prompt.id}`}>{prompt.title}</Link>
+              <Link to={`/editor/${prompt.id}`} dir="auto">
+                {prompt.title}
+              </Link>
             </h2>
           </div>
           <FavoriteButton prompt={prompt} />
@@ -36,13 +40,14 @@ export function PromptCard({ prompt }: { prompt: Prompt }) {
 
         <span className="inline-flex w-fit items-center gap-1.5 rounded-md bg-surface-container px-2 py-0.5 font-mono text-[11px] text-on-surface-variant">
           <span aria-hidden className="size-1.5 rounded-full bg-primary" />
-          {variableCount} {variableCount === 1 ? 'Variable' : 'Variables'} Bound
+          {t('library.card.variablesBound', { total: variableCount })}
         </span>
 
         <div className="flex flex-wrap gap-1.5">
           {prompt.tags.map((tag) => (
             <span
               key={tag}
+              dir="auto"
               className="rounded-md bg-surface-container-high px-2 py-0.5 text-[11px] font-medium text-outline"
             >
               #{tag}
@@ -56,7 +61,9 @@ export function PromptCard({ prompt }: { prompt: Prompt }) {
           <ProviderIcon provider={prompt.model.provider} className="size-[18px] shrink-0 text-primary" />
           <div className="flex min-w-0 flex-col">
             <span className="truncate text-body-sm font-medium text-on-surface">{prompt.model.name}</span>
-            <span className="text-label-sm text-outline">Updated {formatUpdated(prompt.updatedAt)}</span>
+            <span className="text-label-sm text-outline">
+              {t('library.card.updated', { date: formatUpdated(prompt.updatedAt) })}
+            </span>
           </div>
         </div>
         <PromptQuickActions prompt={prompt} />

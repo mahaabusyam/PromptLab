@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { categoryLabels, categoryOrder } from '@/features/prompts/constants'
 import type { PromptCategory } from '@/features/prompts/types'
 import { useLibraryStore } from '@/stores/libraryStore'
@@ -12,11 +13,12 @@ const pillIdle =
   'bg-surface-container-high/70 text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface'
 
 export function CategoryPills({ counts }: CategoryPillsProps) {
+  const { t } = useTranslation()
   const category = useLibraryStore((s) => s.category)
   const setCategory = useLibraryStore((s) => s.setCategory)
 
   const items: { id: 'all' | PromptCategory; label: string; count: number }[] = [
-    { id: 'all', label: 'All Prompts', count: counts.all },
+    { id: 'all', label: t('library.scope.all'), count: counts.all },
     ...categoryOrder.map((id) => ({
       id,
       label: categoryLabels[id],
@@ -25,7 +27,11 @@ export function CategoryPills({ counts }: CategoryPillsProps) {
   ]
 
   return (
-    <div role="group" aria-label="Filter by category" className="no-scrollbar flex items-center gap-2 overflow-x-auto py-1">
+    <div
+      role="group"
+      aria-label={t('library.toolbar.categoryGroup')}
+      className="no-scrollbar flex items-center gap-2 overflow-x-auto py-1"
+    >
       {items.map((item) => (
         <button
           key={item.id}

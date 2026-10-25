@@ -1,14 +1,13 @@
 import { Check, Copy, Pencil, Star } from 'lucide-react'
-import { useNavigate , Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { ProviderIcon } from '@/features/prompts/components/ProviderIcon'
+import { StatusBadge } from '@/features/prompts/components/StatusBadge'
 import { getVersionLabel } from '@/features/prompts/utils'
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
 import type { Prompt } from '@/features/prompts/types'
-import { StatusBadge } from '@/features/prompts/components/StatusBadge'
 
-
-
-const actionBtn = 'rounded p-1 transition-colors hover:bg-surface-container'
+const actionBtn = 'inline-flex rounded p-1 transition-colors hover:bg-surface-container'
 
 interface RecentPromptCardProps {
   prompt: Prompt
@@ -16,9 +15,9 @@ interface RecentPromptCardProps {
 }
 
 export function RecentPromptCard({ prompt, onToggleFavorite }: RecentPromptCardProps) {
-  const navigate = useNavigate()
+  const { t } = useTranslation()
   const { copied, copy } = useCopyToClipboard()
-  
+
   return (
     <article
       data-reveal
@@ -26,21 +25,25 @@ export function RecentPromptCard({ prompt, onToggleFavorite }: RecentPromptCardP
     >
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
-  <StatusBadge status={prompt.status} />
-  <span className="font-code-md text-label-sm text-outline">
-    {getVersionLabel(prompt)}
-  </span>
-</div>
+          <StatusBadge status={prompt.status} />
+          <span className="font-code-md text-label-sm text-outline">{getVersionLabel(prompt)}</span>
+        </div>
 
-        <h3 className="line-clamp-1 text-title-md text-on-surface transition-colors group-hover:text-primary">
+        <h3
+          dir="auto"
+          className="line-clamp-1 text-title-md text-on-surface transition-colors group-hover:text-primary"
+        >
           {prompt.title}
         </h3>
-        <p className="line-clamp-2 text-body-sm text-on-surface-variant">{prompt.description}</p>
+        <p dir="auto" className="line-clamp-2 text-body-sm text-on-surface-variant">
+          {prompt.description}
+        </p>
 
         <div className="mt-1 flex flex-wrap gap-1">
           {prompt.tags.map((tag) => (
             <span
               key={tag}
+              dir="auto"
               className="rounded bg-surface-container-lowest px-2 py-0.5 text-label-sm text-primary"
             >
               #{tag}
@@ -61,14 +64,14 @@ export function RecentPromptCard({ prompt, onToggleFavorite }: RecentPromptCardP
               <span>${prompt.lastRun.costUsd.toFixed(3)}</span>
             </>
           ) : (
-            <span className="whitespace-nowrap">Not run yet</span>
+            <span className="whitespace-nowrap">{t('promptCard.notRun')}</span>
           )}
         </div>
 
         <div className="flex items-center gap-1">
           <button
             type="button"
-            aria-label={prompt.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+            aria-label={prompt.isFavorite ? t('promptCard.removeFavorite') : t('promptCard.addFavorite')}
             aria-pressed={prompt.isFavorite}
             onClick={() => onToggleFavorite(prompt.id)}
             className={`${actionBtn} ${prompt.isFavorite ? 'text-tertiary' : 'text-outline hover:text-tertiary'}`}
@@ -77,22 +80,19 @@ export function RecentPromptCard({ prompt, onToggleFavorite }: RecentPromptCardP
           </button>
           <button
             type="button"
-            aria-label="Copy prompt"
+            aria-label={t('promptCard.copy')}
             onClick={() => copy(prompt.content)}
             className={`${actionBtn} text-outline hover:text-on-surface`}
           >
             {copied ? <Check className="size-[18px] text-primary" /> : <Copy className="size-[18px]" />}
           </button>
-          <button
-            type="button"
-            aria-label="Edit prompt"
-            onClick={() => navigate(`/editor/${prompt.id}`)}
+          <Link
+            to={`/editor/${prompt.id}`}
+            aria-label={t('promptCard.edit', { title: prompt.title })}
             className={`${actionBtn} text-outline hover:text-on-surface`}
           >
-            <Link to={`/editor/${prompt.id}`} aria-label={`Edit ${prompt.title}`}>
-  <Pencil className="size-4" aria-hidden="true" />
-</Link>
-          </button>
+            <Pencil className="size-[18px]" aria-hidden="true" />
+          </Link>
         </div>
       </div>
     </article>

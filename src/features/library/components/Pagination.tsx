@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Trans, useTranslation } from 'react-i18next'
 import { getPageItems } from '../pagination'
 
 interface PaginationProps {
@@ -13,19 +14,32 @@ const navBtn =
   'rounded-xl p-2 text-outline transition-colors hover:bg-surface-container-high hover:text-on-surface disabled:pointer-events-none disabled:opacity-40'
 
 export function Pagination({ page, totalPages, total, pageSize, onChange }: PaginationProps) {
+  const { t } = useTranslation()
   const from = (page - 1) * pageSize + 1
   const to = Math.min(page * pageSize, total)
 
   return (
     <div className="flex flex-col items-center justify-between gap-space-sm pt-space-xs sm:flex-row">
       <p className="text-body-sm text-outline">
-        Showing <span className="font-medium text-on-surface">{from}–{to}</span> of{' '}
-        <span className="font-medium text-on-surface">{total}</span> prompts
+        <Trans
+          i18nKey="library.pagination.showing"
+          values={{ from, to, total }}
+          components={{
+            range: <span className="font-medium text-on-surface" />,
+            sum: <span className="font-medium text-on-surface" />,
+          }}
+        />
       </p>
 
       {totalPages > 1 && (
-        <nav aria-label="Pagination" className="flex items-center gap-1">
-          <button type="button" aria-label="Previous page" disabled={page === 1} onClick={() => onChange(page - 1)} className={navBtn}>
+        <nav aria-label={t('library.pagination.label')} className="flex items-center gap-1">
+          <button
+            type="button"
+            aria-label={t('library.pagination.previous')}
+            disabled={page === 1}
+            onClick={() => onChange(page - 1)}
+            className={navBtn}
+          >
             <ChevronLeft className="rtl:-scale-x-100 size-[18px]" />
           </button>
 
@@ -38,7 +52,7 @@ export function Pagination({ page, totalPages, total, pageSize, onChange }: Pagi
               <button
                 key={item}
                 type="button"
-                aria-label={`Page ${item}`}
+                aria-label={t('library.pagination.page', { page: item })}
                 aria-current={item === page ? 'page' : undefined}
                 onClick={() => onChange(item)}
                 className={`flex size-8 items-center justify-center rounded-xl text-label-md transition-colors ${
@@ -52,7 +66,13 @@ export function Pagination({ page, totalPages, total, pageSize, onChange }: Pagi
             ),
           )}
 
-          <button type="button" aria-label="Next page" disabled={page === totalPages} onClick={() => onChange(page + 1)} className={navBtn}>
+          <button
+            type="button"
+            aria-label={t('library.pagination.next')}
+            disabled={page === totalPages}
+            onClick={() => onChange(page + 1)}
+            className={navBtn}
+          >
             <ChevronRight className="rtl:-scale-x-100 size-[18px]" />
           </button>
         </nav>

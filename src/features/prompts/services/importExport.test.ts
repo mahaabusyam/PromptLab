@@ -28,8 +28,12 @@ describe('parseImportText', () => {
     expect(parseImportText(JSON.stringify(empty)).ok).toBe(true)
   })
 
-  it('rejects text that is not JSON', () => {
-    expect(parseImportText('{oops')).toEqual({ ok: false, error: 'This file is not valid JSON.' })
+    it('rejects text that is not JSON', () => {
+    expect(parseImportText('{oops')).toEqual({
+      ok: false,
+      code: 'invalid_json',
+      error: 'This file is not valid JSON.',
+    })
   })
 
   it('rejects a file from another app', () => {
@@ -55,5 +59,14 @@ describe('parseImportText', () => {
     const result = parseImportText(JSON.stringify(broken))
     expect(result.ok).toBe(false)
     if (!result.ok) expect(result.error).toContain('prompts.0.status')
+  })
+    it('reports where a malformed export is wrong', () => {
+    const result = parseImportText('{"a":1}')
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.code).toBe('invalid_export')
+      expect(result.where).toBeTruthy()
+      expect(result.detail).toBeTruthy()
+    }
   })
 })

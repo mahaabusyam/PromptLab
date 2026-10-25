@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { SearchX } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import type { Prompt } from '@/features/prompts/types'
 import { useLibraryStore } from '@/stores/libraryStore'
@@ -15,6 +16,7 @@ interface PromptResultsProps {
 }
 
 export function PromptResults({ prompts, hasActiveFilters }: PromptResultsProps) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const containerRef = useRef<HTMLDivElement>(null)
   const viewMode = useLibraryStore((s) => s.viewMode)
@@ -52,20 +54,20 @@ export function PromptResults({ prompts, hasActiveFilters }: PromptResultsProps)
 
   if (prompts.length === 0) {
     const copy = hasActiveFilters
-      ? { title: 'No prompts match your filters', body: 'Try a different keyword, or clear the filters.' }
+      ? { title: t('library.empty.filters.title'), body: t('library.empty.filters.body') }
       : scope.kind === 'archive'
-        ? { title: 'Your archive is empty', body: 'Archived prompts will show up here.' }
+        ? { title: t('library.empty.archive.title'), body: t('library.empty.archive.body') }
         : scope.kind === 'starred'
-          ? { title: 'No starred prompts yet', body: 'Tap the star on any prompt to pin it here.' }
+          ? { title: t('library.empty.starred.title'), body: t('library.empty.starred.body') }
           : scope.kind === 'folder'
-            ? { title: 'This folder is empty', body: 'Prompts you move into this folder will appear here.' }
-            : { title: 'No prompts yet', body: 'Create your first prompt to get started.' }
+            ? { title: t('library.empty.folder.title'), body: t('library.empty.folder.body') }
+            : { title: t('library.empty.none.title'), body: t('library.empty.none.body') }
 
     const action = hasActiveFilters
-      ? { label: 'Clear filters', run: resetFilters }
+      ? { label: t('library.toolbar.clearFilters'), run: resetFilters }
       : scope.kind === 'all'
-        ? { label: 'Create New Prompt', run: () => navigate('/editor') }
-        : { label: 'Show all prompts', run: () => setScope({ kind: 'all' }) }
+        ? { label: t('library.header.create'), run: () => navigate('/editor') }
+        : { label: t('library.empty.showAll'), run: () => setScope({ kind: 'all' }) }
 
     return (
       <div

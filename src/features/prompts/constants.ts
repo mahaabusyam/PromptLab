@@ -1,24 +1,46 @@
-import type { ModelProvider, PromptCategory , PromptSettings , PromptStatus } from './types'
+import i18n from 'i18next'
+import '@/i18n' // يضمن تهيئة الترجمة حتى لو الملف انستورد لحاله (مثلًا بالاختبارات)
+import type { ModelProvider, PromptCategory, PromptSettings, PromptStatus } from './types'
 
+// الـ getters بتقرأ الترجمة وقت الاستخدام، فباقي الملفات بتضل تكتب
+// categoryLabels[x] بدون أي تعديل، والتسمية بتطلع حسب اللغة الحالية.
 export const categoryLabels: Record<PromptCategory, string> = {
-  marketing: 'Marketing',
-  coding: 'Coding',
-  education: 'Education',
-  writing: 'Writing',
-  'data-analysis': 'Data Analysis',
+  get marketing() {
+    return i18n.t('promptCategory.marketing')
+  },
+  get coding() {
+    return i18n.t('promptCategory.coding')
+  },
+  get education() {
+    return i18n.t('promptCategory.education')
+  },
+  get writing() {
+    return i18n.t('promptCategory.writing')
+  },
+  get 'data-analysis'() {
+    return i18n.t('promptCategory.data-analysis')
+  },
 }
 
 export const categoryOrder = Object.keys(categoryLabels) as PromptCategory[]
 
+// أسماء العلامات التجارية بتضل كما هي بكل اللغات
 export const providerLabels: Record<ModelProvider, string> = {
   anthropic: 'Claude',
   openai: 'GPT',
   google: 'Gemini',
 }
+
 export const statusLabels: Record<PromptStatus, string> = {
-  draft: 'Draft',
-  testing: 'Testing',
-  production: 'Production',
+  get draft() {
+    return i18n.t('promptStatus.draft')
+  },
+  get testing() {
+    return i18n.t('promptStatus.testing')
+  },
+  get production() {
+    return i18n.t('promptStatus.production')
+  },
 }
 
 export const defaultPromptSettings: PromptSettings = {

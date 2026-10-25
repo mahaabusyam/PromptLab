@@ -9,6 +9,7 @@ import {
   Star,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { usePromptStore } from '@/stores/promptStore'
 import { useLibraryStore } from '@/stores/libraryStore'
 import { buildFolderTree } from '../folderTree'
@@ -59,6 +60,7 @@ interface FolderBranchProps {
 
 // المكوّن بيستدعي نفسه لعرض المجلدات الفرعية (Recursion)
 function FolderBranch({ node, scope, expanded, onToggle, onSelect }: FolderBranchProps) {
+  const { t } = useTranslation()
   const { folder, count, children } = node
   const hasChildren = children.length > 0
   const isOpen = expanded.has(folder.id)
@@ -71,12 +73,17 @@ function FolderBranch({ node, scope, expanded, onToggle, onSelect }: FolderBranc
         {hasChildren ? (
           <button
             type="button"
-            aria-label={`${isOpen ? 'Collapse' : 'Expand'} ${folder.name}`}
+            aria-label={t(isOpen ? 'library.folders.collapse' : 'library.folders.expand', {
+              name: folder.name,
+            })}
             aria-expanded={isOpen}
             onClick={() => onToggle(folder.id)}
             className="grid size-7 shrink-0 place-items-center text-outline"
           >
-            <ChevronRight className={`size-4 transition-[rotate] ${isOpen ? 'rotate-90' : ''}`} />
+            {/* مسكّر: بالعربي السهم بيشاور لليسار. مفتوح: بيشاور لتحت بكل اللغات */}
+            <ChevronRight
+              className={`size-4 transition-[rotate] ${isOpen ? 'rotate-90' : 'rtl:-scale-x-100'}`}
+            />
           </button>
         ) : (
           <span aria-hidden className="size-7 shrink-0" />
@@ -114,6 +121,7 @@ function FolderBranch({ node, scope, expanded, onToggle, onSelect }: FolderBranc
 }
 
 export function FolderTree() {
+  const { t } = useTranslation()
   const prompts = usePromptStore((s) => s.prompts)
   const folders = usePromptStore((s) => s.folders)
   const addFolder = usePromptStore((s) => s.addFolder)
@@ -160,12 +168,12 @@ export function FolderTree() {
     >
       <div className="flex items-center justify-between px-2 pt-1">
         <h2 className="text-label-sm font-semibold uppercase tracking-wider text-outline">
-          Collections &amp; Folders
+          {t('library.folders.title')}
         </h2>
         <button
           type="button"
-          aria-label="Create folder"
-          title="New folder"
+          aria-label={t('library.folders.create')}
+          title={t('library.folders.createHint')}
           onClick={() => setCreating(true)}
           className="rounded-lg p-1 text-outline transition-colors hover:bg-surface-container-high hover:text-on-surface"
         >
@@ -185,17 +193,17 @@ export function FolderTree() {
               setName('')
             }}
             onKeyDown={(e) => e.key === 'Escape' && setCreating(false)}
-            aria-label="New folder name"
-            placeholder="Folder name, then Enter"
+            aria-label={t('library.folders.nameLabel')}
+            placeholder={t('library.folders.namePlaceholder')}
             className="w-full rounded-lg bg-surface-container-lowest px-2.5 py-1.5 text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </form>
       )}
 
-      <nav aria-label="Folders" className="flex flex-col gap-0.5">
+      <nav aria-label={t('library.folders.navLabel')} className="flex flex-col gap-0.5">
         <ScopeRow
           icon={FolderOpen}
-          label="All Prompts"
+          label={t('library.scope.all')}
           count={counts.all}
           active={scope.kind === 'all'}
           onClick={() => setScope({ kind: 'all' })}
@@ -215,14 +223,14 @@ export function FolderTree() {
       <div className="flex flex-col gap-0.5 pt-space-xs">
         <ScopeRow
           icon={Star}
-          label="Pinned & Starred"
+          label={t('library.scope.starred')}
           count={counts.starred}
           active={scope.kind === 'starred'}
           onClick={() => setScope({ kind: 'starred' })}
         />
         <ScopeRow
           icon={Archive}
-          label="Archive"
+          label={t('library.scope.archive')}
           count={counts.archived}
           active={scope.kind === 'archive'}
           onClick={() => setScope({ kind: 'archive' })}
