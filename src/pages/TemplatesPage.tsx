@@ -1,5 +1,6 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
+import { useTranslation } from 'react-i18next';
 import { templateCatalog } from '@/data/templates';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
 import { ListPagination } from '@/components/common/ListPagination'
@@ -26,6 +27,7 @@ import { useTemplateStore } from '@/stores/templateStore';
 type Notice = { type: 'success' | 'error'; text: string };
 
 export default function TemplatesPage() {
+  const { t } = useTranslation();
   const rootRef = useRef<HTMLDivElement>(null);
   const [filters, setFilters] = useState<TemplateFilters>(DEFAULT_TEMPLATE_FILTERS);
   const [page, setPage] = useState(1);
@@ -72,25 +74,34 @@ export default function TemplatesPage() {
 
   async function handleImportFile(file: File): Promise<void> {
     if (file.size > MAX_IMPORT_BYTES) {
-      setNotice({ type: 'error', text: 'This file is too large (max 1 MB).' });
+      setNotice({ type: 'error', text: t('templates.page.fileTooLarge') });
       return;
     }
     const result = parseTemplateImport(await file.text());
-    if (!result.ok) {
-      setNotice({ type: 'error', text: result.error });
+        if (!result.ok) {
+      const text =
+        result.code === 'invalid_json'
+          ? t('templates.importErrors.invalidJson')
+          : result.code === 'empty'
+            ? t('templates.importErrors.empty')
+            : t('templates.importErrors.invalidData', {
+                where: result.where ?? t('templates.importErrors.file'),
+                detail: result.detail ?? '',
+              });
+      setNotice({ type: 'error', text });
       return;
-    }
+        }
     importTemplates(result.templates);
     setNotice({
       type: 'success',
-      text: `Imported ${result.templates.length} ${result.templates.length === 1 ? 'template' : 'templates'}.`,
+      text: t('templates.page.imported', { total: result.templates.length }),
     });
   }
 
   function handleConfirmDelete(): void {
     if (!deleteItem) return;
     deleteCustomTemplate(deleteItem.template.id);
-    setNotice({ type: 'success', text: `Deleted "${deleteItem.template.title}".` });
+    setNotice({ type: 'success', text: t('templates.page.deleted', { title: deleteItem.template.title }) });
     setDeleteItem(null);
   }
 
@@ -135,12 +146,12 @@ export default function TemplatesPage() {
       {showFeatured && featured && <FeaturedTemplate item={featured} onUse={handleUse} />}
 
       <p className="text-sm text-muted-foreground" aria-live="polite">
-        Displaying {pageResult.items.length} of {visible.length} templates
+        {t('templates.page.displaying', { shown: pageResult.items.length, total: visible.length })}
       </p>
 
       {visible.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-          {items.length === 0 ? 'The template catalog is empty.' : 'No templates match your filters.'}
+          {items.length === 0 ? t('templates.page.emptyCatalog') : t('templates.page.noMatch')}
         </div>
       ) : (
         <>
@@ -152,7 +163,7 @@ export default function TemplatesPage() {
             onPreview={setPreviewItem}
             onDelete={setDeleteItem}
           />
-          <ListPagination result={pageResult} onPageChange={setPage} noun="templates" />
+          <ListPagination result={pageResult} onPageChange={setPage} noun={t('templates.page.noun')} />
         </>
       )}
 
@@ -165,9 +176,9 @@ export default function TemplatesPage() {
       {deleteItem && (
         <ConfirmDialog
           tone="danger"
-          title="Delete this template?"
-          description={`"${deleteItem.template.title}" will be removed from this browser. Prompts you already created from it are not affected.`}
-          confirmLabel="Delete template"
+          title={t('templates.page.deleteTitle')}
+          description={t('templates.page.deleteBody', { title: deleteItem.template.title })}
+          confirmLabel={t('templates.page.deleteConfirm')}
           onConfirm={handleConfirmDelete}
           onCancel={() => setDeleteItem(null)}
         />

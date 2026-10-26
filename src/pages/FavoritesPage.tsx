@@ -1,6 +1,7 @@
 import { Keyboard } from 'lucide-react';
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
+import { Trans, useTranslation } from 'react-i18next';
 import { buildFavoriteStats } from '@/features/favorites/buildFavorites';
 import { FavoritesHeader } from '@/features/favorites/components/FavoritesHeader';
 import { FavoritesList } from '@/features/favorites/components/FavoritesList';
@@ -17,7 +18,7 @@ import {
 import { useFavoriteEntries } from '@/features/favorites/hooks/useFavoriteEntries';
 import { buildFolderCounts, buildTopVariables } from '@/features/favorites/sidebarData';
 import type { FavoriteEntry, FavoriteFilters } from '@/features/favorites/types';
-import { ListPagination } from '@/components/common/ListPagination'
+import { ListPagination } from '@/components/common/ListPagination';
 import { paginate } from '@/features/history/paginate';
 import { TemplatePreviewDialog } from '@/features/templates/components/TemplatePreviewDialog';
 import { useUseTemplate } from '@/features/templates/hooks/useUseTemplate';
@@ -33,6 +34,7 @@ interface Notice {
 }
 
 export default function FavoritesPage() {
+  const { t } = useTranslation();
   const rootRef = useRef<HTMLDivElement>(null);
   const entries = useFavoriteEntries();
 
@@ -75,9 +77,9 @@ export default function FavoritesPage() {
   const handleToggle = useCallback(
     (entry: FavoriteEntry) => {
       flip(entry);
-      setNotice({ text: `Removed "${entry.title}" from favorites.`, undoEntry: entry });
+      setNotice({ text: t('favorites.page.removed', { title: entry.title }), undoEntry: entry });
     },
-    [flip],
+    [flip, t],
   );
 
   function handleUndo(): void {
@@ -131,13 +133,13 @@ export default function FavoritesPage() {
           role="status"
           className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-sm text-primary"
         >
-          <span>{notice.text}</span>
+          <span dir="auto">{notice.text}</span>
           <button
             type="button"
             onClick={handleUndo}
             className="rounded-md px-2 py-0.5 font-semibold underline underline-offset-4 hover:no-underline focus-visible:outline-2 focus-visible:outline-primary"
           >
-            Undo
+            {t('favorites.page.undo')}
           </button>
         </p>
       )}
@@ -146,9 +148,7 @@ export default function FavoritesPage() {
         <div className="space-y-6 xl:col-span-9">
           {visible.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-              {entries.length === 0
-                ? 'No favorites yet. Star a prompt or a template and it will appear here.'
-                : 'No favorites match your filters.'}
+              {entries.length === 0 ? t('favorites.page.emptyAll') : t('favorites.page.noMatch')}
             </div>
           ) : (
             <>
@@ -159,7 +159,7 @@ export default function FavoritesPage() {
                 onUse={handleUse}
                 onPreview={handlePreview}
               />
-              <ListPagination result={pageResult} onPageChange={setPage} noun="favorites" />
+              <ListPagination result={pageResult} onPageChange={setPage} noun={t('favorites.page.noun')} />
             </>
           )}
         </div>
@@ -175,11 +175,14 @@ export default function FavoritesPage() {
       </div>
 
       <p className="flex items-center justify-center gap-2 rounded-xl bg-card/60 px-4 py-2 text-center text-sm text-muted-foreground">
-        <Keyboard className="size-4 text-pink-500" aria-hidden="true" />
+        <Keyboard className="size-4 shrink-0 text-pink-500" aria-hidden="true" />
         <span>
-          Tip: press{' '}
-          <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground">H</kbd> while a card
-          is focused (Tab to it) to remove it from favorites.
+          <Trans
+            i18nKey="favorites.page.tip"
+            components={{
+              kbd: <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground" />,
+            }}
+          />
         </span>
       </p>
 

@@ -1,5 +1,7 @@
 import { Brain, Braces, Coins } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { formatNumber } from '@/i18n/format';
 import { providerLabels } from '@/features/prompts/constants';
 import type { FavoriteStats } from '../types';
 
@@ -16,26 +18,29 @@ interface Tile {
 }
 
 export function FavoritesStats({ stats }: FavoritesStatsProps) {
+  const { t } = useTranslation();
   const tiles: Tile[] = [
     {
       key: 'tokens',
-      label: 'Starred Tokens',
-      value: stats.totalTokens.toLocaleString('en-US'),
-      hint: 'estimated, all starred items',
+      label: t('favorites.stats.tokens'),
+      value: formatNumber(stats.totalTokens),
+      hint: t('favorites.stats.tokensHint'),
       icon: Coins,
     },
     {
       key: 'vars',
-      label: 'Variables',
+      label: t('favorites.stats.variables'),
       value: String(stats.distinctVariables),
-      hint: 'distinct {{variables}}',
+      hint: t('favorites.stats.variablesHint'),
       icon: Braces,
     },
     {
       key: 'model',
-      label: 'Primary Foundation',
+      label: t('favorites.stats.model'),
       value: stats.primaryProvider ? providerLabels[stats.primaryProvider.provider] : '–',
-      hint: stats.primaryProvider ? `${stats.primaryProvider.percent}% of favorites` : 'no favorites yet',
+      hint: stats.primaryProvider
+        ? t('favorites.stats.modelHint', { percent: stats.primaryProvider.percent })
+        : t('favorites.stats.modelNone'),
       icon: Brain,
     },
   ];

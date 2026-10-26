@@ -1,4 +1,5 @@
 import { ArrowUpRight, Check, Copy, ExternalLink, Eye, Heart } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import type { Template } from '@/features/templates/schemas';
 import { useCopyText } from '../hooks/useCopyText';
@@ -13,11 +14,12 @@ export interface FavoriteHandlers {
 }
 
 export function FavoriteHeart({ entry, onToggle }: { entry: FavoriteEntry; onToggle: (e: FavoriteEntry) => void }) {
+  const { t } = useTranslation();
   return (
     <button
       type="button"
       aria-pressed
-      aria-label={`Remove ${entry.title} from favorites`}
+      aria-label={t('favorites.parts.remove', { title: entry.title })}
       onClick={() => onToggle(entry)}
       className="rounded-lg p-1 text-pink-500 transition-[scale] hover:scale-110 focus-visible:outline-2 focus-visible:outline-primary"
     >
@@ -27,6 +29,7 @@ export function FavoriteHeart({ entry, onToggle }: { entry: FavoriteEntry; onTog
 }
 
 export function KindBadge({ entry }: { entry: FavoriteEntry }) {
+  const { t } = useTranslation();
   const isTemplate = entry.kind === 'template';
   const featured = isTemplate && entry.template.featured;
   return (
@@ -39,7 +42,11 @@ export function KindBadge({ entry }: { entry: FavoriteEntry }) {
             : 'bg-muted text-primary'
       }`}
     >
-      {featured ? 'Featured template' : entry.kind}
+      {featured
+        ? t('favorites.parts.featured')
+        : isTemplate
+          ? t('favorites.parts.kindTemplate')
+          : t('favorites.parts.kindPrompt')}
     </span>
   );
 }
@@ -47,17 +54,33 @@ export function KindBadge({ entry }: { entry: FavoriteEntry }) {
 const iconBtn =
   'rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary';
 
-export function FavoriteActions({ entry, onUse, onPreview }: { entry: FavoriteEntry } & Pick<FavoriteHandlers, 'onUse' | 'onPreview'>) {
+export function FavoriteActions({
+  entry,
+  onUse,
+  onPreview,
+}: { entry: FavoriteEntry } & Pick<FavoriteHandlers, 'onUse' | 'onPreview'>) {
+  const { t } = useTranslation();
   const text = entry.kind === 'prompt' ? entry.prompt.content : entry.template.content;
   const { copied, copy } = useCopyText(text);
 
   if (entry.kind === 'prompt') {
     return (
       <div className="flex items-center gap-1">
-        <button type="button" onClick={copy} className={iconBtn} aria-label={copied ? 'Copied' : `Copy ${entry.title}`} title="Copy prompt">
+        <button
+          type="button"
+          onClick={copy}
+          className={iconBtn}
+          aria-label={copied ? t('favorites.parts.copied') : t('favorites.parts.copy', { title: entry.title })}
+          title={t('favorites.parts.copyTitle')}
+        >
           {copied ? <Check className="size-[18px] text-emerald-500" aria-hidden="true" /> : <Copy className="size-[18px]" aria-hidden="true" />}
         </button>
-        <Link to={`/editor/${entry.id}`} className={`${iconBtn} text-primary`} aria-label={`Open ${entry.title} in editor`} title="Open in Editor">
+        <Link
+          to={`/editor/${entry.id}`}
+          className={`${iconBtn} text-primary`}
+          aria-label={t('favorites.parts.open', { title: entry.title })}
+          title={t('favorites.parts.openTitle')}
+        >
           <ExternalLink className="size-[18px]" aria-hidden="true" />
         </Link>
       </div>
@@ -66,7 +89,13 @@ export function FavoriteActions({ entry, onUse, onPreview }: { entry: FavoriteEn
 
   return (
     <div className="flex items-center gap-2">
-      <button type="button" onClick={() => onPreview(entry)} className={iconBtn} aria-label={`Preview ${entry.title}`} title="Quick preview">
+      <button
+        type="button"
+        onClick={() => onPreview(entry)}
+        className={iconBtn}
+        aria-label={t('templates.card.preview', { title: entry.title })}
+        title={t('favorites.parts.previewTitle')}
+      >
         <Eye className="size-[18px]" aria-hidden="true" />
       </button>
       <button
@@ -74,8 +103,8 @@ export function FavoriteActions({ entry, onUse, onPreview }: { entry: FavoriteEn
         onClick={() => onUse(entry.template)}
         className="inline-flex items-center gap-1 rounded-lg bg-muted px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary"
       >
-        Use Template
-        <ArrowUpRight className="size-3.5" aria-hidden="true" />
+        {t('templates.card.use')}
+        <ArrowUpRight className="size-3.5 rtl:-scale-x-100" aria-hidden="true" />
       </button>
     </div>
   );

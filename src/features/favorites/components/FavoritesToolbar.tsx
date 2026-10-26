@@ -1,4 +1,5 @@
 import { LayoutGrid, List, Search, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { providerLabels } from '@/features/prompts/constants';
 import type { ModelProvider } from '@/features/prompts/types';
 import { favoriteSortLabels } from '../constants';
@@ -14,17 +15,6 @@ interface FavoritesToolbarProps {
   onViewChange: (view: FavoriteView) => void;
 }
 
-const tabs: { value: FavoriteTab; label: string }[] = [
-  { value: 'all', label: 'All Favorites' },
-  { value: 'prompt', label: 'Favorite Prompts' },
-  { value: 'template', label: 'Favorite Templates' },
-];
-
-const views = [
-  { value: 'grid' as const, label: 'Grid view', icon: LayoutGrid },
-  { value: 'list' as const, label: 'List view', icon: List },
-];
-
 const providerKeys = Object.keys(providerLabels) as ModelProvider[];
 const sortKeys = Object.keys(favoriteSortLabels) as FavoriteSort[];
 
@@ -32,6 +22,19 @@ const selectClass =
   'h-10 rounded-lg border border-border bg-background px-3 text-sm focus-visible:outline-2 focus-visible:outline-primary';
 
 export function FavoritesToolbar({ filters, counts, onChange, onReset, view, onViewChange }: FavoritesToolbarProps) {
+  const { t } = useTranslation();
+
+  const tabs: { value: FavoriteTab; label: string }[] = [
+    { value: 'all', label: t('favorites.toolbar.tabAll') },
+    { value: 'prompt', label: t('favorites.toolbar.tabPrompt') },
+    { value: 'template', label: t('favorites.toolbar.tabTemplate') },
+  ];
+
+  const views = [
+    { value: 'grid' as const, label: t('favorites.toolbar.gridView'), icon: LayoutGrid },
+    { value: 'list' as const, label: t('favorites.toolbar.listView'), icon: List },
+  ];
+
   return (
     <div data-enter className="space-y-3 rounded-xl border border-border bg-card p-3">
       <div className="flex flex-col gap-3 md:flex-row md:items-center">
@@ -41,37 +44,43 @@ export function FavoritesToolbar({ filters, counts, onChange, onReset, view, onV
             type="search"
             value={filters.query}
             onChange={(e) => onChange({ query: e.target.value })}
-            placeholder="Search favorites by title, variable, model or tag..."
-            aria-label="Search favorites"
+            placeholder={t('favorites.toolbar.searchPlaceholder')}
+            aria-label={t('favorites.toolbar.searchLabel')}
             className="h-10 w-full rounded-lg border border-border bg-background ps-9 pe-3 text-sm placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-primary"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <select
-            aria-label="Filter by model"
+            aria-label={t('favorites.toolbar.modelLabel')}
             value={filters.provider}
             onChange={(e) => onChange({ provider: e.target.value as ModelProvider | 'all' })}
             className={selectClass}
           >
-            <option value="all">All models</option>
+            <option value="all">{t('favorites.toolbar.allModels')}</option>
             {providerKeys.map((p) => (
               <option key={p} value={p}>{providerLabels[p]}</option>
             ))}
           </select>
 
           <select
-            aria-label="Sort favorites"
+            aria-label={t('favorites.toolbar.sortLabel')}
             value={filters.sort}
             onChange={(e) => onChange({ sort: e.target.value as FavoriteSort })}
             className={selectClass}
           >
             {sortKeys.map((s) => (
-              <option key={s} value={s}>Sort by: {favoriteSortLabels[s]}</option>
+              <option key={s} value={s}>
+                {t('favorites.toolbar.sortOption', { label: favoriteSortLabels[s] })}
+              </option>
             ))}
           </select>
 
-          <div className="inline-flex rounded-lg border border-border bg-background p-0.5" role="group" aria-label="View mode">
+          <div
+            className="inline-flex rounded-lg border border-border bg-background p-0.5"
+            role="group"
+            aria-label={t('favorites.toolbar.viewGroup')}
+          >
             {views.map(({ value, label, icon: Icon }) => (
               <button
                 key={value}
@@ -90,7 +99,7 @@ export function FavoritesToolbar({ filters, counts, onChange, onReset, view, onV
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by type">
+      <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t('favorites.toolbar.typeGroup')}>
         {tabs.map(({ value, label }) => {
           const active = filters.tab === value;
           return (
@@ -120,7 +129,7 @@ export function FavoritesToolbar({ filters, counts, onChange, onReset, view, onV
             className="ms-auto inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-primary"
           >
             <X className="size-3.5" aria-hidden="true" />
-            Clear filters
+            {t('favorites.toolbar.clear')}
           </button>
         )}
       </div>

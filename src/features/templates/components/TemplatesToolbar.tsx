@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { categoryLabels, categoryOrder, providerLabels } from '@/features/prompts/constants';
 import { complexityLabels, sortLabels } from '../constants';
 import { hasActiveTemplateFilters } from '../filterTemplates';
@@ -20,8 +21,9 @@ const complexityKeys = Object.keys(complexityLabels) as TemplateComplexity[];
 const sortKeys = Object.keys(sortLabels) as TemplateSort[];
 
 export function TemplatesToolbar({ filters, counts, onChange, onReset }: TemplatesToolbarProps) {
+  const { t } = useTranslation();
   const pills: { value: TemplateCategory | 'all'; label: string }[] = [
-    { value: 'all', label: 'All' },
+    { value: 'all', label: t('templates.toolbar.all') },
     ...categoryOrder.map((c) => ({ value: c as TemplateCategory, label: categoryLabels[c] })),
   ];
 
@@ -29,7 +31,11 @@ export function TemplatesToolbar({ filters, counts, onChange, onReset }: Templat
     <div data-enter className="space-y-3 rounded-2xl border border-border bg-card/60 p-3">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         {/* Category pills */}
-        <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto" role="group" aria-label="Filter by category">
+        <div
+          className="no-scrollbar flex items-center gap-1.5 overflow-x-auto"
+          role="group"
+          aria-label={t('templates.toolbar.categoryGroup')}
+        >
           {pills.map(({ value, label }) => {
             const active = filters.category === value;
             return (
@@ -56,31 +62,31 @@ export function TemplatesToolbar({ filters, counts, onChange, onReset }: Templat
         {/* Selects */}
         <div className="flex flex-wrap items-center gap-2">
           <select
-            aria-label="Filter by model"
+            aria-label={t('templates.toolbar.modelLabel')}
             value={filters.provider}
             onChange={(e) => onChange({ provider: e.target.value as TemplateProvider | 'all' })}
             className={selectClass}
           >
-            <option value="all">All models</option>
+            <option value="all">{t('templates.toolbar.allModels')}</option>
             {providerKeys.map((p) => (
               <option key={p} value={p}>{providerLabels[p]}</option>
             ))}
           </select>
 
           <select
-            aria-label="Filter by complexity"
+            aria-label={t('templates.toolbar.complexityLabel')}
             value={filters.complexity}
             onChange={(e) => onChange({ complexity: e.target.value as TemplateComplexity | 'all' })}
             className={selectClass}
           >
-            <option value="all">All complexities</option>
+            <option value="all">{t('templates.toolbar.allComplexities')}</option>
             {complexityKeys.map((c) => (
               <option key={c} value={c}>{complexityLabels[c]}</option>
             ))}
           </select>
 
           <select
-            aria-label="Sort templates"
+            aria-label={t('templates.toolbar.sortLabel')}
             value={filters.sort}
             onChange={(e) => onChange({ sort: e.target.value as TemplateSort })}
             className={selectClass}
@@ -99,7 +105,7 @@ export function TemplatesToolbar({ filters, counts, onChange, onReset }: Templat
           className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-primary"
         >
           <X className="size-3.5" aria-hidden="true" />
-          Clear filters
+          {t('templates.toolbar.clear')}
         </button>
       )}
     </div>

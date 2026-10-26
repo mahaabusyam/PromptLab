@@ -1,11 +1,13 @@
 import { Puzzle, Upload } from 'lucide-react';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface TemplatesImportBannerProps {
   onFile: (file: File) => void;
 }
 
 export function TemplatesImportBanner({ onFile }: TemplatesImportBannerProps) {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -16,11 +18,9 @@ export function TemplatesImportBanner({ onFile }: TemplatesImportBannerProps) {
       <div className="space-y-1">
         <h2 id="import-title" className="flex items-center gap-2 font-heading text-lg font-semibold">
           <Puzzle className="size-5 text-primary" aria-hidden="true" />
-          Can&apos;t find what you need?
+          {t('templates.banner.title')}
         </h2>
-        <p className="text-sm text-muted-foreground">
-          Import your own templates from a JSON file. They are saved in this browser and appear in the gallery.
-        </p>
+        <p className="text-sm text-muted-foreground">{t('templates.banner.body')}</p>
       </div>
 
       <div>
@@ -30,7 +30,7 @@ export function TemplatesImportBanner({ onFile }: TemplatesImportBannerProps) {
           accept="application/json,.json"
           className="sr-only"
           tabIndex={-1}
-          aria-label="Choose a JSON file with templates"
+          aria-label={t('templates.banner.fileLabel')}
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) onFile(file);
@@ -43,7 +43,7 @@ export function TemplatesImportBanner({ onFile }: TemplatesImportBannerProps) {
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <Upload className="size-4" aria-hidden="true" />
-          Import Template
+          {t('templates.banner.button')}
         </button>
       </div>
     </section>

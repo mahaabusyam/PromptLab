@@ -36,7 +36,7 @@ describe('parseTemplateImport', () => {
 
   it('rejects text that is not JSON', () => {
     const result = parseTemplateImport('not json');
-    expect(result).toEqual({ ok: false, error: 'This file is not valid JSON.' });
+    expect(result).toEqual({ ok: false, code: 'invalid_json', error: 'This file is not valid JSON.' });
   });
 
   it('rejects an unknown category and points to the field', () => {
@@ -47,6 +47,10 @@ describe('parseTemplateImport', () => {
 
   it('rejects an empty list', () => {
     const result = parseTemplateImport('[]');
-    expect(result).toEqual({ ok: false, error: 'The file contains no templates.' });
+    expect(result).toEqual({ ok: false, code: 'empty', error: 'The file contains no templates.' });
   });
+  it('reports the failing field for invalid template data', () => {
+  const result = parseTemplateImport('[{"title": 5}]');
+  expect(result).toMatchObject({ ok: false, code: 'invalid_data' });
+});
 });
