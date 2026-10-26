@@ -16,21 +16,21 @@ describe('VariablesPanel', () => {
   it('shows an empty state and disables Auto-Fill when there are no variables', () => {
     setup()
 
-    expect(screen.getByText('0 Dynamic Variables')).toBeInTheDocument()
+    expect(screen.getByText('Dynamic Variables: 0')).toBeInTheDocument()
     expect(screen.getByText(/No variables yet/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Auto-Fill' })).toBeDisabled()
     expect(screen.queryAllByRole('textbox')).toHaveLength(0)
   })
 
-  it('uses the singular title for exactly one variable', () => {
+  it('shows the variable count in the title', () => {
     setup({ variableNames: ['topic'] })
-    expect(screen.getByText('1 Dynamic Variable')).toBeInTheDocument()
+    expect(screen.getByText('Dynamic Variables: 1')).toBeInTheDocument()
   })
 
   it('renders one labelled field per variable with its current value', () => {
     setup({ variableNames: ['topic', 'tone'], values: { topic: 'AI' } })
 
-    expect(screen.getByText('2 Dynamic Variables')).toBeInTheDocument()
+    expect(screen.getByText('Dynamic Variables: 2')).toBeInTheDocument()
     // getByLabelText also proves each textarea is correctly linked to its <label>
     expect(screen.getByLabelText(/^topic/)).toHaveValue('AI')
     expect(screen.getByLabelText(/^tone/)).toHaveValue('')

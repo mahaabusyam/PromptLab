@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import CodeMirror from '@uiw/react-codemirror'
 import { Prec } from '@codemirror/state'
 import { EditorView, keymap } from '@codemirror/view'
+import { useTranslation } from 'react-i18next'
 import { promptA11y, promptEditorTheme, variableHighlight } from '../codemirror/promptExtensions'
 
 const BASIC_SETUP = {
@@ -26,6 +27,8 @@ interface PromptCodeEditorProps {
 }
 
 export function PromptCodeEditor({ value, onChange, wrap, onReady, onQuickRun }: PromptCodeEditorProps) {
+  const { t } = useTranslation()
+  const a11yLabel = t('editor.code.label')
   // ref بدل dependency، عشان الـ extensions ما تنبني من جديد كل ما تغيّرت الدالة
   const runRef = useRef(onQuickRun)
   useEffect(() => {
@@ -36,7 +39,9 @@ export function PromptCodeEditor({ value, onChange, wrap, onReady, onQuickRun }:
     () => [
       variableHighlight,
       promptEditorTheme,
-      promptA11y,
+      promptA11y(a11yLabel),
+      // كل سطر بياخد اتجاهه من محتواه: سطر عربي من اليمين، وسطر إنجليزي من اليسار
+      EditorView.perLineTextDirection.of(true),
       Prec.highest(
         // eslint-disable-next-line react-hooks/refs -- the ref is only read inside the key handler (on keypress), never during render
         keymap.of([
@@ -51,20 +56,23 @@ export function PromptCodeEditor({ value, onChange, wrap, onReady, onQuickRun }:
       ),
       ...(wrap ? [EditorView.lineWrapping] : []),
     ],
-    [wrap],
+        [wrap, a11yLabel],
   )
 
   return (
-    <CodeMirror
-      value={value}
-      onChange={onChange}
-      theme="none"
-      basicSetup={BASIC_SETUP}
-      extensions={extensions}
-      onCreateEditor={onReady}
-      minHeight="560px"
-      placeholder="Write your prompt here. Use {{variables}} for dynamic parts..."
-      className="text-on-surface"
-    />
+    // المحرر نفسه LTR (أرقام الأسطر عاليسار مثل كل المحررات)، واتجاه كل سطر تلقائي
+    <div dir="ltr">
+      <CodeMirror
+        value={value}
+        onChange={onChange}
+        theme="none"
+        basicSetup={BASIC_SETUP}
+        extensions={extensions}
+        onCreateEditor={onReady}
+        minHeight="560px"
+        placeholder={t('editor.code.placeholder', { example: '{{variables}}' })}
+        className="text-on-surface"
+      />
+    </div>
   )
 }

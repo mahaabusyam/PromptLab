@@ -7,6 +7,10 @@ import { AiError } from '../errors'
 import { generateVariations } from '../services/aiClient'
 import { VariationsDialog } from './VariationsDialog'
 
+// النص صار مقسوم على عناصر (<bdi> لأسماء المتغيّرات)، فنطابق على textContent الكامل للفقرة
+const paragraphWith = (pattern: RegExp) => (_content: string, element: Element | null) =>
+  element?.tagName === 'P' && pattern.test(element.textContent ?? '')
+
 vi.mock('../services/aiClient', () => ({
   improvePrompt: vi.fn(),
   runPrompt: vi.fn(),
@@ -57,7 +61,7 @@ describe('VariationsDialog', () => {
 
     await user.click(screen.getByRole('button', { name: 'Generate variations' }))
 
-    expect(await screen.findByText(/Removed: \{\{topic\}\}/)).toBeInTheDocument()
+      expect(screen.getByText(paragraphWith(/Removed: \{\{topic\}\}/))).toBeInTheDocument()
   })
 
   it('shows a loading message while waiting', async () => {

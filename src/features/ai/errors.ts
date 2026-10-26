@@ -1,5 +1,9 @@
 import { isAxiosError } from 'axios'
+import i18n from 'i18next'
+import '@/i18n' // يضمن تهيئة الترجمة حتى لو الملف انستورد لحاله (مثلًا بالاختبارات)
+import { formatNumber } from '@/i18n/format'
 import { errorBodySchema } from './schemas'
+import { MAX_AI_PROMPT_CHARS } from './types'
 import type { AiErrorCode } from './types'
 
 export class AiError extends Error {
@@ -47,24 +51,24 @@ export function toAiError(error: unknown): AiError {
   return new AiError('upstream_error', 'Something went wrong.')
 }
 
-/** Friendly text for the UI (the app is English). */
+/** نص مفهوم للمستخدم، بلغة الواجهة الحالية. (error.message نفسه للمطوّرين فقط) */
 export function getAiErrorMessage(error: AiError): string {
   switch (error.code) {
     case 'rate_limited':
       return error.retryAfterSeconds
-        ? `Too many requests. Try again in ${error.retryAfterSeconds} seconds.`
-        : 'Too many requests. Please wait a moment and try again.'
+        ? i18n.t('ai.errors.rateLimitedIn', { seconds: error.retryAfterSeconds })
+        : i18n.t('ai.errors.rateLimited')
     case 'bad_request':
-      return 'This prompt can’t be sent. Make sure it isn’t empty and is under 8,000 characters.'
+      return i18n.t('ai.errors.badRequest', { limit: formatNumber(MAX_AI_PROMPT_CHARS) })
     case 'unavailable':
-      return 'AI features aren’t available right now. Your prompts still work offline.'
+      return i18n.t('ai.errors.unavailable')
     case 'timeout':
-      return 'The AI took too long to answer. Please try again.'
+      return i18n.t('ai.errors.timeout')
     case 'network':
-      return 'Can’t reach the AI service. Check your connection.'
+      return i18n.t('ai.errors.network')
     case 'invalid_response':
-      return 'The AI service sent an unexpected answer. Please try again.'
+      return i18n.t('ai.errors.invalidResponse')
     case 'upstream_error':
-      return 'The AI provider had a problem. Please try again shortly.'
+      return i18n.t('ai.errors.upstream')
   }
 }

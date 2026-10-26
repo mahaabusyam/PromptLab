@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { BrainCircuit, SlidersHorizontal } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { formatNumber } from '@/i18n/format'
 import { MAX_OUTPUT_TOKENS, modelCatalog, providerLabels } from '@/features/prompts/constants'
 import { ProviderIcon } from '@/features/prompts/components/ProviderIcon'
 import type { PromptSettings } from '@/features/prompts/types'
@@ -49,6 +51,7 @@ function RangeField({ label, value, min, max, step, digits, onChange, hints }: R
 
 // حقل رقم بنص محلي: بتقدري تمسحي وتكتبي بحرية، والتحقق (1..8192) بيصير لما تطلعي منه
 function MaxTokensField({ value, onCommit }: { value: number; onCommit: (value: number) => void }) {
+  const { t } = useTranslation()
   const [text, setText] = useState(String(value))
 
   const commit = () => {
@@ -62,7 +65,9 @@ function MaxTokensField({ value, onCommit }: { value: number; onCommit: (value: 
   return (
     <div className="flex flex-col gap-1.5 rounded-lg bg-surface-container-lowest p-2.5 shadow-inner">
       <div className="flex items-center justify-between">
-        <label htmlFor="max-tokens" className="text-label-sm text-outline">Max Tokens</label>
+        <label htmlFor="max-tokens" className="text-label-sm text-outline">
+          {t('editor.model.maxTokens')}
+        </label>
         <SlidersHorizontal aria-hidden className="size-3.5 text-outline" />
       </div>
       <input
@@ -77,7 +82,9 @@ function MaxTokensField({ value, onCommit }: { value: number; onCommit: (value: 
         onKeyDown={(e) => e.key === 'Enter' && commit()}
         className="w-full bg-transparent text-body-sm font-semibold text-on-surface focus:outline-none"
       />
-      <span className="truncate text-[10px] text-outline">Limit: {MAX_OUTPUT_TOKENS.toLocaleString()} cap</span>
+      <span className="truncate text-[10px] text-outline">
+        {t('editor.model.limit', { limit: formatNumber(MAX_OUTPUT_TOKENS) })}
+      </span>
     </div>
   )
 }
@@ -88,34 +95,37 @@ interface ModelPanelProps {
 }
 
 export function ModelPanel({ draft, onChange }: ModelPanelProps) {
+  const { t } = useTranslation()
   const { model, settings } = draft
   const setSetting = (patch: Partial<PromptSettings>) => onChange({ settings: { ...settings, ...patch } })
 
   // لو موديل الـ Prompt مش بالقائمة (مثلاً من ملف مستورد)، منضيفه عشان ما يختفي
   const options = useMemo(() => {
     const known = modelCatalog.map((m) => ({ value: m.name, label: m.name }))
-    return known.some((o) => o.value === model.name) ? known : [{ value: model.name, label: model.name }, ...known]
+    return known.some((o) => o.value === model.name)
+      ? known
+      : [{ value: model.name, label: model.name }, ...known]
   }, [model.name])
   const info = modelCatalog.find((m) => m.name === model.name)
 
   return (
     <EditorCard
       icon={BrainCircuit}
-      title="Model Hyperparameters"
+      title={t('editor.model.title')}
       action={
         <span
-          title="These settings are saved with the prompt and used for the simulated run and its estimates. “Run with AI” uses the server's model and only applies Max Tokens."
+          title={t('editor.model.badgeHint')}
           className="shrink-0 rounded-full bg-surface-container-high px-2 py-0.5 text-label-sm font-semibold text-outline"
         >
-          Simulation settings
+          {t('editor.model.badge')}
         </span>
-            }
+      }
     >
       <div className="flex flex-col gap-1">
-        <span className="text-label-sm text-outline">Active Foundation Model</span>
+        <span className="text-label-sm text-outline">{t('editor.model.activeModel')}</span>
         <div>
           <FilterDropdown
-            ariaLabel="Foundation model"
+            ariaLabel={t('editor.model.modelLabel')}
             icon={<ProviderIcon provider={model.provider} className="size-4 text-primary" />}
             value={model.name}
             options={options}
@@ -127,26 +137,26 @@ export function ModelPanel({ draft, onChange }: ModelPanelProps) {
         </div>
         <span className="text-label-sm text-outline">
           {providerLabels[model.provider]}
-          {info ? ` • ${info.context} Context` : ''}
+          {info ? ` • ${t('editor.model.context', { size: info.context })}` : ''}
         </span>
       </div>
 
       <div className="grid grid-cols-2 gap-space-sm pt-1">
         <RangeField
-          label="Temperature"
+          label={t('editor.model.temperature')}
           value={settings.temperature}
           min={0}
           max={1}
           step={0.05}
           digits={2}
           onChange={(temperature) => setSetting({ temperature })}
-          hints={['0.0 Strict', '1.0 Creative']}
+          hints={[t('editor.model.strict'), t('editor.model.creative')]}
         />
         <MaxTokensField value={settings.maxTokens} onCommit={(maxTokens) => setSetting({ maxTokens })} />
       </div>
 
       <RangeField
-        label="Top-P Sampling"
+        label={t('editor.model.topP')}
         value={settings.topP}
         min={0}
         max={1}
@@ -156,7 +166,9 @@ export function ModelPanel({ draft, onChange }: ModelPanelProps) {
       />
 
       <div className="flex items-center justify-between pt-1">
-        <span className="text-body-sm text-on-surface-variant" id="strict-schema-label">Strict Schema</span>
+        <span className="text-body-sm text-on-surface-variant" id="strict-schema-label">
+          {t('editor.model.strictSchema')}
+        </span>
         <button
           type="button"
           role="switch"
@@ -170,9 +182,7 @@ export function ModelPanel({ draft, onChange }: ModelPanelProps) {
           />
         </button>
       </div>
-      <p className="text-label-sm text-outline">
-        Saved with the prompt and applied once a real model is connected.
-      </p>
+      <p className="text-label-sm text-outline">{t('editor.model.note')}</p>
     </EditorCard>
   )
 }

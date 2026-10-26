@@ -7,6 +7,10 @@ import { AiError } from '../errors'
 import { improvePrompt } from '../services/aiClient'
 import { ImprovePromptDialog } from './ImprovePromptDialog'
 
+// النص صار مقسوم على عناصر (<bdi> لأسماء المتغيّرات)، فنطابق على textContent الكامل للفقرة
+const paragraphWith = (pattern: RegExp) => (_content: string, element: Element | null) =>
+  element?.tagName === 'P' && pattern.test(element.textContent ?? '')
+
 vi.mock('../services/aiClient', () => ({
   improvePrompt: vi.fn(),
   runPrompt: vi.fn(),
@@ -81,7 +85,7 @@ describe('ImprovePromptDialog', () => {
 
     await user.click(screen.getByRole('button', { name: 'Improve' }))
 
-    expect(await screen.findByText(/Removed variables: \{\{topic\}\}/)).toBeInTheDocument()
+        expect(await screen.findByText(paragraphWith(/Removed variables: \{\{topic\}\}/))).toBeInTheDocument()
   })
 
   it('shows a friendly message when the request fails, and lets you retry', async () => {

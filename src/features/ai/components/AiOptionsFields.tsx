@@ -1,4 +1,5 @@
 import { useId } from 'react'
+import { useTranslation } from 'react-i18next'
 import { lengthLabels, taskLabels, toneLabels } from '../constants'
 import { aiLengths, aiTasks, aiTones } from '../types'
 import type { AiOptions } from '../types'
@@ -43,11 +44,30 @@ interface AiOptionsFieldsProps {
 }
 
 export function AiOptionsFields({ value, onChange }: AiOptionsFieldsProps) {
+  const { t } = useTranslation()
   return (
     <div className="flex flex-col gap-space-sm sm:flex-row">
-      <OptionSelect label="Task" value={value.task} options={aiTasks} labels={taskLabels} onChange={(task) => onChange({ ...value, task })} />
-      <OptionSelect label="Tone" value={value.tone} options={aiTones} labels={toneLabels} onChange={(tone) => onChange({ ...value, tone })} />
-      <OptionSelect label="Length" value={value.length} options={aiLengths} labels={lengthLabels} onChange={(length) => onChange({ ...value, length })} />
+      <OptionSelect
+        label={t('ai.fields.task')}
+        value={value.task}
+        options={aiTasks}
+        labels={taskLabels}
+        onChange={(task) => onChange({ ...value, task })}
+      />
+      <OptionSelect
+        label={t('ai.fields.tone')}
+        value={value.tone}
+        options={aiTones}
+        labels={toneLabels}
+        onChange={(tone) => onChange({ ...value, tone })}
+      />
+      <OptionSelect
+        label={t('ai.fields.length')}
+        value={value.length}
+        options={aiLengths}
+        labels={lengthLabels}
+        onChange={(length) => onChange({ ...value, length })}
+      />
     </div>
   )
 }

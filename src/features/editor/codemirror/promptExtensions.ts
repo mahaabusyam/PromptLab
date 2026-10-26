@@ -42,5 +42,5 @@ export const promptEditorTheme = EditorView.theme({
     { backgroundColor: 'color-mix(in srgb, currentColor 22%, transparent)' },
 })
 
-// قارئ الشاشة بيقرأ "Prompt content" بدل "text field"
-export const promptA11y = EditorView.contentAttributes.of({ 'aria-label': 'Prompt content' })
+// قارئ الشاشة بيقرأ اسم المحرر بدل "text field". النص بيجي من الترجمة، فهو دالة مش ثابت
+export const promptA11y = (label: string) => EditorView.contentAttributes.of({ 'aria-label': label })

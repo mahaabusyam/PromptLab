@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const MAX_TAGS = 8
 
@@ -9,6 +10,7 @@ interface TagsInputProps {
 }
 
 export function TagsInput({ tags, onChange }: TagsInputProps) {
+  const { t } = useTranslation()
   const [value, setValue] = useState('')
 
   const add = () => {
@@ -24,11 +26,11 @@ export function TagsInput({ tags, onChange }: TagsInputProps) {
           key={tag}
           className="inline-flex items-center gap-1 rounded-full bg-surface-container-high px-2 py-0.5 text-label-sm text-on-surface-variant"
         >
-          #{tag}
+          <span dir="auto">#{tag}</span>
           <button
             type="button"
-            aria-label={`Remove tag ${tag}`}
-            onClick={() => onChange(tags.filter((t) => t !== tag))}
+            aria-label={t('editor.tags.remove', { tag })}
+            onClick={() => onChange(tags.filter((existing) => existing !== tag))}
             className="rounded-full text-outline transition-colors hover:text-on-surface"
           >
             <X className="size-3" />
@@ -37,6 +39,7 @@ export function TagsInput({ tags, onChange }: TagsInputProps) {
       ))}
       {tags.length < MAX_TAGS && (
         <input
+          dir="auto"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onBlur={add}
@@ -48,8 +51,8 @@ export function TagsInput({ tags, onChange }: TagsInputProps) {
               onChange(tags.slice(0, -1))
             }
           }}
-          aria-label="Add tag"
-          placeholder="+ tag"
+          aria-label={t('editor.tags.add')}
+          placeholder={t('editor.tags.placeholder')}
           className="w-16 bg-transparent text-label-sm text-on-surface placeholder:text-outline focus:outline-none"
         />
       )}

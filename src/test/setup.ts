@@ -1,3 +1,4 @@
+import '@/i18n'
 import '@testing-library/jest-dom/vitest' // adds matchers like toBeInTheDocument()
 import { cleanup } from '@testing-library/react'
 import { afterEach, vi } from 'vitest'
