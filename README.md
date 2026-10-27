@@ -9,8 +9,10 @@ PromptLab is a local-first web app: you write prompts with dynamic `{{variables}
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)
 ![Tests](https://img.shields.io/badge/tested_with-Vitest-6E9F18?logo=vitest&logoColor=white)
+![i18n](https://img.shields.io/badge/i18n-English_%2B_Arabic_(RTL)
+-0EA5E9)
 
-> **Live demo:** [your-app.vercel.app] ( https://prompt-lab-ivory.vercel.app/)
+> **Live demo:** [prompt-lab-ivory.vercel.app](https://prompt-lab-ivory.vercel.app)
 
 > **Status:** all features are complete, including the optional **AI tools** (Improve, Variations, Run with AI). The app works fully offline without them, see [AI setup](#ai-setup).
 
@@ -81,6 +83,7 @@ PromptLab is a local-first web app: you write prompts with dynamic `{{variables}
 - **Responsive** layout for phones, tablets and desktops.
 - **Accessible by design**: semantic HTML, native `<dialog>` modals with focus handling, ARIA roles for tabs, switches and comboboxes, visible focus states and full keyboard navigation. Animations respect `prefers-reduced-motion`.
 - Loading, error and empty states throughout, plus a custom 404 page and route error screen.
+- **English and Arabic (RTL)**: the whole interface is translated and mirrors correctly for right-to-left reading. The language is detected from your browser and can be switched in **Settings → Appearance**.
 
 ### Keyboard shortcuts
 
@@ -104,7 +107,8 @@ PromptLab is a local-first web app: you write prompts with dynamic `{{variables}
 | Forms and validation | React Hook Form + Zod                                     |
 | Editor               | CodeMirror (`@uiw/react-codemirror`)                      |
 | Motion               | GSAP + ScrollTrigger, Lenis smooth scrolling              |
-| Dates                | date-fns                                                  |
+| Dates                | date-fns   
+| Internationalization | i18next + react-i18next (typed keys, RTL support)         |
 | Testing              | Vitest, React Testing Library, jsdom                      |
 | AI integration       | TanStack Query, Axios, Vercel Functions, Gemini API       |
 
@@ -181,6 +185,7 @@ api/                # Vercel Functions: secure proxy to the AI provider
 └── run.ts
 src/
 ├── app/            # router, providers, route error handling
+├── i18n/           # i18next setup and English / Arabic locale files
 ├── components/
 │   ├── ui/         # base UI components
 │   ├── layout/     # sidebar, header, app layout
@@ -242,6 +247,7 @@ The suite covers the logic the app depends on most:
 - templates and favorites logic
 - a React Testing Library component test (variables panel)
 - the **AI layer**: API failures (rate limits, timeouts, unavailable service, malformed responses) and the AI dialogs' loading, error and apply flows
+- **locale parity**: a test makes sure the English and Arabic files have the same keys and the same `{{placeholders}}`
 
 ```bash
 npx vitest run
