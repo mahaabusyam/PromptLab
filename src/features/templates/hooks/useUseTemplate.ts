@@ -1,8 +1,8 @@
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { modelCatalog } from '@/features/prompts/constants';
-import { usePromptStore } from '@/stores/promptStore';
-import type { Template } from '../schemas';
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { modelCatalog } from "@/features/prompts/constants";
+import { usePromptStore } from "@/stores/promptStore";
+import type { Template } from "../schemas";
 
 export function useUseTemplate() {
   const addPrompt = usePromptStore((s) => s.addPrompt);
@@ -12,7 +12,8 @@ export function useUseTemplate() {
     (template: Template) => {
       // A template recommends a provider; a prompt stores a concrete model name
       const modelName =
-        modelCatalog.find((m) => m.provider === template.provider)?.name ?? template.provider;
+        modelCatalog.find((m) => m.provider === template.provider)?.name ??
+        template.provider;
 
       const created = addPrompt({
         title: template.title,

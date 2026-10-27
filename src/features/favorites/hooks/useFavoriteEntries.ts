@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
-import { useTemplateItems } from '@/features/templates/hooks/useTemplateItems';
-import { usePromptStore } from '@/stores/promptStore';
-import { useTemplateStore } from '@/stores/templateStore';
-import { buildFavoriteEntries } from '../buildFavorites';
+import { useMemo } from "react";
+import { useTemplateItems } from "@/features/templates/hooks/useTemplateItems";
+import { usePromptStore } from "@/stores/promptStore";
+import { useTemplateStore } from "@/stores/templateStore";
+import { buildFavoriteEntries } from "../buildFavorites";
 
 export function useFavoriteEntries() {
   const prompts = usePromptStore((s) => s.prompts);

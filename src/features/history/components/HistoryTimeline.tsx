@@ -1,9 +1,9 @@
-import { useLayoutEffect, useMemo, useRef } from 'react';
-import gsap from 'gsap';
-import { useTranslation } from 'react-i18next';
-import { groupByDay } from '../groupByDay';
-import type { HistoryEntry } from '../types';
-import { HistoryLogCard } from './HistoryLogCard';
+import { useLayoutEffect, useMemo, useRef } from "react";
+import gsap from "gsap";
+import { useTranslation } from "react-i18next";
+import { groupByDay } from "../groupByDay";
+import type { HistoryEntry } from "../types";
+import { HistoryLogCard } from "./HistoryLogCard";
 
 interface HistoryTimelineProps {
   entries: HistoryEntry[];
@@ -11,29 +11,33 @@ interface HistoryTimelineProps {
   onDelete: (entry: HistoryEntry) => void;
 }
 
-export function HistoryTimeline({ entries, onRestore, onDelete }: HistoryTimelineProps) {
+export function HistoryTimeline({
+  entries,
+  onRestore,
+  onDelete,
+}: HistoryTimelineProps) {
   const { t } = useTranslation();
   const rootRef = useRef<HTMLDivElement>(null);
   const groups = useMemo(() => groupByDay(entries), [entries]);
   // Re-run the animation only when the set of visible entries changes
-  const idsKey = useMemo(() => entries.map((e) => e.id).join('|'), [entries]);
+  const idsKey = useMemo(() => entries.map((e) => e.id).join("|"), [entries]);
 
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '[data-log]',
+        "[data-log]",
         { y: 20, opacity: 0 },
         {
           y: 0,
           opacity: 1,
           duration: 0.45,
           stagger: { each: 0.05, amount: 0.6 },
-          ease: 'power2.out',
-          clearProps: 'transform,opacity',
+          ease: "power2.out",
+          clearProps: "transform,opacity",
         },
       );
     }, root);
@@ -46,11 +50,14 @@ export function HistoryTimeline({ entries, onRestore, onDelete }: HistoryTimelin
       {groups.map((group) => (
         <section key={group.key} aria-labelledby={`day-${group.key}`}>
           <div className="mb-4 flex items-baseline gap-3">
-            <h2 id={`day-${group.key}`} className="font-heading text-lg font-semibold">
+            <h2
+              id={`day-${group.key}`}
+              className="font-heading text-lg font-semibold"
+            >
               {group.label}
             </h2>
             <span className="text-xs text-muted-foreground">
-              {t('history.timeline.recorded', { total: group.entries.length })}
+              {t("history.timeline.recorded", { total: group.entries.length })}
             </span>
           </div>
 
@@ -60,10 +67,14 @@ export function HistoryTimeline({ entries, onRestore, onDelete }: HistoryTimelin
                 <span
                   aria-hidden="true"
                   className={`absolute top-6 -start-[26px] size-3 rounded-full border-2 border-background ${
-                    entry.isRollback ? 'bg-red-500' : 'bg-primary'
+                    entry.isRollback ? "bg-red-500" : "bg-primary"
                   }`}
                 />
-                <HistoryLogCard entry={entry} onRestore={onRestore} onDelete={onDelete} />
+                <HistoryLogCard
+                  entry={entry}
+                  onRestore={onRestore}
+                  onDelete={onDelete}
+                />
               </li>
             ))}
           </ol>

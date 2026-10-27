@@ -18,16 +18,16 @@ PromptLab is a local-first web app: you write prompts with dynamic `{{variables}
 
 ## Screenshots
 
-| Dashboard | Prompt Library |
-| :---: | :---: |
+|                  Dashboard                   |                 Prompt Library                  |
+| :------------------------------------------: | :---------------------------------------------: |
 | ![Dashboard](docs/screenshots/dashboard.png) | ![Prompt Library](docs/screenshots/library.png) |
 
-| Prompt Editor | Compare Versions |
-| :---: | :---: |
+|                 Prompt Editor                 |                 Compare Versions                  |
+| :-------------------------------------------: | :-----------------------------------------------: |
 | ![Prompt Editor](docs/screenshots/editor.png) | ![Compare Versions](docs/screenshots/compare.png) |
 
-| Templates | Settings (light theme) |
-| :---: | :---: |
+|                  Templates                   |              Settings (light theme)              |
+| :------------------------------------------: | :----------------------------------------------: |
 | ![Templates](docs/screenshots/templates.png) | ![Settings](docs/screenshots/settings-light.png) |
 
 ---
@@ -35,12 +35,14 @@ PromptLab is a local-first web app: you write prompts with dynamic `{{variables}
 ## Features
 
 ### Write and run
+
 - **Prompt editor** built on CodeMirror, with `{{variable}}` highlighting and a side panel for variables, model and settings.
 - **Dynamic variables**: values are filled in a panel and the final text is previewed before use. An **Auto-Fill** button fills the empty ones with sample values.
 - **Autosave** for existing prompts. New prompts stay drafts until you click **Create Prompt**, and leaving an unsaved draft asks for confirmation.
 - **Simulated run**: the console resolves the prompt with your variable values and shows estimated tokens and cost. It is free, instant and works offline.
 
-### AI assistance 
+### AI assistance
+
 - **Improve with AI**: pick a task, tone and length, then compare your prompt with the suggestion side by side and apply it with one click.
 - **Generate Variations**: get three alternative versions with different approaches, copy one or use it in the editor.
 - **Run with AI**: send the final prompt (with your variable values) to a real model and see the answer, latency and token usage.
@@ -49,27 +51,32 @@ PromptLab is a local-first web app: you write prompts with dynamic `{{variables}
 - Clear **loading, error and rate-limit** states. If the AI service is unavailable, everything else keeps working.
 
 ### Organize
+
 - **Prompt Library** in grid or compact list view, with instant search (title, description, content, tags), filters (category, model provider, tag), sorting and pagination.
 - **Nested folders**, tags, categories, favorites and an archive.
 - **Command palette** (`Ctrl/⌘ + K`) to jump to any prompt, template or page.
 
 ### Version and compare
+
 - **Versions** with semantic labels (`v1.4` → `v1.5` minor, `v2.0` major) and a note describing each change.
 - **History**: a timeline or table of every version across all prompts, with filters, stats and an inline diff.
 - **Compare**: pick any two versions of a prompt and see the differences in split or unified view, with a minimap, word-level highlighting and a shareable URL. Export the result as a unified diff.
-- **Restore** creates a *new* version with the old content, so history is never rewritten. Restoring and deleting ask for confirmation.
+- **Restore** creates a _new_ version with the old content, so history is never rewritten. Restoring and deleting ask for confirmation.
 
 ### Templates and favorites
+
 - **12 built-in templates** across marketing, coding, education, writing and data analysis, with preview and a one-click **Use template** that creates a prompt.
 - **Import your own templates** from JSON (validated with Zod).
 - **Favorites** collects starred prompts and templates, with filters, folder and variable shortcuts, undo, and **Export Starred (JSON)**.
 
 ### Your data
+
 - **Local-first**: everything is stored in `localStorage`, no account and no backend.
 - **Full backup and restore** from Settings: one JSON file with prompts, versions, folders, imported templates, favorites and settings. It includes a **SHA-256 checksum**, is validated with Zod on import, and can be **merged** into or **replace** your current data.
 - **Storage meter** showing how much browser storage PromptLab uses.
 
 ### Experience
+
 - **Dark, light and system themes**, four accent colors and a higher-contrast mode.
 - **Responsive** layout for phones, tablets and desktops.
 - **Accessible by design**: semantic HTML, native `<dialog>` modals with focus handling, ARIA roles for tabs, switches and comboboxes, visible focus states and full keyboard navigation. Animations respect `prefers-reduced-motion`.
@@ -77,29 +84,29 @@ PromptLab is a local-first web app: you write prompts with dynamic `{{variables}
 
 ### Keyboard shortcuts
 
-| Shortcut | Where | Action |
-| --- | --- | --- |
-| `Ctrl/⌘ + K` | Anywhere | Open search |
-| `Ctrl/⌘ + Enter` | Editor | Run the prompt |
-| `H` | Favorites (card focused) | Remove from favorites |
-| `Esc` | Dialogs | Close |
+| Shortcut         | Where                    | Action                |
+| ---------------- | ------------------------ | --------------------- |
+| `Ctrl/⌘ + K`     | Anywhere                 | Open search           |
+| `Ctrl/⌘ + Enter` | Editor                   | Run the prompt        |
+| `H`              | Favorites (card focused) | Remove from favorites |
+| `Esc`            | Dialogs                  | Close                 |
 
 ---
 
 ## Tech stack
 
-| Area | Tools |
-| --- | --- |
-| Framework | React 19, TypeScript (strict), Vite |
-| Routing | React Router 7 (data router, lazy-loaded pages) |
-| Styling | Tailwind CSS v4, shadcn/ui-style components, Lucide icons |
-| State | Zustand with `persist` (localStorage) |
-| Forms and validation | React Hook Form + Zod |
-| Editor | CodeMirror (`@uiw/react-codemirror`) |
-| Motion | GSAP + ScrollTrigger, Lenis smooth scrolling |
-| Dates | date-fns |
-| Testing | Vitest, React Testing Library, jsdom |
-| AI integration | TanStack Query, Axios, Vercel Functions, Gemini API |
+| Area                 | Tools                                                     |
+| -------------------- | --------------------------------------------------------- |
+| Framework            | React 19, TypeScript (strict), Vite                       |
+| Routing              | React Router 7 (data router, lazy-loaded pages)           |
+| Styling              | Tailwind CSS v4, shadcn/ui-style components, Lucide icons |
+| State                | Zustand with `persist` (localStorage)                     |
+| Forms and validation | React Hook Form + Zod                                     |
+| Editor               | CodeMirror (`@uiw/react-codemirror`)                      |
+| Motion               | GSAP + ScrollTrigger, Lenis smooth scrolling              |
+| Dates                | date-fns                                                  |
+| Testing              | Vitest, React Testing Library, jsdom                      |
+| AI integration       | TanStack Query, Axios, Vercel Functions, Gemini API       |
 
 The visual design was created in **Google Stitch** (the "Obsidian Kinetic" design system) and implemented with design tokens that support both dark and light themes.
 
@@ -132,10 +139,10 @@ AI requests go through small serverless functions in `api/`, so **the secret key
 1. Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/apikey).
 2. Add it to your Vercel project (**Settings → Environment Variables**), then redeploy:
 
-   | Variable | Required | Description |
-   | --- | --- | --- |
-   | `GEMINI_API_KEY` | yes | Server-side key. Never prefix it with `VITE_`. |
-   | `GEMINI_MODEL` | no | Model id (default: `gemini-3.5-flash-lite`). |
+   | Variable         | Required | Description                                    |
+   | ---------------- | -------- | ---------------------------------------------- |
+   | `GEMINI_API_KEY` | yes      | Server-side key. Never prefix it with `VITE_`. |
+   | `GEMINI_MODEL`   | no       | Model id (default: `gemini-3.5-flash-lite`).   |
 
 3. For local development, `npm run dev` does not run `api/`. Either proxy `/api` to a deployed copy in `vite.config.ts`:
 
@@ -149,16 +156,15 @@ AI requests go through small serverless functions in `api/`, so **the secret key
 
 The functions validate input with Zod, cap prompt length at 8,000 characters and apply a basic per-IP rate limit.
 
-
 ### Scripts
 
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | Start the development server |
-| `npm run build` | Type-check (`tsc -b`) and build for production |
-| `npm run preview` | Preview the production build locally |
-| `npm run lint` | Run ESLint |
-| `npm test` | Run the test suite in watch mode (`npx vitest run` for a single run) |
+| Command           | What it does                                                         |
+| ----------------- | -------------------------------------------------------------------- |
+| `npm run dev`     | Start the development server                                         |
+| `npm run build`   | Type-check (`tsc -b`) and build for production                       |
+| `npm run preview` | Preview the production build locally                                 |
+| `npm run lint`    | Run ESLint                                                           |
+| `npm test`        | Run the test suite in watch mode (`npx vitest run` for a single run) |
 
 Before deploying, run `npm run lint && npm run build && npx vitest run`.
 
@@ -193,17 +199,17 @@ src/
 
 ### Routes
 
-| Path | Page |
-| --- | --- |
-| `/` | Dashboard |
-| `/library` | Prompt Library |
+| Path                           | Page                           |
+| ------------------------------ | ------------------------------ |
+| `/`                            | Dashboard                      |
+| `/library`                     | Prompt Library                 |
 | `/editor`, `/editor/:promptId` | Prompt Editor (new / existing) |
-| `/templates` | Templates |
-| `/history` | History |
-| `/compare` | Compare Versions |
-| `/favorites` | Favorites |
-| `/settings` | Settings |
-| `*` | Not Found |
+| `/templates`                   | Templates                      |
+| `/history`                     | History                        |
+| `/compare`                     | Compare Versions               |
+| `/favorites`                   | Favorites                      |
+| `/settings`                    | Settings                       |
+| `*`                            | Not Found                      |
 
 ---
 
@@ -211,13 +217,13 @@ src/
 
 Your prompts and versions are stored in your browser. PromptLab uses these `localStorage` keys:
 
-| Key | Contents |
-| --- | --- |
-| `promptlab-prompts` | Prompts, versions and folders |
-| `promptlab-templates` | Imported templates and starred templates |
-| `promptlab-settings` | Workspace name, default model, accent, contrast |
-| `promptlab-theme` | Theme choice |
-| `promptlab-library`, `promptlab-favorites-view` | View preferences |
+| Key                                             | Contents                                        |
+| ----------------------------------------------- | ----------------------------------------------- |
+| `promptlab-prompts`                             | Prompts, versions and folders                   |
+| `promptlab-templates`                           | Imported templates and starred templates        |
+| `promptlab-settings`                            | Workspace name, default model, accent, contrast |
+| `promptlab-theme`                               | Theme choice                                    |
+| `promptlab-library`, `promptlab-favorites-view` | View preferences                                |
 
 Clearing your browser data removes your prompts, so **export a backup** from Settings regularly. Every imported file is validated with Zod before it can touch the app's state.
 **AI features and privacy:** only when you click an AI button (Improve, Variations or Run with AI) the prompt text, plus your chosen options, is sent through the app's server function to the Gemini API. Nothing is sent otherwise, and the app does not store AI requests or answers on a server.
@@ -266,4 +272,3 @@ Ideas:
 ## Author
 
 Built by **[mahaabusyam](https://github.com/mahaabusyam)**.
-

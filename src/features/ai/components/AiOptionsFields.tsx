@@ -1,19 +1,25 @@
-import { useId } from 'react'
-import { useTranslation } from 'react-i18next'
-import { lengthLabels, taskLabels, toneLabels } from '../constants'
-import { aiLengths, aiTasks, aiTones } from '../types'
-import type { AiOptions } from '../types'
+import { useId } from "react";
+import { useTranslation } from "react-i18next";
+import { lengthLabels, taskLabels, toneLabels } from "../constants";
+import { aiLengths, aiTasks, aiTones } from "../types";
+import type { AiOptions } from "../types";
 
 interface OptionSelectProps<T extends string> {
-  label: string
-  value: T
-  options: readonly T[]
-  labels: Record<T, string>
-  onChange: (value: T) => void
+  label: string;
+  value: T;
+  options: readonly T[];
+  labels: Record<T, string>;
+  onChange: (value: T) => void;
 }
 
-function OptionSelect<T extends string>({ label, value, options, labels, onChange }: OptionSelectProps<T>) {
-  const id = useId()
+function OptionSelect<T extends string>({
+  label,
+  value,
+  options,
+  labels,
+  onChange,
+}: OptionSelectProps<T>) {
+  const id = useId();
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-1.5">
       <label htmlFor={id} className="text-label-sm text-on-surface-variant">
@@ -23,8 +29,8 @@ function OptionSelect<T extends string>({ label, value, options, labels, onChang
         id={id}
         value={value}
         onChange={(e) => {
-          const next = options.find((option) => option === e.target.value)
-          if (next) onChange(next)
+          const next = options.find((option) => option === e.target.value);
+          if (next) onChange(next);
         }}
         className="rounded-xl bg-surface-container-high px-3 py-2 text-body-sm text-on-surface focus-visible:outline-2 focus-visible:outline-primary"
       >
@@ -35,39 +41,39 @@ function OptionSelect<T extends string>({ label, value, options, labels, onChang
         ))}
       </select>
     </div>
-  )
+  );
 }
 
 interface AiOptionsFieldsProps {
-  value: AiOptions
-  onChange: (next: AiOptions) => void
+  value: AiOptions;
+  onChange: (next: AiOptions) => void;
 }
 
 export function AiOptionsFields({ value, onChange }: AiOptionsFieldsProps) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-space-sm sm:flex-row">
       <OptionSelect
-        label={t('ai.fields.task')}
+        label={t("ai.fields.task")}
         value={value.task}
         options={aiTasks}
         labels={taskLabels}
         onChange={(task) => onChange({ ...value, task })}
       />
       <OptionSelect
-        label={t('ai.fields.tone')}
+        label={t("ai.fields.tone")}
         value={value.tone}
         options={aiTones}
         labels={toneLabels}
         onChange={(tone) => onChange({ ...value, tone })}
       />
       <OptionSelect
-        label={t('ai.fields.length')}
+        label={t("ai.fields.length")}
         value={value.length}
         options={aiLengths}
         labels={lengthLabels}
         onChange={(length) => onChange({ ...value, length })}
       />
     </div>
-  )
+  );
 }

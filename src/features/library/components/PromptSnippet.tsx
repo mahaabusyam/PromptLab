@@ -1,12 +1,12 @@
-import { splitTemplate, truncateTemplate } from '@/utils/promptVariables'
+import { splitTemplate, truncateTemplate } from "@/utils/promptVariables";
 
 interface PromptSnippetProps {
-  content: string
-  maxChars?: number
+  content: string;
+  maxChars?: number;
 }
 
 export function PromptSnippet({ content, maxChars = 120 }: PromptSnippetProps) {
-  const segments = splitTemplate(truncateTemplate(content, maxChars))
+  const segments = splitTemplate(truncateTemplate(content, maxChars));
 
   return (
     <p
@@ -14,7 +14,7 @@ export function PromptSnippet({ content, maxChars = 120 }: PromptSnippetProps) {
       className="break-words rounded-xl bg-surface-container-lowest/90 p-3 font-code-md text-code-md leading-relaxed text-on-surface-variant shadow-inner"
     >
       {segments.map((segment, i) =>
-        segment.kind === 'variable' ? (
+        segment.kind === "variable" ? (
           <span
             key={i}
             dir="ltr"
@@ -27,5 +27,5 @@ export function PromptSnippet({ content, maxChars = 120 }: PromptSnippetProps) {
         ),
       )}
     </p>
-  )
+  );
 }

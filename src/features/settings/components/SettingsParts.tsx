@@ -1,8 +1,8 @@
-import type { LucideIcon } from 'lucide-react';
-import type { ReactNode } from 'react';
+import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 
 export const fieldClass =
-  'w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-primary';
+  "w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-primary";
 
 interface SettingsCardProps {
   id: string;
@@ -13,7 +13,14 @@ interface SettingsCardProps {
   children: ReactNode;
 }
 
-export function SettingsCard({ id, icon: Icon, title, description, badge, children }: SettingsCardProps) {
+export function SettingsCard({
+  id,
+  icon: Icon,
+  title,
+  description,
+  badge,
+  children,
+}: SettingsCardProps) {
   return (
     <section
       id={id}
@@ -23,7 +30,10 @@ export function SettingsCard({ id, icon: Icon, title, description, badge, childr
     >
       <header className="mb-5 flex items-start justify-between gap-3 border-b border-border pb-4">
         <div>
-          <h2 id={`${id}-title`} className="flex items-center gap-2 font-heading text-lg font-semibold">
+          <h2
+            id={`${id}-title`}
+            className="flex items-center gap-2 font-heading text-lg font-semibold"
+          >
             <Icon className="size-5 text-primary" aria-hidden="true" />
             {title}
           </h2>
@@ -51,13 +61,13 @@ export function Switch({ checked, onChange, label }: SwitchProps) {
       aria-label={label}
       onClick={() => onChange(!checked)}
       className={`relative h-6 w-11 shrink-0 rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-        checked ? 'bg-primary' : 'bg-muted'
+        checked ? "bg-primary" : "bg-muted"
       }`}
     >
       <span
         aria-hidden="true"
         className={`absolute start-0.5 top-0.5 size-5 rounded-full bg-white shadow transition-[translate] ${
-          checked ? 'translate-x-5 rtl:-translate-x-5' : 'translate-x-0'
+          checked ? "translate-x-5 rtl:-translate-x-5" : "translate-x-0"
         }`}
       />
     </button>

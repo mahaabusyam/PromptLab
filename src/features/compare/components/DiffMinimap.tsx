@@ -1,17 +1,17 @@
-import type { RefObject } from 'react';
-import { useTranslation } from 'react-i18next';
-import { groupKinds } from '../diffRows';
-import type { KindBlock, RowKind } from '../diffRows';
+import type { RefObject } from "react";
+import { useTranslation } from "react-i18next";
+import { groupKinds } from "../diffRows";
+import type { KindBlock, RowKind } from "../diffRows";
 
 interface DiffMinimapProps {
   kinds: RowKind[];
   scrollRef: RefObject<HTMLDivElement | null>;
 }
 
-const blockTone: Record<KindBlock['kind'], string> = {
-  added: 'bg-primary',
-  removed: 'bg-red-500',
-  changed: 'bg-amber-500',
+const blockTone: Record<KindBlock["kind"], string> = {
+  added: "bg-primary",
+  removed: "bg-red-500",
+  changed: "bg-amber-500",
 };
 
 export function DiffMinimap({ kinds, scrollRef }: DiffMinimapProps) {
@@ -19,16 +19,19 @@ export function DiffMinimap({ kinds, scrollRef }: DiffMinimapProps) {
   const total = Math.max(kinds.length, 1);
   const blocks = groupKinds(kinds);
 
-  const blockLabel: Record<KindBlock['kind'], string> = {
-    added: t('compare.minimap.added'),
-    removed: t('compare.minimap.removed'),
-    changed: t('compare.minimap.changed'),
+  const blockLabel: Record<KindBlock["kind"], string> = {
+    added: t("compare.minimap.added"),
+    removed: t("compare.minimap.removed"),
+    changed: t("compare.minimap.changed"),
   };
 
   function jumpTo(block: KindBlock): void {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollTo({ top: (block.start / total) * el.scrollHeight - 24, behavior: 'smooth' });
+    el.scrollTo({
+      top: (block.start / total) * el.scrollHeight - 24,
+      behavior: "smooth",
+    });
   }
 
   return (
@@ -38,12 +41,12 @@ export function DiffMinimap({ kinds, scrollRef }: DiffMinimapProps) {
           key={`${block.start}-${block.end}`}
           type="button"
           onClick={() => jumpTo(block)}
-          title={t('compare.minimap.title', {
+          title={t("compare.minimap.title", {
             from: block.start + 1,
             to: block.end,
             kind: blockLabel[block.kind],
           })}
-          aria-label={t('compare.minimap.jump', {
+          aria-label={t("compare.minimap.jump", {
             kind: blockLabel[block.kind],
             from: block.start + 1,
             to: block.end,

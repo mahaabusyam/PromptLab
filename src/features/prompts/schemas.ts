@@ -1,14 +1,14 @@
-import { z } from 'zod'
+import { z } from "zod";
 
-export const promptStatusSchema = z.enum(['draft', 'testing', 'production'])
-export const modelProviderSchema = z.enum(['anthropic', 'openai', 'google'])
+export const promptStatusSchema = z.enum(["draft", "testing", "production"]);
+export const modelProviderSchema = z.enum(["anthropic", "openai", "google"]);
 export const promptCategorySchema = z.enum([
-  'marketing',
-  'coding',
-  'education',
-  'writing',
-  'data-analysis',
-])
+  "marketing",
+  "coding",
+  "education",
+  "writing",
+  "data-analysis",
+]);
 
 export const promptVersionSchema = z.object({
   id: z.string(),
@@ -25,7 +25,7 @@ export const promptSettingsSchema = z.object({
   maxTokens: z.number().int().min(1).max(8192),
   topP: z.number().min(0).max(1),
   strictSchema: z.boolean(),
-})
+});
 
 export const promptSchema = z.object({
   id: z.string().min(1),
@@ -46,19 +46,19 @@ export const promptSchema = z.object({
   versions: z.array(promptVersionSchema).min(1),
   createdAt: z.string(),
   updatedAt: z.string(),
-})
+});
 
 export const folderSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   parentId: z.string().nullable(),
-})
+});
 
 // شكل ملف التصدير/الاستيراد JSON
 export const exportFileSchema = z.object({
-  app: z.literal('promptlab'),
+  app: z.literal("promptlab"),
   version: z.literal(1),
   exportedAt: z.string(),
   prompts: z.array(promptSchema),
   folders: z.array(folderSchema),
-})
+});

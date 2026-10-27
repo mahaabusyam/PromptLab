@@ -1,32 +1,35 @@
-import type { Template } from '@/features/templates/schemas';
-import type { TemplateCategory, TemplateProvider } from '@/features/templates/types';
+import type { Template } from "@/features/templates/schemas";
+import type {
+  TemplateCategory,
+  TemplateProvider,
+} from "@/features/templates/types";
 
 // If TypeScript complains here, replace the right-hand strings with the
 // exact values used by promptCategorySchema / modelProviderSchema in your project.
 const CAT = {
-  marketing: 'marketing',
-  coding: 'coding',
-  education: 'education',
-  writing: 'writing',
-  data: 'data-analysis',
+  marketing: "marketing",
+  coding: "coding",
+  education: "education",
+  writing: "writing",
+  data: "data-analysis",
 } as const satisfies Record<string, TemplateCategory>;
 
 const MODEL = {
-  openai: 'openai',
-  anthropic: 'anthropic',
-  google: 'google',
+  openai: "openai",
+  anthropic: "anthropic",
+  google: "google",
 } as const satisfies Record<string, TemplateProvider>;
 
 export const templateCatalog: Template[] = [
   {
-    id: 'tpl-cold-email',
-    title: 'Cold Email Pitch Engine',
+    id: "tpl-cold-email",
+    title: "Cold Email Pitch Engine",
     description:
-      'Writes a short, personalized B2B outreach email with a specific hook and one clear ask, without robotic jargon.',
+      "Writes a short, personalized B2B outreach email with a specific hook and one clear ask, without robotic jargon.",
     category: CAT.marketing,
     provider: MODEL.anthropic,
-    complexity: 'few-shot',
-    tags: ['email', 'outreach', 'b2b'],
+    complexity: "few-shot",
+    tags: ["email", "outreach", "b2b"],
     content: `You are a senior B2B sales copywriter.
 
 Write a cold email to a {{persona}} at {{company}}.
@@ -40,14 +43,14 @@ Rules:
 Return: subject line (max 6 words) and the email body.`,
   },
   {
-    id: 'tpl-saas-seo',
-    title: 'SaaS SEO Copywriter',
+    id: "tpl-saas-seo",
+    title: "SaaS SEO Copywriter",
     description:
-      'Produces search-intent-focused landing page copy with benefit-led headings and natural keyword placement.',
+      "Produces search-intent-focused landing page copy with benefit-led headings and natural keyword placement.",
     category: CAT.marketing,
     provider: MODEL.openai,
-    complexity: 'few-shot',
-    tags: ['seo', 'landing-page', 'saas'],
+    complexity: "few-shot",
+    tags: ["seo", "landing-page", "saas"],
     content: `Act as an SEO copywriter for SaaS products.
 
 Target keyword: {{target_kw}}
@@ -64,14 +67,14 @@ Write a landing page with:
 Avoid keyword stuffing. Keep reading level at grade 8.`,
   },
   {
-    id: 'tpl-product-launch',
-    title: 'Product Launch Announcement',
+    id: "tpl-product-launch",
+    title: "Product Launch Announcement",
     description:
-      'Turns a feature or product into a launch post tailored to the channel you will publish on.',
+      "Turns a feature or product into a launch post tailored to the channel you will publish on.",
     category: CAT.marketing,
     provider: MODEL.openai,
-    complexity: 'zero-shot',
-    tags: ['launch', 'social', 'announcement'],
+    complexity: "zero-shot",
+    tags: ["launch", "social", "announcement"],
     content: `Write a launch announcement for {{product_name}}.
 
 Audience: {{audience}}
@@ -82,14 +85,14 @@ Match the length and style of the channel. Lead with the benefit, not the featur
 Include one clear call to action. Give 3 headline options first.`,
   },
   {
-    id: 'tpl-code-refactor',
-    title: 'Code Refactoring Reviewer',
+    id: "tpl-code-refactor",
+    title: "Code Refactoring Reviewer",
     description:
-      'Finds anti-patterns, improves complexity and readability, and explains every change it makes.',
+      "Finds anti-patterns, improves complexity and readability, and explains every change it makes.",
     category: CAT.coding,
     provider: MODEL.openai,
-    complexity: 'few-shot',
-    tags: ['refactor', 'review', 'clean-code'],
+    complexity: "few-shot",
+    tags: ["refactor", "review", "clean-code"],
     content: `You are a senior {{language}} engineer doing a code review.
 
 Goal of the refactor: {{goal}}
@@ -106,14 +109,14 @@ Return:
 Do not change public behavior unless you say so explicitly.`,
   },
   {
-    id: 'tpl-api-docs',
-    title: 'API Documentation Synthesizer',
+    id: "tpl-api-docs",
+    title: "API Documentation Synthesizer",
     description:
-      'Reads an OpenAPI spec and writes clear markdown docs with copy-paste ready request examples.',
+      "Reads an OpenAPI spec and writes clear markdown docs with copy-paste ready request examples.",
     category: CAT.coding,
     provider: MODEL.anthropic,
-    complexity: 'few-shot',
-    tags: ['openapi', 'docs', 'sdk'],
+    complexity: "few-shot",
+    tags: ["openapi", "docs", "sdk"],
     content: `Generate developer documentation from this OpenAPI spec:
 
 {{openapi_spec}}
@@ -123,15 +126,15 @@ Add a request example for each of these languages: {{languages}}.
 Finish with a "Getting started" section (auth, base URL, first call).`,
   },
   {
-    id: 'tpl-multi-agent',
-    title: 'Autonomous Multi-Agent Orchestrator',
+    id: "tpl-multi-agent",
+    title: "Autonomous Multi-Agent Orchestrator",
     description:
-      'Breaks a complex goal into Planner, Tool-caller and Reviewer roles, with a reflection loop before the final answer.',
+      "Breaks a complex goal into Planner, Tool-caller and Reviewer roles, with a reflection loop before the final answer.",
     category: CAT.coding,
     provider: MODEL.anthropic,
-    complexity: 'multi-agent',
+    complexity: "multi-agent",
     featured: true,
-    tags: ['agents', 'planning', 'tools'],
+    tags: ["agents", "planning", "tools"],
     content: `You coordinate three roles: Planner, Executor and Reviewer.
 
 User goal: {{user_goal}}
@@ -147,14 +150,14 @@ Process:
 Never invent tool results. If a step is impossible with the given tools, say so and stop.`,
   },
   {
-    id: 'tpl-socratic-tutor',
-    title: 'Socratic Tutor',
+    id: "tpl-socratic-tutor",
+    title: "Socratic Tutor",
     description:
-      'Teaches through guiding questions instead of giving away answers, adapted to the learner level.',
+      "Teaches through guiding questions instead of giving away answers, adapted to the learner level.",
     category: CAT.education,
     provider: MODEL.anthropic,
-    complexity: 'few-shot',
-    tags: ['tutor', 'learning', 'questions'],
+    complexity: "few-shot",
+    tags: ["tutor", "learning", "questions"],
     content: `You are a patient tutor of {{subject}} teaching a {{student_level}} learner.
 
 Concept to teach: {{concept}}
@@ -169,14 +172,14 @@ Rules:
 Start by asking what the learner already knows about the concept.`,
   },
   {
-    id: 'tpl-lesson-plan',
-    title: 'Lesson Plan Builder',
+    id: "tpl-lesson-plan",
+    title: "Lesson Plan Builder",
     description:
-      'Builds a timed lesson plan with objectives, activities and a short check for understanding.',
+      "Builds a timed lesson plan with objectives, activities and a short check for understanding.",
     category: CAT.education,
     provider: MODEL.openai,
-    complexity: 'zero-shot',
-    tags: ['lesson', 'teacher', 'plan'],
+    complexity: "zero-shot",
+    tags: ["lesson", "teacher", "plan"],
     content: `Create a lesson plan.
 
 Topic: {{topic}}
@@ -187,14 +190,14 @@ Include: 2-3 measurable learning objectives, a minute-by-minute timeline,
 one hands-on activity, 3 check-for-understanding questions, and a short homework idea.`,
   },
   {
-    id: 'tpl-exec-brief',
-    title: 'Executive Brief Writer',
+    id: "tpl-exec-brief",
+    title: "Executive Brief Writer",
     description:
-      'Turns raw metrics into a short executive memo that leads with the conclusion and the decision needed.',
+      "Turns raw metrics into a short executive memo that leads with the conclusion and the decision needed.",
     category: CAT.writing,
     provider: MODEL.openai,
-    complexity: 'zero-shot',
-    tags: ['memo', 'summary', 'kpi'],
+    complexity: "zero-shot",
+    tags: ["memo", "summary", "kpi"],
     content: `Write an executive brief for {{audience}} about the {{department}} department.
 
 Raw data:
@@ -209,14 +212,14 @@ Structure (Minto pyramid):
 Max 180 words. No filler.`,
   },
   {
-    id: 'tpl-blog-outline',
-    title: 'Blog Post Outline',
+    id: "tpl-blog-outline",
+    title: "Blog Post Outline",
     description:
-      'Creates a clear outline with a hook, section goals and a conclusion for any topic and audience.',
+      "Creates a clear outline with a hook, section goals and a conclusion for any topic and audience.",
     category: CAT.writing,
     provider: MODEL.anthropic,
-    complexity: 'zero-shot',
-    tags: ['blog', 'outline', 'content'],
+    complexity: "zero-shot",
+    tags: ["blog", "outline", "content"],
     content: `Create a blog post outline about {{topic}} for {{audience}}.
 
 Tone: {{tone}}
@@ -225,14 +228,14 @@ Give: 3 title options, a one-line hook, 5-7 sections (each with its goal in one 
 and a conclusion with a call to action.`,
   },
   {
-    id: 'tpl-sql-debugger',
-    title: 'SQL Query & Schema Debugger',
+    id: "tpl-sql-debugger",
+    title: "SQL Query & Schema Debugger",
     description:
-      'Finds slow or unsafe queries, rewrites them for the given dialect, and suggests indexes.',
+      "Finds slow or unsafe queries, rewrites them for the given dialect, and suggests indexes.",
     category: CAT.data,
     provider: MODEL.google,
-    complexity: 'few-shot',
-    tags: ['sql', 'performance', 'indexes'],
+    complexity: "few-shot",
+    tags: ["sql", "performance", "indexes"],
     content: `You are a database performance engineer working with {{dialect}}.
 
 Schema:
@@ -248,14 +251,14 @@ Return:
 4. How to verify the improvement (what to look for in the query plan)`,
   },
   {
-    id: 'tpl-synthetic-data',
-    title: 'Synthetic Data & Edge-Case Generator',
+    id: "tpl-synthetic-data",
+    title: "Synthetic Data & Edge-Case Generator",
     description:
-      'Generates schema-valid JSON test records, including the edge cases that usually break parsers.',
+      "Generates schema-valid JSON test records, including the edge cases that usually break parsers.",
     category: CAT.data,
     provider: MODEL.google,
-    complexity: 'few-shot',
-    tags: ['json', 'testing', 'edge-cases'],
+    complexity: "few-shot",
+    tags: ["json", "testing", "edge-cases"],
     content: `Generate {{record_count}} test records that strictly follow this JSON schema:
 
 {{json_schema}}

@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { Template } from '@/features/templates/schemas';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import type { Template } from "@/features/templates/schemas";
 
 interface TemplateState {
   favoriteIds: string[];
@@ -22,13 +22,15 @@ export const useTemplateStore = create<TemplateState>()(
             : [...state.favoriteIds, id],
         })),
       importTemplates: (templates) =>
-        set((state) => ({ customTemplates: [...state.customTemplates, ...templates] })),
+        set((state) => ({
+          customTemplates: [...state.customTemplates, ...templates],
+        })),
       deleteCustomTemplate: (id) =>
         set((state) => ({
           customTemplates: state.customTemplates.filter((t) => t.id !== id),
           favoriteIds: state.favoriteIds.filter((x) => x !== id), // don't leave a dangling favorite
         })),
     }),
-    { name: 'promptlab-templates', version: 1 },
+    { name: "promptlab-templates", version: 1 },
   ),
 );

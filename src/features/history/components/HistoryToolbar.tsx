@@ -1,8 +1,13 @@
-import { LayoutList, Search, Table2, X } from 'lucide-react';
-import type { ChangeEvent } from 'react';
-import { useTranslation } from 'react-i18next';
-import { hasActiveFilters } from '../filterHistory';
-import type { HistoryFilters, HistoryKind, HistoryRange, HistoryView } from '../types';
+import { LayoutList, Search, Table2, X } from "lucide-react";
+import type { ChangeEvent } from "react";
+import { useTranslation } from "react-i18next";
+import { hasActiveFilters } from "../filterHistory";
+import type {
+  HistoryFilters,
+  HistoryKind,
+  HistoryRange,
+  HistoryView,
+} from "../types";
 
 interface PromptOption {
   id: string;
@@ -20,7 +25,7 @@ interface HistoryToolbarProps {
 }
 
 const selectClass =
-  'h-10 rounded-lg border border-border bg-card px-3 text-sm focus-visible:outline-2 focus-visible:outline-primary';
+  "h-10 rounded-lg border border-border bg-card px-3 text-sm focus-visible:outline-2 focus-visible:outline-primary";
 
 export function HistoryToolbar({
   filters,
@@ -34,22 +39,42 @@ export function HistoryToolbar({
   const { t } = useTranslation();
 
   const rangeOptions: { value: HistoryRange; label: string }[] = [
-    { value: 'all', label: t('history.toolbar.rangeAll') },
-    { value: '7d', label: t('history.toolbar.range7d') },
-    { value: '30d', label: t('history.toolbar.range30d') },
-    { value: '90d', label: t('history.toolbar.range90d') },
+    { value: "all", label: t("history.toolbar.rangeAll") },
+    { value: "7d", label: t("history.toolbar.range7d") },
+    { value: "30d", label: t("history.toolbar.range30d") },
+    { value: "90d", label: t("history.toolbar.range90d") },
   ];
 
   const pills: { kind: HistoryKind; label: string; dot: string }[] = [
-    { kind: 'all', label: t('history.toolbar.kindAll'), dot: 'bg-muted-foreground' },
-    { kind: 'edit', label: t('history.toolbar.kindEdit'), dot: 'bg-primary' },
-    { kind: 'rollback', label: t('history.toolbar.kindRollback'), dot: 'bg-red-500' },
-    { kind: 'initial', label: t('history.toolbar.kindInitial'), dot: 'bg-emerald-500' },
+    {
+      kind: "all",
+      label: t("history.toolbar.kindAll"),
+      dot: "bg-muted-foreground",
+    },
+    { kind: "edit", label: t("history.toolbar.kindEdit"), dot: "bg-primary" },
+    {
+      kind: "rollback",
+      label: t("history.toolbar.kindRollback"),
+      dot: "bg-red-500",
+    },
+    {
+      kind: "initial",
+      label: t("history.toolbar.kindInitial"),
+      dot: "bg-emerald-500",
+    },
   ];
 
   const viewButtons = [
-    { value: 'timeline' as const, label: t('history.toolbar.timeline'), icon: LayoutList },
-    { value: 'table' as const, label: t('history.toolbar.table'), icon: Table2 },
+    {
+      value: "timeline" as const,
+      label: t("history.toolbar.timeline"),
+      icon: LayoutList,
+    },
+    {
+      value: "table" as const,
+      label: t("history.toolbar.table"),
+      icon: Table2,
+    },
   ];
 
   return (
@@ -64,21 +89,23 @@ export function HistoryToolbar({
           <input
             type="search"
             value={filters.query}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => onChange({ query: e.target.value })}
-            placeholder={t('history.toolbar.searchPlaceholder')}
-            aria-label={t('history.toolbar.searchLabel')}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onChange({ query: e.target.value })
+            }
+            placeholder={t("history.toolbar.searchPlaceholder")}
+            aria-label={t("history.toolbar.searchLabel")}
             className="h-10 w-full rounded-lg border border-border bg-card ps-9 pe-3 text-sm placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-primary"
           />
         </div>
 
         {/* Dropdowns */}
         <select
-          aria-label={t('history.toolbar.promptLabel')}
+          aria-label={t("history.toolbar.promptLabel")}
           value={filters.promptId}
           onChange={(e) => onChange({ promptId: e.target.value })}
           className={`${selectClass} lg:max-w-56`}
         >
-          <option value="all">{t('history.toolbar.allPrompts')}</option>
+          <option value="all">{t("history.toolbar.allPrompts")}</option>
           {promptOptions.map((p) => (
             <option key={p.id} value={p.id}>
               {p.title}
@@ -87,7 +114,7 @@ export function HistoryToolbar({
         </select>
 
         <select
-          aria-label={t('history.toolbar.rangeLabel')}
+          aria-label={t("history.toolbar.rangeLabel")}
           value={filters.range}
           onChange={(e) => onChange({ range: e.target.value as HistoryRange })}
           className={selectClass}
@@ -103,7 +130,7 @@ export function HistoryToolbar({
         <div
           className="inline-flex rounded-lg border border-border bg-card p-1"
           role="group"
-          aria-label={t('history.toolbar.viewGroup')}
+          aria-label={t("history.toolbar.viewGroup")}
         >
           {viewButtons.map(({ value, label, icon: Icon }) => (
             <button
@@ -112,7 +139,9 @@ export function HistoryToolbar({
               aria-pressed={view === value}
               onClick={() => onViewChange(value)}
               className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-primary ${
-                view === value ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground'
+                view === value
+                  ? "bg-primary/15 text-primary"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Icon className="size-4" aria-hidden="true" />
@@ -123,7 +152,11 @@ export function HistoryToolbar({
       </div>
 
       {/* Filter pills */}
-      <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t('history.toolbar.kindGroup')}>
+      <div
+        className="flex flex-wrap items-center gap-2"
+        role="group"
+        aria-label={t("history.toolbar.kindGroup")}
+      >
         {pills.map(({ kind, label, dot }) => {
           const active = filters.kind === kind;
           return (
@@ -134,13 +167,18 @@ export function HistoryToolbar({
               onClick={() => onChange({ kind })}
               className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-primary ${
                 active
-                  ? 'border-primary/40 bg-primary/10 text-primary'
-                  : 'border-border bg-card text-muted-foreground hover:text-foreground'
+                  ? "border-primary/40 bg-primary/10 text-primary"
+                  : "border-border bg-card text-muted-foreground hover:text-foreground"
               }`}
             >
-              <span className={`size-2 rounded-full ${dot}`} aria-hidden="true" />
+              <span
+                className={`size-2 rounded-full ${dot}`}
+                aria-hidden="true"
+              />
               {label}
-              <span className="tabular-nums opacity-70">{kindCounts[kind]}</span>
+              <span className="tabular-nums opacity-70">
+                {kindCounts[kind]}
+              </span>
             </button>
           );
         })}
@@ -152,7 +190,7 @@ export function HistoryToolbar({
             className="ms-auto inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-primary"
           >
             <X className="size-3.5" aria-hidden="true" />
-            {t('history.toolbar.clear')}
+            {t("history.toolbar.clear")}
           </button>
         )}
       </div>

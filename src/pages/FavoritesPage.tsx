@@ -1,32 +1,38 @@
-import { Keyboard } from 'lucide-react';
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { Trans, useTranslation } from 'react-i18next';
-import { buildFavoriteStats } from '@/features/favorites/buildFavorites';
-import { FavoritesHeader } from '@/features/favorites/components/FavoritesHeader';
-import { FavoritesList } from '@/features/favorites/components/FavoritesList';
-import type { TemplateEntry } from '@/features/favorites/components/FavoriteParts';
-import { FavoritesSidebar } from '@/features/favorites/components/FavoritesSidebar';
-import { FavoritesStats } from '@/features/favorites/components/FavoritesStats';
-import { FavoritesToolbar } from '@/features/favorites/components/FavoritesToolbar';
-import { FAVORITES_PAGE_SIZE } from '@/features/favorites/constants';
+import { Keyboard } from "lucide-react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import gsap from "gsap";
+import { Trans, useTranslation } from "react-i18next";
+import { buildFavoriteStats } from "@/features/favorites/buildFavorites";
+import { FavoritesHeader } from "@/features/favorites/components/FavoritesHeader";
+import { FavoritesList } from "@/features/favorites/components/FavoritesList";
+import type { TemplateEntry } from "@/features/favorites/components/FavoriteParts";
+import { FavoritesSidebar } from "@/features/favorites/components/FavoritesSidebar";
+import { FavoritesStats } from "@/features/favorites/components/FavoritesStats";
+import { FavoritesToolbar } from "@/features/favorites/components/FavoritesToolbar";
+import { FAVORITES_PAGE_SIZE } from "@/features/favorites/constants";
 import {
   DEFAULT_FAVORITE_FILTERS,
   countByTab,
   filterFavorites,
-} from '@/features/favorites/filterFavorites';
-import { useFavoriteEntries } from '@/features/favorites/hooks/useFavoriteEntries';
-import { buildFolderCounts, buildTopVariables } from '@/features/favorites/sidebarData';
-import type { FavoriteEntry, FavoriteFilters } from '@/features/favorites/types';
-import { ListPagination } from '@/components/common/ListPagination';
-import { paginate } from '@/features/history/paginate';
-import { TemplatePreviewDialog } from '@/features/templates/components/TemplatePreviewDialog';
-import { useUseTemplate } from '@/features/templates/hooks/useUseTemplate';
-import type { Template } from '@/features/templates/schemas';
-import type { TemplateListItem } from '@/features/templates/types';
-import { useFavoritesViewStore } from '@/stores/favoritesViewStore';
-import { usePromptStore } from '@/stores/promptStore';
-import { useTemplateStore } from '@/stores/templateStore';
+} from "@/features/favorites/filterFavorites";
+import { useFavoriteEntries } from "@/features/favorites/hooks/useFavoriteEntries";
+import {
+  buildFolderCounts,
+  buildTopVariables,
+} from "@/features/favorites/sidebarData";
+import type {
+  FavoriteEntry,
+  FavoriteFilters,
+} from "@/features/favorites/types";
+import { ListPagination } from "@/components/common/ListPagination";
+import { paginate } from "@/features/history/paginate";
+import { TemplatePreviewDialog } from "@/features/templates/components/TemplatePreviewDialog";
+import { useUseTemplate } from "@/features/templates/hooks/useUseTemplate";
+import type { Template } from "@/features/templates/schemas";
+import type { TemplateListItem } from "@/features/templates/types";
+import { useFavoritesViewStore } from "@/stores/favoritesViewStore";
+import { usePromptStore } from "@/stores/promptStore";
+import { useTemplateStore } from "@/stores/templateStore";
 
 interface Notice {
   text: string;
@@ -38,7 +44,9 @@ export default function FavoritesPage() {
   const rootRef = useRef<HTMLDivElement>(null);
   const entries = useFavoriteEntries();
 
-  const [filters, setFilters] = useState<FavoriteFilters>(DEFAULT_FAVORITE_FILTERS);
+  const [filters, setFilters] = useState<FavoriteFilters>(
+    DEFAULT_FAVORITE_FILTERS,
+  );
   const [page, setPage] = useState(1);
   const [preview, setPreview] = useState<TemplateListItem | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
@@ -51,12 +59,24 @@ export default function FavoritesPage() {
   const startFromTemplate = useUseTemplate();
 
   const stats = useMemo(() => buildFavoriteStats(entries), [entries]);
-  const visible = useMemo(() => filterFavorites(entries, filters), [entries, filters]);
-  const counts = useMemo(() => countByTab(entries, filters), [entries, filters]);
-  const pageResult = useMemo(() => paginate(visible, page, FAVORITES_PAGE_SIZE), [visible, page]);
+  const visible = useMemo(
+    () => filterFavorites(entries, filters),
+    [entries, filters],
+  );
+  const counts = useMemo(
+    () => countByTab(entries, filters),
+    [entries, filters],
+  );
+  const pageResult = useMemo(
+    () => paginate(visible, page, FAVORITES_PAGE_SIZE),
+    [visible, page],
+  );
 
   // Sidebar describes ALL favorites (not the filtered ones), so choices never vanish
-  const folderCounts = useMemo(() => buildFolderCounts(entries, folders), [entries, folders]);
+  const folderCounts = useMemo(
+    () => buildFolderCounts(entries, folders),
+    [entries, folders],
+  );
   const topVariables = useMemo(() => buildTopVariables(entries), [entries]);
 
   const handleChange = useCallback((patch: Partial<FavoriteFilters>) => {
@@ -69,7 +89,10 @@ export default function FavoritesPage() {
   }, []);
 
   const flip = useCallback(
-    (entry: FavoriteEntry) => (entry.kind === 'prompt' ? togglePrompt(entry.id) : toggleTemplate(entry.id)),
+    (entry: FavoriteEntry) =>
+      entry.kind === "prompt"
+        ? togglePrompt(entry.id)
+        : toggleTemplate(entry.id),
     [togglePrompt, toggleTemplate],
   );
 
@@ -77,7 +100,10 @@ export default function FavoritesPage() {
   const handleToggle = useCallback(
     (entry: FavoriteEntry) => {
       flip(entry);
-      setNotice({ text: t('favorites.page.removed', { title: entry.title }), undoEntry: entry });
+      setNotice({
+        text: t("favorites.page.removed", { title: entry.title }),
+        undoEntry: entry,
+      });
     },
     [flip, t],
   );
@@ -97,19 +123,30 @@ export default function FavoritesPage() {
   );
 
   const handlePreview = useCallback((entry: TemplateEntry) => {
-    setPreview({ template: entry.template, variables: entry.variables, tokens: entry.tokens });
+    setPreview({
+      template: entry.template,
+      variables: entry.variables,
+      tokens: entry.tokens,
+    });
   }, []);
 
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '[data-enter]',
+        "[data-enter]",
         { y: 16, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: 'power2.out', clearProps: 'transform,opacity' },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+          clearProps: "transform,opacity",
+        },
       );
     }, root);
     return () => ctx.revert();
@@ -139,7 +176,7 @@ export default function FavoritesPage() {
             onClick={handleUndo}
             className="rounded-md px-2 py-0.5 font-semibold underline underline-offset-4 hover:no-underline focus-visible:outline-2 focus-visible:outline-primary"
           >
-            {t('favorites.page.undo')}
+            {t("favorites.page.undo")}
           </button>
         </p>
       )}
@@ -148,7 +185,9 @@ export default function FavoritesPage() {
         <div className="space-y-6 xl:col-span-9">
           {visible.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-              {entries.length === 0 ? t('favorites.page.emptyAll') : t('favorites.page.noMatch')}
+              {entries.length === 0
+                ? t("favorites.page.emptyAll")
+                : t("favorites.page.noMatch")}
             </div>
           ) : (
             <>
@@ -159,7 +198,11 @@ export default function FavoritesPage() {
                 onUse={handleUse}
                 onPreview={handlePreview}
               />
-              <ListPagination result={pageResult} onPageChange={setPage} noun={t('favorites.page.noun')} />
+              <ListPagination
+                result={pageResult}
+                onPageChange={setPage}
+                noun={t("favorites.page.noun")}
+              />
             </>
           )}
         </div>
@@ -175,12 +218,17 @@ export default function FavoritesPage() {
       </div>
 
       <p className="flex items-center justify-center gap-2 rounded-xl bg-card/60 px-4 py-2 text-center text-sm text-muted-foreground">
-        <Keyboard className="size-4 shrink-0 text-pink-500" aria-hidden="true" />
+        <Keyboard
+          className="size-4 shrink-0 text-pink-500"
+          aria-hidden="true"
+        />
         <span>
           <Trans
             i18nKey="favorites.page.tip"
             components={{
-              kbd: <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground" />,
+              kbd: (
+                <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground" />
+              ),
             }}
           />
         </span>

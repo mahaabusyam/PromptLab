@@ -1,18 +1,18 @@
-import type { ReactNode } from 'react'
-import type { LucideIcon } from 'lucide-react'
+import type { ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 
 interface StatCardProps {
-  label: string
-  icon: LucideIcon
-  iconClassName?: string
-  iconFilled?: boolean
-  children: ReactNode
+  label: string;
+  icon: LucideIcon;
+  iconClassName?: string;
+  iconFilled?: boolean;
+  children: ReactNode;
 }
 
 export function StatCard({
   label,
   icon: Icon,
-  iconClassName = 'text-primary',
+  iconClassName = "text-primary",
   iconFilled = false,
   children,
 }: StatCardProps) {
@@ -28,10 +28,13 @@ export function StatCard({
         <div
           className={`grid size-8 place-items-center rounded-lg bg-surface-container-high transition-transform group-hover:scale-110 ${iconClassName}`}
         >
-          <Icon className="size-[18px]" fill={iconFilled ? 'currentColor' : 'none'} />
+          <Icon
+            className="size-[18px]"
+            fill={iconFilled ? "currentColor" : "none"}
+          />
         </div>
       </div>
       {children}
     </div>
-  )
+  );
 }

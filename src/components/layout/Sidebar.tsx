@@ -1,42 +1,42 @@
-import { useLayoutEffect, useRef } from 'react'
-import { NavLink } from 'react-router-dom'
-import { ChevronsUpDown, PanelLeft, Sparkles } from 'lucide-react'
-import { gsap } from '@/utils/gsap'
-import { IconButton } from '@/components/common/IconButton'
-import { navItems } from './nav'
-import { useSettingsStore } from '@/stores/settingsStore'
-import { usePromptStore } from '@/stores/promptStore'
-import { useTranslation } from 'react-i18next'
+import { useLayoutEffect, useRef } from "react";
+import { NavLink } from "react-router-dom";
+import { ChevronsUpDown, PanelLeft, Sparkles } from "lucide-react";
+import { gsap } from "@/utils/gsap";
+import { IconButton } from "@/components/common/IconButton";
+import { navItems } from "./nav";
+import { useSettingsStore } from "@/stores/settingsStore";
+import { usePromptStore } from "@/stores/promptStore";
+import { useTranslation } from "react-i18next";
 
 interface SidebarProps {
-  open: boolean
-  onClose: () => void
+  open: boolean;
+  onClose: () => void;
 }
 
 export function Sidebar({ open, onClose }: SidebarProps) {
-  const { t } = useTranslation()
-  const ref = useRef<HTMLElement>(null)
+  const { t } = useTranslation();
+  const ref = useRef<HTMLElement>(null);
 
-  const workspaceName = useSettingsStore((s) => s.settings.workspaceName)
-  const promptCount = usePromptStore((s) => s.prompts.length)
+  const workspaceName = useSettingsStore((s) => s.settings.workspaceName);
+  const promptCount = usePromptStore((s) => s.prompts.length);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '[data-nav-item]',
-        { opacity: 0, x: document.documentElement.dir === 'rtl' ? 16 : -16 },
+        "[data-nav-item]",
+        { opacity: 0, x: document.documentElement.dir === "rtl" ? 16 : -16 },
         {
           opacity: 1,
           x: 0,
           duration: 0.5,
           stagger: 0.05,
-          ease: 'power3.out',
+          ease: "power3.out",
         },
-      )
-    }, ref)
+      );
+    }, ref);
 
-    return () => ctx.revert()
-  }, [])
+    return () => ctx.revert();
+  }, []);
 
   return (
     <>
@@ -51,7 +51,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       <aside
         ref={ref}
         className={`fixed start-0 top-0 z-50 flex h-full w-64 flex-col justify-between bg-surface-container-lowest/90 shadow-[0_1px_8px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-transform duration-300 ${
-          open ? 'translate-x-0' : '-translate-x-full rtl:translate-x-full'
+          open ? "translate-x-0" : "-translate-x-full rtl:translate-x-full"
         }`}
       >
         <div className="flex flex-col">
@@ -70,32 +70,32 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               </span>
             </div>
 
-            <IconButton aria-label={t('sidebar.collapse')} onClick={onClose}>
+            <IconButton aria-label={t("sidebar.collapse")} onClick={onClose}>
               <PanelLeft className="size-[18px] rtl:-scale-x-100" />
             </IconButton>
           </div>
 
           <div className="px-space-md pt-space-xs">
             <span className="px-space-xs text-label-sm uppercase tracking-wider text-outline">
-              {t('sidebar.platform')}
+              {t("sidebar.platform")}
             </span>
           </div>
 
           <nav
             className="mt-space-xs flex flex-col gap-1 px-space-md"
-            aria-label={t('sidebar.mainNav')}
+            aria-label={t("sidebar.mainNav")}
           >
             {navItems.map(({ labelKey, to, icon: Icon }) => (
               <NavLink
                 key={to}
                 to={to}
-                end={to === '/'}
+                end={to === "/"}
                 data-nav-item
                 className={({ isActive }) =>
                   `group flex items-center gap-space-sm rounded-xl px-space-sm py-2 transition-colors ${
                     isActive
-                      ? 'bg-secondary-container font-semibold text-on-secondary-container shadow-[0_0_16px_rgba(87,27,193,0.35)]'
-                      : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
+                      ? "bg-secondary-container font-semibold text-on-secondary-container shadow-[0_0_16px_rgba(87,27,193,0.35)]"
+                      : "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"
                   }`
                 }
               >
@@ -122,7 +122,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 </span>
 
                 <span className="truncate text-label-sm text-on-surface-variant">
-                  {t('sidebar.promptCount', { total: promptCount })}
+                  {t("sidebar.promptCount", { total: promptCount })}
                 </span>
               </span>
             </span>
@@ -132,5 +132,5 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </div>
       </aside>
     </>
-  )
+  );
 }

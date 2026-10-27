@@ -1,14 +1,19 @@
-import type { LucideIcon } from 'lucide-react'
-import type { ReactNode } from 'react'
+import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 
 interface EditorCardProps {
-  icon: LucideIcon
-  title: string
-  action?: ReactNode
-  children: ReactNode
+  icon: LucideIcon;
+  title: string;
+  action?: ReactNode;
+  children: ReactNode;
 }
 
-export function EditorCard({ icon: Icon, title, action, children }: EditorCardProps) {
+export function EditorCard({
+  icon: Icon,
+  title,
+  action,
+  children,
+}: EditorCardProps) {
   return (
     <section
       data-reveal
@@ -19,11 +24,13 @@ export function EditorCard({ icon: Icon, title, action, children }: EditorCardPr
           <div className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-secondary-container">
             <Icon aria-hidden className="size-4 text-primary" />
           </div>
-          <h2 className="truncate font-headline-sm text-headline-sm text-on-surface">{title}</h2>
+          <h2 className="truncate font-headline-sm text-headline-sm text-on-surface">
+            {title}
+          </h2>
         </div>
         {action}
       </div>
       {children}
     </section>
-  )
+  );
 }

@@ -1,1 +1,1 @@
-export * from '@/utils/paginate'
+export * from "@/utils/paginate";

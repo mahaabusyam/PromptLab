@@ -1,16 +1,19 @@
-import type { z } from 'zod';
-import type { modelProviderSchema, promptCategorySchema } from '@/features/prompts/schemas';
-import type { Template, TemplateComplexity } from './schemas';
+import type { z } from "zod";
+import type {
+  modelProviderSchema,
+  promptCategorySchema,
+} from "@/features/prompts/schemas";
+import type { Template, TemplateComplexity } from "./schemas";
 
 export type TemplateCategory = z.infer<typeof promptCategorySchema>;
 export type TemplateProvider = z.infer<typeof modelProviderSchema>;
-export type TemplateSort = 'featured' | 'name' | 'tokens' | 'variables';
+export type TemplateSort = "featured" | "name" | "tokens" | "variables";
 
 export interface TemplateFilters {
   query: string;
-  category: TemplateCategory | 'all';
-  provider: TemplateProvider | 'all';
-  complexity: TemplateComplexity | 'all';
+  category: TemplateCategory | "all";
+  provider: TemplateProvider | "all";
+  complexity: TemplateComplexity | "all";
   sort: TemplateSort;
 }
 

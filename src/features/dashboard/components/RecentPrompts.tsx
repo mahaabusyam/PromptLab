@@ -1,18 +1,18 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Braces } from 'lucide-react'
-import { usePromptStore } from '@/stores/promptStore'
-import { useScrollReveal } from '@/hooks/useScrollReveal'
-import { ScrollTrigger } from '@/utils/gsap'
-import type { PromptFilter } from '../types'
-import { RecentPromptCard } from './RecentPromptCard'
-import { useTranslation } from 'react-i18next'
+import { useEffect, useMemo, useState } from "react";
+import { Braces } from "lucide-react";
+import { usePromptStore } from "@/stores/promptStore";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { ScrollTrigger } from "@/utils/gsap";
+import type { PromptFilter } from "../types";
+import { RecentPromptCard } from "./RecentPromptCard";
+import { useTranslation } from "react-i18next";
 
 export function RecentPrompts() {
-  const { t } = useTranslation()
-  const ref = useScrollReveal<HTMLElement>()
-  const prompts = usePromptStore((s) => s.prompts)
-  const toggleFavorite = usePromptStore((s) => s.toggleFavorite)
-  const [filter, setFilter] = useState<PromptFilter>('all')
+  const { t } = useTranslation();
+  const ref = useScrollReveal<HTMLElement>();
+  const prompts = usePromptStore((s) => s.prompts);
+  const toggleFavorite = usePromptStore((s) => s.toggleFavorite);
+  const [filter, setFilter] = useState<PromptFilter>("all");
 
   // آخر 4 Prompts تعدّلت. نصوص التاريخ ISO بتترتب صح كنص عادي
   const recent = useMemo(
@@ -22,24 +22,28 @@ export function RecentPrompts() {
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
         .slice(0, 4),
     [prompts],
-  )
+  );
 
   const visible = useMemo(
-    () => (filter === 'all' ? recent : recent.filter((p) => p.status === filter)),
+    () =>
+      filter === "all" ? recent : recent.filter((p) => p.status === filter),
     [recent, filter],
-  )
+  );
 
   // ارتفاع القسم بيتغير لما نفلتر، فنخلي ScrollTrigger يعيد حساب مواقع الأقسام اللي تحته
   useEffect(() => {
-    ScrollTrigger.refresh()
-  }, [filter])
+    ScrollTrigger.refresh();
+  }, [filter]);
 
-    const tabs: { id: PromptFilter; label: string }[] = [
-    { id: 'all', label: t('dashboard.recent.tabs.all', { total: recent.length }) },
-    { id: 'production', label: t('dashboard.recent.tabs.production') },
-    { id: 'testing', label: t('dashboard.recent.tabs.testing') },
-    { id: 'draft', label: t('dashboard.recent.tabs.drafts') },
-  ]
+  const tabs: { id: PromptFilter; label: string }[] = [
+    {
+      id: "all",
+      label: t("dashboard.recent.tabs.all", { total: recent.length }),
+    },
+    { id: "production", label: t("dashboard.recent.tabs.production") },
+    { id: "testing", label: t("dashboard.recent.tabs.testing") },
+    { id: "draft", label: t("dashboard.recent.tabs.drafts") },
+  ];
 
   return (
     <section
@@ -54,19 +58,21 @@ export function RecentPrompts() {
           <Braces className="size-[22px] text-primary" />
           <div>
             <h2 className="font-headline-sm text-headline-sm tracking-tight text-on-surface">
-              {t('dashboard.recent.title')}
+              {t("dashboard.recent.title")}
             </h2>
-            <p className="text-body-sm text-outline">{t('dashboard.recent.subtitle')}</p>
+            <p className="text-body-sm text-outline">
+              {t("dashboard.recent.subtitle")}
+            </p>
           </div>
         </div>
 
         <div
           role="tablist"
-          aria-label={t('dashboard.recent.filterLabel')}
+          aria-label={t("dashboard.recent.filterLabel")}
           className="inline-flex self-start rounded-xl bg-surface-container-lowest p-1 sm:self-auto"
         >
           {tabs.map((tab) => {
-            const active = filter === tab.id
+            const active = filter === tab.id;
             return (
               <button
                 key={tab.id}
@@ -76,28 +82,32 @@ export function RecentPrompts() {
                 onClick={() => setFilter(tab.id)}
                 className={`rounded-lg px-3 py-1 text-label-md transition-colors ${
                   active
-                    ? 'bg-surface-container-high text-on-surface shadow-sm'
-                    : 'text-outline hover:text-on-surface'
+                    ? "bg-surface-container-high text-on-surface shadow-sm"
+                    : "text-outline hover:text-on-surface"
                 }`}
               >
                 {tab.label}
               </button>
-            )
+            );
           })}
         </div>
       </div>
 
       {visible.length === 0 ? (
         <div className="rounded-lg bg-surface-container-lowest px-space-md py-space-xl text-center text-body-sm text-outline">
-          {t('dashboard.recent.empty')}
+          {t("dashboard.recent.empty")}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-space-md md:grid-cols-2">
           {visible.map((p) => (
-            <RecentPromptCard key={p.id} prompt={p} onToggleFavorite={toggleFavorite} />
+            <RecentPromptCard
+              key={p.id}
+              prompt={p}
+              onToggleFavorite={toggleFavorite}
+            />
           ))}
         </div>
       )}
     </section>
-  )
+  );
 }

@@ -9,7 +9,11 @@ export interface PageResult<T> {
   total: number;
 }
 
-export function paginate<T>(items: T[], page: number, size: number = HISTORY_PAGE_SIZE): PageResult<T> {
+export function paginate<T>(
+  items: T[],
+  page: number,
+  size: number = HISTORY_PAGE_SIZE,
+): PageResult<T> {
   const totalPages = Math.max(1, Math.ceil(items.length / size));
   const current = Math.min(Math.max(1, page), totalPages);
   const start = (current - 1) * size;
@@ -24,9 +28,14 @@ export function paginate<T>(items: T[], page: number, size: number = HISTORY_PAG
 }
 
 /** Page numbers to render; `null` means an ellipsis gap. e.g. [1, null, 4, 5, 6, null, 20] */
-export function getPageNumbers(current: number, total: number): (number | null)[] {
+export function getPageNumbers(
+  current: number,
+  total: number,
+): (number | null)[] {
   const wanted = new Set([1, total, current - 1, current, current + 1]);
-  const pages = [...wanted].filter((n) => n >= 1 && n <= total).sort((a, b) => a - b);
+  const pages = [...wanted]
+    .filter((n) => n >= 1 && n <= total)
+    .sort((a, b) => a - b);
 
   const result: (number | null)[] = [];
   pages.forEach((n, i) => {

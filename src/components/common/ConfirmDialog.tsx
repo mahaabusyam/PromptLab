@@ -1,24 +1,24 @@
-import { useId } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Modal } from './Modal'
+import { useId } from "react";
+import { useTranslation } from "react-i18next";
+import { Modal } from "./Modal";
 
-export type ConfirmTone = 'danger' | 'primary'
+export type ConfirmTone = "danger" | "primary";
 
 interface ConfirmDialogProps {
-  title: string
-  description: string
-  confirmLabel: string
-  onConfirm: () => void
-  onCancel: () => void
+  title: string;
+  description: string;
+  confirmLabel: string;
+  onConfirm: () => void;
+  onCancel: () => void;
   /** danger = destructive action (delete, replace). primary = safe action (restore). Default: danger. */
-  tone?: ConfirmTone
+  tone?: ConfirmTone;
 }
 
 // Full literal class names so Tailwind can see them (never build class names dynamically)
 const confirmStyles: Record<ConfirmTone, string> = {
-  danger: 'bg-error text-on-error',
-  primary: 'bg-primary text-primary-foreground',
-}
+  danger: "bg-error text-on-error",
+  primary: "bg-primary text-primary-foreground",
+};
 
 export function ConfirmDialog({
   title,
@@ -26,10 +26,10 @@ export function ConfirmDialog({
   confirmLabel,
   onConfirm,
   onCancel,
-  tone = 'danger',
+  tone = "danger",
 }: ConfirmDialogProps) {
-  const { t } = useTranslation()
-  const titleId = useId() // unique id, so two dialogs can never share the same aria-labelledby
+  const { t } = useTranslation();
+  const titleId = useId(); // unique id, so two dialogs can never share the same aria-labelledby
 
   return (
     <Modal labelledBy={titleId} onClose={onCancel}>
@@ -45,7 +45,7 @@ export function ConfirmDialog({
             onClick={onCancel}
             className="rounded-xl bg-surface-container-highest px-3.5 py-2 text-label-md transition-colors hover:bg-surface-variant"
           >
-            {t('common.cancel')}
+            {t("common.cancel")}
           </button>
           <button
             type="button"
@@ -57,5 +57,5 @@ export function ConfirmDialog({
         </div>
       </div>
     </Modal>
-  )
+  );
 }

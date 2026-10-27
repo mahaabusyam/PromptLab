@@ -1,7 +1,14 @@
-import { z } from 'zod';
-import { modelProviderSchema, promptCategorySchema } from '@/features/prompts/schemas';
+import { z } from "zod";
+import {
+  modelProviderSchema,
+  promptCategorySchema,
+} from "@/features/prompts/schemas";
 
-export const templateComplexitySchema = z.enum(['zero-shot', 'few-shot', 'multi-agent']);
+export const templateComplexitySchema = z.enum([
+  "zero-shot",
+  "few-shot",
+  "multi-agent",
+]);
 
 export const templateSchema = z.object({
   id: z.string().min(1),

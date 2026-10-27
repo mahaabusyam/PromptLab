@@ -24,9 +24,9 @@ export interface HistoryStats {
   avgDaily: number;
   commitsTrend: number | null; // % vs previous 30 days, null if no baseline
 }
-export type HistoryKind = 'all' | 'edit' | 'rollback' | 'initial';
-export type HistoryRange = '7d' | '30d' | '90d' | 'all';
-export type HistoryView = 'timeline' | 'table';
+export type HistoryKind = "all" | "edit" | "rollback" | "initial";
+export type HistoryRange = "7d" | "30d" | "90d" | "all";
+export type HistoryView = "timeline" | "table";
 
 export interface HistoryFilters {
   query: string;

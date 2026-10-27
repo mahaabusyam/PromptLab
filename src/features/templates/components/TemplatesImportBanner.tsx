@@ -1,6 +1,6 @@
-import { Puzzle, Upload } from 'lucide-react';
-import { useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Puzzle, Upload } from "lucide-react";
+import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 interface TemplatesImportBannerProps {
   onFile: (file: File) => void;
@@ -16,11 +16,16 @@ export function TemplatesImportBanner({ onFile }: TemplatesImportBannerProps) {
       className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-border bg-card p-6 md:flex-row md:items-center"
     >
       <div className="space-y-1">
-        <h2 id="import-title" className="flex items-center gap-2 font-heading text-lg font-semibold">
+        <h2
+          id="import-title"
+          className="flex items-center gap-2 font-heading text-lg font-semibold"
+        >
           <Puzzle className="size-5 text-primary" aria-hidden="true" />
-          {t('templates.banner.title')}
+          {t("templates.banner.title")}
         </h2>
-        <p className="text-sm text-muted-foreground">{t('templates.banner.body')}</p>
+        <p className="text-sm text-muted-foreground">
+          {t("templates.banner.body")}
+        </p>
       </div>
 
       <div>
@@ -30,11 +35,11 @@ export function TemplatesImportBanner({ onFile }: TemplatesImportBannerProps) {
           accept="application/json,.json"
           className="sr-only"
           tabIndex={-1}
-          aria-label={t('templates.banner.fileLabel')}
+          aria-label={t("templates.banner.fileLabel")}
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) onFile(file);
-            e.target.value = ''; // allows choosing the same file again
+            e.target.value = ""; // allows choosing the same file again
           }}
         />
         <button
@@ -43,7 +48,7 @@ export function TemplatesImportBanner({ onFile }: TemplatesImportBannerProps) {
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <Upload className="size-4" aria-hidden="true" />
-          {t('templates.banner.button')}
+          {t("templates.banner.button")}
         </button>
       </div>
     </section>

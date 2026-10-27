@@ -1,1 +1,1 @@
-export { ConfirmDialog as HistoryConfirmDialog } from '@/components/common/ConfirmDialog'
+export { ConfirmDialog as HistoryConfirmDialog } from "@/components/common/ConfirmDialog";

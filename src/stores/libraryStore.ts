@@ -1,35 +1,35 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import type { LibraryFilters, ViewMode } from '@/features/library/types'
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import type { LibraryFilters, ViewMode } from "@/features/library/types";
 
 const defaultFilters: LibraryFilters = {
-  search: '',
-  sort: 'updated',
-  model: 'all',
+  search: "",
+  sort: "updated",
+  model: "all",
   tag: null,
-  category: 'all',
-  scope: { kind: 'all' },
-}
+  category: "all",
+  scope: { kind: "all" },
+};
 
 interface LibraryState extends LibraryFilters {
-  viewMode: ViewMode
-  page: number
-  setSearch: (value: string) => void
-  setSort: (value: LibraryFilters['sort']) => void
-  setModel: (value: LibraryFilters['model']) => void
-  setTag: (value: LibraryFilters['tag']) => void
-  setCategory: (value: LibraryFilters['category']) => void
-  setScope: (value: LibraryFilters['scope']) => void
-  setViewMode: (value: ViewMode) => void
-  setPage: (value: number) => void
-  resetFilters: () => void
+  viewMode: ViewMode;
+  page: number;
+  setSearch: (value: string) => void;
+  setSort: (value: LibraryFilters["sort"]) => void;
+  setModel: (value: LibraryFilters["model"]) => void;
+  setTag: (value: LibraryFilters["tag"]) => void;
+  setCategory: (value: LibraryFilters["category"]) => void;
+  setScope: (value: LibraryFilters["scope"]) => void;
+  setViewMode: (value: ViewMode) => void;
+  setPage: (value: number) => void;
+  resetFilters: () => void;
 }
 
 export const useLibraryStore = create<LibraryState>()(
   persist(
     (set) => ({
       ...defaultFilters,
-      viewMode: 'grid',
+      viewMode: "grid",
       page: 1,
       // أي تغيير بالفلاتر بيرجّعنا للصفحة 1، وإلا ممكن نضل واقفين على صفحة صارت فاضية
       setSearch: (search) => set({ search, page: 1 }),
@@ -43,10 +43,10 @@ export const useLibraryStore = create<LibraryState>()(
       resetFilters: () => set({ ...defaultFilters, page: 1 }),
     }),
     {
-      name: 'promptlab-library',
+      name: "promptlab-library",
       version: 1,
       // بنحفظ بس شكل العرض (Grid/List). البحث والفلاتر بتبدأ نظيفة كل مرة
       partialize: (state) => ({ viewMode: state.viewMode }),
     },
   ),
-)
+);

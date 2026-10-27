@@ -1,14 +1,14 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import 'lenis/dist/lenis.css'
-import './index.css'
-import App from './App'
-import { Providers } from '@/app/providers'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "lenis/dist/lenis.css";
+import "./index.css";
+import App from "./App";
+import { Providers } from "@/app/providers";
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Providers>
       <App />
     </Providers>
   </StrictMode>,
-)
+);

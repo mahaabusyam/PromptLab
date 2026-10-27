@@ -1,11 +1,11 @@
-import { format } from 'date-fns';
-import type { TFunction } from 'i18next';
-import { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { downloadJson } from '@/features/prompts/services/importExport';
-import { usePromptStore } from '@/stores/promptStore';
-import { useSettingsStore } from '@/stores/settingsStore';
-import { useTemplateStore } from '@/stores/templateStore';
+import { format } from "date-fns";
+import type { TFunction } from "i18next";
+import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { downloadJson } from "@/features/prompts/services/importExport";
+import { usePromptStore } from "@/stores/promptStore";
+import { useSettingsStore } from "@/stores/settingsStore";
+import { useTemplateStore } from "@/stores/templateStore";
 import {
   MAX_BACKUP_BYTES,
   buildBackup,
@@ -14,12 +14,12 @@ import {
   summarizeBackup,
   type BackupFile,
   type ParseBackupResult,
-} from '../backup';
+} from "../backup";
 
-export type ImportMode = 'merge' | 'replace';
+export type ImportMode = "merge" | "replace";
 
 export interface BackupStatus {
-  type: 'success' | 'error';
+  type: "success" | "error";
   message: string;
 }
 
@@ -34,16 +34,19 @@ type BackupFailure = Extract<ParseBackupResult, { ok: false }>;
 /** Turns a parse failure (a code from the service) into a translated message. */
 function describeFailure(failure: BackupFailure, t: TFunction): string {
   switch (failure.code) {
-    case 'too_large':
-      return t('settings.backup.errTooLarge');
-    case 'invalid_json':
-      return t('settings.backup.errInvalidJson');
-    case 'checksum':
-      return t('settings.backup.errChecksum');
-    case 'invalid_backup':
+    case "too_large":
+      return t("settings.backup.errTooLarge");
+    case "invalid_json":
+      return t("settings.backup.errInvalidJson");
+    case "checksum":
+      return t("settings.backup.errChecksum");
+    case "invalid_backup":
       return failure.where && failure.detail
-        ? t('settings.backup.errInvalidBackupAt', { where: failure.where, detail: failure.detail })
-        : t('settings.backup.errInvalidBackup');
+        ? t("settings.backup.errInvalidBackupAt", {
+            where: failure.where,
+            detail: failure.detail,
+          })
+        : t("settings.backup.errInvalidBackup");
   }
 }
 
@@ -67,10 +70,13 @@ export function useBackup() {
       favoriteTemplateIds: favoriteIds,
       settings,
     });
-    downloadJson(file, `promptlab-backup-${format(new Date(), 'yyyy-MM-dd')}.json`);
+    downloadJson(
+      file,
+      `promptlab-backup-${format(new Date(), "yyyy-MM-dd")}.json`,
+    );
     setStatus({
-      type: 'success',
-      message: t('settings.backup.exported', {
+      type: "success",
+      message: t("settings.backup.exported", {
         prompts: prompts.length,
         templates: customTemplates.length,
       }),
@@ -82,17 +88,21 @@ export function useBackup() {
     async (file: File) => {
       if (file.size > MAX_BACKUP_BYTES) {
         setPending(null);
-        setStatus({ type: 'error', message: t('settings.backup.errTooLarge') });
+        setStatus({ type: "error", message: t("settings.backup.errTooLarge") });
         return;
       }
       const result = await parseBackup(await file.text());
       if (!result.ok) {
         setPending(null);
-        setStatus({ type: 'error', message: describeFailure(result, t) });
+        setStatus({ type: "error", message: describeFailure(result, t) });
         return;
       }
       setStatus(null);
-      setPending({ fileName: file.name, file: result.file, summary: summarizeBackup(result.file.data) });
+      setPending({
+        fileName: file.name,
+        file: result.file,
+        summary: summarizeBackup(result.file.data),
+      });
     },
     [t],
   );
@@ -106,7 +116,7 @@ export function useBackup() {
       importData({ prompts: data.prompts, folders: data.folders }, mode);
 
       const templates = useTemplateStore.getState();
-      if (mode === 'replace') {
+      if (mode === "replace") {
         useTemplateStore.setState({
           customTemplates: data.customTemplates,
           favoriteIds: data.favoriteTemplateIds,
@@ -114,17 +124,27 @@ export function useBackup() {
         useSettingsStore.getState().replace(data.settings);
       } else {
         useTemplateStore.setState({
-          customTemplates: mergeById(templates.customTemplates, data.customTemplates).items,
-          favoriteIds: [...new Set([...templates.favoriteIds, ...data.favoriteTemplateIds])],
+          customTemplates: mergeById(
+            templates.customTemplates,
+            data.customTemplates,
+          ).items,
+          favoriteIds: [
+            ...new Set([...templates.favoriteIds, ...data.favoriteTemplateIds]),
+          ],
         });
       }
 
       setStatus({
-        type: 'success',
-        message: t(mode === 'replace' ? 'settings.backup.restored' : 'settings.backup.merged', {
-          prompts: pending.summary.prompts,
-          name: pending.fileName,
-        }),
+        type: "success",
+        message: t(
+          mode === "replace"
+            ? "settings.backup.restored"
+            : "settings.backup.merged",
+          {
+            prompts: pending.summary.prompts,
+            name: pending.fileName,
+          },
+        ),
       });
       setPending(null);
     },
@@ -133,5 +153,12 @@ export function useBackup() {
 
   const cancelPending = useCallback(() => setPending(null), []);
 
-  return { status, pending, exportBackup, stageFile, applyPending, cancelPending };
+  return {
+    status,
+    pending,
+    exportBackup,
+    stageFile,
+    applyPending,
+    cancelPending,
+  };
 }

@@ -1,7 +1,7 @@
-import { FolderOpen } from 'lucide-react';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import type { FolderCount, VariableCount } from '../sidebarData';
+import { FolderOpen } from "lucide-react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import type { FolderCount, VariableCount } from "../sidebarData";
 
 interface FavoritesSidebarProps {
   folders: FolderCount[];
@@ -24,24 +24,34 @@ export function FavoritesSidebar({
 }: FavoritesSidebarProps) {
   const { t } = useTranslation();
   const [showAllVars, setShowAllVars] = useState(false);
-  const shownVars = showAllVars ? variables : variables.slice(0, VISIBLE_VARIABLES);
+  const shownVars = showAllVars
+    ? variables
+    : variables.slice(0, VISIBLE_VARIABLES);
   const hiddenCount = variables.length - VISIBLE_VARIABLES;
 
   return (
     <aside
       data-enter
-      aria-label={t('favorites.sidebar.label')}
+      aria-label={t("favorites.sidebar.label")}
       className="flex flex-col gap-4 xl:order-first xl:col-span-3"
     >
       {/* Starred folders */}
-      <section aria-labelledby="fav-folders" className="rounded-2xl border border-border bg-card p-4">
-        <h2 id="fav-folders" className="mb-3 flex items-center gap-2 font-heading text-sm font-semibold">
+      <section
+        aria-labelledby="fav-folders"
+        className="rounded-2xl border border-border bg-card p-4"
+      >
+        <h2
+          id="fav-folders"
+          className="mb-3 flex items-center gap-2 font-heading text-sm font-semibold"
+        >
           <FolderOpen className="size-[18px] text-primary" aria-hidden="true" />
-          {t('favorites.sidebar.folders')}
+          {t("favorites.sidebar.folders")}
         </h2>
 
         {folders.length === 0 ? (
-          <p className="text-xs text-muted-foreground">{t('favorites.sidebar.foldersEmpty')}</p>
+          <p className="text-xs text-muted-foreground">
+            {t("favorites.sidebar.foldersEmpty")}
+          </p>
         ) : (
           <ul className="space-y-1">
             {folders.map((f) => {
@@ -54,12 +64,16 @@ export function FavoritesSidebar({
                     onClick={() => onFolderChange(active ? null : f.id)}
                     className={`flex w-full items-center justify-between gap-2 rounded-xl px-2.5 py-2 text-start text-sm transition-colors focus-visible:outline-2 focus-visible:outline-primary ${
                       active
-                        ? 'bg-primary/15 font-semibold text-primary'
-                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        ? "bg-primary/15 font-semibold text-primary"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
                   >
-                    <span dir="auto" className="truncate">{f.name}</span>
-                    <span className="rounded-full bg-background px-2 py-0.5 font-mono text-xs">{f.count}</span>
+                    <span dir="auto" className="truncate">
+                      {f.name}
+                    </span>
+                    <span className="rounded-full bg-background px-2 py-0.5 font-mono text-xs">
+                      {f.count}
+                    </span>
                   </button>
                 </li>
               );
@@ -69,14 +83,23 @@ export function FavoritesSidebar({
       </section>
 
       {/* Top variables */}
-      <section aria-labelledby="fav-vars" className="rounded-2xl border border-border bg-card p-4">
+      <section
+        aria-labelledby="fav-vars"
+        className="rounded-2xl border border-border bg-card p-4"
+      >
         <div className="mb-3 flex items-center justify-between">
-          <h2 id="fav-vars" className="font-heading text-sm font-semibold">{t('favorites.sidebar.variables')}</h2>
-          <span className="text-[11px] text-muted-foreground">{t('favorites.sidebar.indexed')}</span>
+          <h2 id="fav-vars" className="font-heading text-sm font-semibold">
+            {t("favorites.sidebar.variables")}
+          </h2>
+          <span className="text-[11px] text-muted-foreground">
+            {t("favorites.sidebar.indexed")}
+          </span>
         </div>
 
         {variables.length === 0 ? (
-          <p className="text-xs text-muted-foreground">{t('favorites.sidebar.variablesEmpty')}</p>
+          <p className="text-xs text-muted-foreground">
+            {t("favorites.sidebar.variablesEmpty")}
+          </p>
         ) : (
           <ul className="flex flex-wrap gap-1.5">
             {shownVars.map((v) => {
@@ -87,10 +110,12 @@ export function FavoritesSidebar({
                     type="button"
                     dir="ltr"
                     aria-pressed={active}
-                    title={t('favorites.sidebar.usedIn', { total: v.count })}
+                    title={t("favorites.sidebar.usedIn", { total: v.count })}
                     onClick={() => onVariableChange(active ? null : v.name)}
                     className={`rounded-md px-2 py-1 font-mono text-xs transition-colors focus-visible:outline-2 focus-visible:outline-primary ${
-                      active ? 'bg-primary text-primary-foreground' : 'bg-background text-primary hover:bg-muted'
+                      active
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-background text-primary hover:bg-muted"
                     }`}
                   >
                     {`{{${v.name}}}`}
@@ -107,8 +132,8 @@ export function FavoritesSidebar({
                   className="rounded-md px-2 py-1 text-xs text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary"
                 >
                   {showAllVars
-                    ? t('favorites.sidebar.showLess')
-                    : t('favorites.sidebar.showMore', { total: hiddenCount })}
+                    ? t("favorites.sidebar.showLess")
+                    : t("favorites.sidebar.showMore", { total: hiddenCount })}
                 </button>
               </li>
             )}

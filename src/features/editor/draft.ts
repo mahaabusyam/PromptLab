@@ -1,19 +1,19 @@
-import { defaultPromptSettings } from '@/features/prompts/constants'
-import type { Prompt } from '@/features/prompts/types'
-import type { EditorDraft } from './types'
+import { defaultPromptSettings } from "@/features/prompts/constants";
+import type { Prompt } from "@/features/prompts/types";
+import type { EditorDraft } from "./types";
 
 export function blankDraft(): EditorDraft {
   return {
-    title: '',
-    description: '',
-    content: '',
-    status: 'draft',
-    category: 'writing',
+    title: "",
+    description: "",
+    content: "",
+    status: "draft",
+    category: "writing",
     tags: [],
-    model: { name: 'Claude 3.5 Sonnet', provider: 'anthropic' },
+    model: { name: "Claude 3.5 Sonnet", provider: "anthropic" },
     settings: defaultPromptSettings,
     variableValues: {},
-  }
+  };
 }
 
 export function toDraft(prompt: Prompt): EditorDraft {
@@ -27,10 +27,10 @@ export function toDraft(prompt: Prompt): EditorDraft {
     model: prompt.model,
     settings: prompt.settings ?? defaultPromptSettings,
     variableValues: prompt.variableValues ?? {},
-  }
+  };
 }
 
 /** قبل الحفظ: ما منسمح بعنوان فاضي */
 export function normalizeDraft(draft: EditorDraft): EditorDraft {
-  return { ...draft, title: draft.title.trim() || 'Untitled prompt' }
+  return { ...draft, title: draft.title.trim() || "Untitled prompt" };
 }

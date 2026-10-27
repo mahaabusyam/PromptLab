@@ -1,17 +1,17 @@
-import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
-import { ProviderIcon } from '@/features/prompts/components/ProviderIcon'
-import { StatusBadge } from '@/features/prompts/components/StatusBadge'
-import type { Prompt } from '@/features/prompts/types'
-import { getVersionLabel } from '@/features/prompts/utils'
-import { formatUpdated } from '@/utils/dates'
-import { extractVariables } from '@/utils/promptVariables'
-import { FavoriteButton, PromptQuickActions } from './PromptActions'
-import { PromptSnippet } from './PromptSnippet'
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { ProviderIcon } from "@/features/prompts/components/ProviderIcon";
+import { StatusBadge } from "@/features/prompts/components/StatusBadge";
+import type { Prompt } from "@/features/prompts/types";
+import { getVersionLabel } from "@/features/prompts/utils";
+import { formatUpdated } from "@/utils/dates";
+import { extractVariables } from "@/utils/promptVariables";
+import { FavoriteButton, PromptQuickActions } from "./PromptActions";
+import { PromptSnippet } from "./PromptSnippet";
 
 export function PromptCard({ prompt }: { prompt: Prompt }) {
-  const { t } = useTranslation()
-  const variableCount = extractVariables(prompt.content).length
+  const { t } = useTranslation();
+  const variableCount = extractVariables(prompt.content).length;
 
   return (
     <article
@@ -40,7 +40,7 @@ export function PromptCard({ prompt }: { prompt: Prompt }) {
 
         <span className="inline-flex w-fit items-center gap-1.5 rounded-md bg-surface-container px-2 py-0.5 font-mono text-[11px] text-on-surface-variant">
           <span aria-hidden className="size-1.5 rounded-full bg-primary" />
-          {t('library.card.variablesBound', { total: variableCount })}
+          {t("library.card.variablesBound", { total: variableCount })}
         </span>
 
         <div className="flex flex-wrap gap-1.5">
@@ -58,16 +58,23 @@ export function PromptCard({ prompt }: { prompt: Prompt }) {
 
       <div className="mt-4 flex items-center justify-between gap-2 border-t border-surface-variant/40 pt-3">
         <div className="flex min-w-0 items-center gap-2">
-          <ProviderIcon provider={prompt.model.provider} className="size-[18px] shrink-0 text-primary" />
+          <ProviderIcon
+            provider={prompt.model.provider}
+            className="size-[18px] shrink-0 text-primary"
+          />
           <div className="flex min-w-0 flex-col">
-            <span className="truncate text-body-sm font-medium text-on-surface">{prompt.model.name}</span>
+            <span className="truncate text-body-sm font-medium text-on-surface">
+              {prompt.model.name}
+            </span>
             <span className="text-label-sm text-outline">
-              {t('library.card.updated', { date: formatUpdated(prompt.updatedAt) })}
+              {t("library.card.updated", {
+                date: formatUpdated(prompt.updatedAt),
+              })}
             </span>
           </div>
         </div>
         <PromptQuickActions prompt={prompt} />
       </div>
     </article>
-  )
+  );
 }

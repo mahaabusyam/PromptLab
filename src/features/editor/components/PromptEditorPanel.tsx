@@ -1,31 +1,40 @@
-import { useEffect, useId, useRef, useState } from 'react'
-import type { KeyboardEvent, ReactNode } from 'react'
-import type { EditorView } from '@codemirror/view'
-import { AlignLeft, Braces, Code, Eye, GitCompare, Maximize2, Minimize2, WrapText } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-import { FilterDropdown } from '@/components/common/FilterDropdown'
-import type { PromptVersion } from '@/features/prompts/types'
-import { formatUpdated } from '@/utils/dates'
-import { gsap } from '@/utils/gsap'
-import { formatPrompt } from '@/utils/promptFormat'
-import type { EditorDraft } from '../types'
-import { DiffView } from './DiffView'
-import { EditorStatusBar } from './EditorStatusBar'
-import { PromptCodeEditor } from './PromptCodeEditor'
-import { PromptPreview } from './PromptPreview'
+import { useEffect, useId, useRef, useState } from "react";
+import type { KeyboardEvent, ReactNode } from "react";
+import type { EditorView } from "@codemirror/view";
+import {
+  AlignLeft,
+  Braces,
+  Code,
+  Eye,
+  GitCompare,
+  Maximize2,
+  Minimize2,
+  WrapText,
+} from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { FilterDropdown } from "@/components/common/FilterDropdown";
+import type { PromptVersion } from "@/features/prompts/types";
+import { formatUpdated } from "@/utils/dates";
+import { gsap } from "@/utils/gsap";
+import { formatPrompt } from "@/utils/promptFormat";
+import type { EditorDraft } from "../types";
+import { DiffView } from "./DiffView";
+import { EditorStatusBar } from "./EditorStatusBar";
+import { PromptCodeEditor } from "./PromptCodeEditor";
+import { PromptPreview } from "./PromptPreview";
 
-type TabId = 'raw' | 'preview' | 'diff'
-const TAB_ORDER: TabId[] = ['raw', 'preview', 'diff']
+type TabId = "raw" | "preview" | "diff";
+const TAB_ORDER: TabId[] = ["raw", "preview", "diff"];
 
 const toolBtn =
-  'rounded-lg p-1.5 text-outline transition-colors hover:bg-surface-container hover:text-on-surface disabled:pointer-events-none disabled:opacity-40'
+  "rounded-lg p-1.5 text-outline transition-colors hover:bg-surface-container hover:text-on-surface disabled:pointer-events-none disabled:opacity-40";
 
 interface PromptEditorPanelProps {
-  draft: EditorDraft
-  onChange: (patch: Partial<EditorDraft>) => void
-  versions: PromptVersion[]
-  variableNames: string[]
-  onRun: () => void
+  draft: EditorDraft;
+  onChange: (patch: Partial<EditorDraft>) => void;
+  versions: PromptVersion[];
+  variableNames: string[];
+  onRun: () => void;
 }
 
 export function PromptEditorPanel({
@@ -35,30 +44,34 @@ export function PromptEditorPanel({
   variableNames,
   onRun,
 }: PromptEditorPanelProps) {
-  const { t } = useTranslation()
-  const uid = useId()
-  const [tab, setTab] = useState<TabId>('raw')
-  const [wrap, setWrap] = useState(true)
-  const [fullscreen, setFullscreen] = useState(false)
-  const viewRef = useRef<EditorView | null>(null)
-  const panelsRef = useRef<HTMLDivElement>(null)
-  const firstRender = useRef(true)
+  const { t } = useTranslation();
+  const uid = useId();
+  const [tab, setTab] = useState<TabId>("raw");
+  const [wrap, setWrap] = useState(true);
+  const [fullscreen, setFullscreen] = useState(false);
+  const viewRef = useRef<EditorView | null>(null);
+  const panelsRef = useRef<HTMLDivElement>(null);
+  const firstRender = useRef(true);
 
-  const [baseId, setBaseId] = useState<string | null>(null)
-  const latest = versions[versions.length - 1]
+  const [baseId, setBaseId] = useState<string | null>(null);
+  const latest = versions[versions.length - 1];
   // النسخة المختارة للمقارنة، وإلا آخر نسخة محفوظة
-  const baseVersion = versions.find((v) => v.id === baseId) ?? latest
+  const baseVersion = versions.find((v) => v.id === baseId) ?? latest;
   // النقطة على التبويب: هل في تعديلات غير محفوظة كنسخة؟
-  const hasChanges = latest !== undefined && latest.content !== draft.content
+  const hasChanges = latest !== undefined && latest.content !== draft.content;
 
   useEffect(() => {
     if (firstRender.current) {
-      firstRender.current = false
-      return
+      firstRender.current = false;
+      return;
     }
 
-    const panels = panelsRef.current
-    if (!panels || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const panels = panelsRef.current;
+    if (
+      !panels ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
 
     const tween = gsap.fromTo(
       panels,
@@ -67,131 +80,132 @@ export function PromptEditorPanel({
         opacity: 1,
         y: 0,
         duration: 0.25,
-        ease: 'power2.out',
-        clearProps: 'transform,opacity',
+        ease: "power2.out",
+        clearProps: "transform,opacity",
       },
-    )
+    );
 
     return () => {
-      tween.kill()
-    }
-  }, [tab])
+      tween.kill();
+    };
+  }, [tab]);
 
   // Escape يطلّعك من وضع الشاشة الكاملة
   useEffect(() => {
-    if (!fullscreen) return
+    if (!fullscreen) return;
 
-    const onKeyDown = (e: globalThis.KeyboardEvent) => e.key === 'Escape' && setFullscreen(false)
+    const onKeyDown = (e: globalThis.KeyboardEvent) =>
+      e.key === "Escape" && setFullscreen(false);
 
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [fullscreen])
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [fullscreen]);
 
   const tabIds = (id: TabId) => ({
     tab: `${uid}-tab-${id}`,
     panel: `${uid}-panel-${id}`,
-  })
+  });
 
   // أسهم الكيبورد بين التبويبات (نمط ARIA Tabs)
   // بالعربي الاتجاه بينعكس: السهم الأيسر = التبويب التالي
   const onTabKeyDown = (e: KeyboardEvent) => {
-    const rtl = document.documentElement.dir === 'rtl'
-    const nextKey = rtl ? 'ArrowLeft' : 'ArrowRight'
-    const prevKey = rtl ? 'ArrowRight' : 'ArrowLeft'
+    const rtl = document.documentElement.dir === "rtl";
+    const nextKey = rtl ? "ArrowLeft" : "ArrowRight";
+    const prevKey = rtl ? "ArrowRight" : "ArrowLeft";
 
-    const index = TAB_ORDER.indexOf(tab)
+    const index = TAB_ORDER.indexOf(tab);
     const next =
       e.key === nextKey
         ? TAB_ORDER[(index + 1) % TAB_ORDER.length]
         : e.key === prevKey
           ? TAB_ORDER[(index - 1 + TAB_ORDER.length) % TAB_ORDER.length]
-          : e.key === 'Home'
+          : e.key === "Home"
             ? TAB_ORDER[0]
-            : e.key === 'End'
+            : e.key === "End"
               ? TAB_ORDER[TAB_ORDER.length - 1]
-              : null
+              : null;
 
-    if (!next) return
-    e.preventDefault()
-    setTab(next)
-    document.getElementById(tabIds(next).tab)?.focus()
-  }
+    if (!next) return;
+    e.preventDefault();
+    setTab(next);
+    document.getElementById(tabIds(next).tab)?.focus();
+  };
 
   const insertVariable = () => {
-    const view = viewRef.current
-    if (!view) return
+    const view = viewRef.current;
+    if (!view) return;
 
-    const { from, to } = view.state.selection.main
+    const { from, to } = view.state.selection.main;
 
     view.dispatch({
-      changes: { from, to, insert: '{{variable}}' },
+      changes: { from, to, insert: "{{variable}}" },
       selection: { anchor: from + 2, head: from + 10 },
-    })
+    });
 
-    view.focus()
-  }
+    view.focus();
+  };
 
   const tabs: {
-    id: TabId
-    label: string
-    icon: typeof Code
-    badge: ReactNode
+    id: TabId;
+    label: string;
+    icon: typeof Code;
+    badge: ReactNode;
   }[] = [
     {
-      id: 'raw',
-      label: t('editor.panel.raw'),
+      id: "raw",
+      label: t("editor.panel.raw"),
       icon: Code,
       badge: (
         <span
           dir="ltr"
           className="ms-1 rounded-full bg-secondary-container px-1.5 text-label-sm font-semibold text-on-secondary-container"
         >
-          {'{{ }}'}
+          {"{{ }}"}
         </span>
       ),
     },
     {
-      id: 'preview',
-      label: t('editor.panel.preview'),
+      id: "preview",
+      label: t("editor.panel.preview"),
       icon: Eye,
       badge: (
         <span className="ms-1 rounded-full bg-surface-container px-1.5 text-label-sm text-outline">
-          {t('editor.panel.vars', { total: variableNames.length })}
+          {t("editor.panel.vars", { total: variableNames.length })}
         </span>
       ),
     },
     {
-      id: 'diff',
+      id: "diff",
       label: baseVersion
-        ? t('editor.panel.diffVs', { label: baseVersion.label })
-        : t('editor.panel.diff'),
+        ? t("editor.panel.diffVs", { label: baseVersion.label })
+        : t("editor.panel.diff"),
       icon: GitCompare,
       badge: hasChanges ? (
         <span
-          aria-label={t('editor.panel.unsavedChanges')}
+          aria-label={t("editor.panel.unsavedChanges")}
           className="ms-1 size-2 rounded-full bg-tertiary-container"
         />
       ) : null,
     },
-  ]
+  ];
 
   return (
     <section
-      aria-label={t('editor.panel.label')}
-      data-lenis-prevent={fullscreen ? '' : undefined}
+      aria-label={t("editor.panel.label")}
+      data-lenis-prevent={fullscreen ? "" : undefined}
       className={`flex min-w-0 flex-col overflow-hidden bg-surface-container-lowest/90 shadow-xl ${
-        fullscreen ? 'fixed inset-0 z-60' : 'rounded-xl lg:col-span-8'
+        fullscreen ? "fixed inset-0 z-60" : "rounded-xl lg:col-span-8"
       }`}
     >
       <div className="flex items-center justify-between bg-surface-container-low px-space-md">
         <div
           role="tablist"
-          aria-label={t('editor.panel.tabsLabel')}
+          aria-label={t("editor.panel.tabsLabel")}
           onKeyDown={onTabKeyDown}
           className="flex items-center gap-space-xs overflow-x-auto"
         >
           {tabs.map(({ id, label, icon: Icon, badge }) => {
-            const active = tab === id
+            const active = tab === id;
 
             return (
               <button
@@ -205,24 +219,27 @@ export function PromptEditorPanel({
                 onClick={() => setTab(id)}
                 className={`relative flex shrink-0 items-center gap-2 px-space-md py-3 text-body-sm transition-colors ${
                   active
-                    ? 'font-semibold text-on-surface after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary'
-                    : 'text-on-surface-variant hover:text-on-surface'
+                    ? "font-semibold text-on-surface after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary"
+                    : "text-on-surface-variant hover:text-on-surface"
                 }`}
               >
-                <Icon aria-hidden className={`size-[18px] ${active ? 'text-primary' : 'text-outline'}`} />
+                <Icon
+                  aria-hidden
+                  className={`size-[18px] ${active ? "text-primary" : "text-outline"}`}
+                />
                 {label}
                 {badge}
               </button>
-            )
+            );
           })}
         </div>
 
         <div className="hidden items-center gap-1 py-2 sm:flex">
           <button
             type="button"
-            title={t('editor.panel.format')}
-            aria-label={t('editor.panel.format')}
-            disabled={tab !== 'raw'}
+            title={t("editor.panel.format")}
+            aria-label={t("editor.panel.format")}
+            disabled={tab !== "raw"}
             onClick={() => onChange({ content: formatPrompt(draft.content) })}
             className={toolBtn}
           >
@@ -231,21 +248,21 @@ export function PromptEditorPanel({
 
           <button
             type="button"
-            title={t('editor.panel.wrap')}
-            aria-label={t('editor.panel.wrap')}
+            title={t("editor.panel.wrap")}
+            aria-label={t("editor.panel.wrap")}
             aria-pressed={wrap}
-            disabled={tab !== 'raw'}
+            disabled={tab !== "raw"}
             onClick={() => setWrap((v) => !v)}
-            className={`${toolBtn} ${wrap ? 'text-primary' : ''}`}
+            className={`${toolBtn} ${wrap ? "text-primary" : ""}`}
           >
             <WrapText className="size-[18px]" />
           </button>
 
           <button
             type="button"
-            title={t('editor.panel.insertVariable')}
-            aria-label={t('editor.panel.insertVariable')}
-            disabled={tab !== 'raw'}
+            title={t("editor.panel.insertVariable")}
+            aria-label={t("editor.panel.insertVariable")}
+            disabled={tab !== "raw"}
             onClick={insertVariable}
             className={toolBtn}
           >
@@ -256,53 +273,75 @@ export function PromptEditorPanel({
 
           <button
             type="button"
-            title={fullscreen ? t('editor.panel.exitFullscreenHint') : t('editor.panel.fullscreen')}
-            aria-label={fullscreen ? t('editor.panel.exitFullscreen') : t('editor.panel.fullscreen')}
+            title={
+              fullscreen
+                ? t("editor.panel.exitFullscreenHint")
+                : t("editor.panel.fullscreen")
+            }
+            aria-label={
+              fullscreen
+                ? t("editor.panel.exitFullscreen")
+                : t("editor.panel.fullscreen")
+            }
             aria-pressed={fullscreen}
             onClick={() => setFullscreen((v) => !v)}
             className={toolBtn}
           >
-            {fullscreen ? <Minimize2 className="size-[18px]" /> : <Maximize2 className="size-[18px]" />}
+            {fullscreen ? (
+              <Minimize2 className="size-[18px]" />
+            ) : (
+              <Maximize2 className="size-[18px]" />
+            )}
           </button>
         </div>
       </div>
 
-      <div ref={panelsRef} className={fullscreen ? 'min-h-0 flex-1 overflow-auto' : ''}>
+      <div
+        ref={panelsRef}
+        className={fullscreen ? "min-h-0 flex-1 overflow-auto" : ""}
+      >
         <div
-          id={tabIds('raw').panel}
+          id={tabIds("raw").panel}
           role="tabpanel"
-          aria-labelledby={tabIds('raw').tab}
-          hidden={tab !== 'raw'}
+          aria-labelledby={tabIds("raw").tab}
+          hidden={tab !== "raw"}
         >
           <PromptCodeEditor
             value={draft.content}
             onChange={(content) => onChange({ content })}
             wrap={wrap}
             onReady={(view) => {
-              viewRef.current = view
+              viewRef.current = view;
             }}
             onQuickRun={onRun}
           />
         </div>
 
-        {tab === 'preview' && (
-          <div id={tabIds('preview').panel} role="tabpanel" aria-labelledby={tabIds('preview').tab}>
-            <PromptPreview content={draft.content} values={draft.variableValues} />
+        {tab === "preview" && (
+          <div
+            id={tabIds("preview").panel}
+            role="tabpanel"
+            aria-labelledby={tabIds("preview").tab}
+          >
+            <PromptPreview
+              content={draft.content}
+              values={draft.variableValues}
+            />
           </div>
         )}
 
-        {tab === 'diff' && (
+        {tab === "diff" && (
           <div
-            id={tabIds('diff').panel}
+            id={tabIds("diff").panel}
             role="tabpanel"
-            aria-labelledby={tabIds('diff').tab}
+            aria-labelledby={tabIds("diff").tab}
             className="min-h-72"
           >
             {versions.length > 1 && baseVersion && (
               <div className="flex items-center gap-2 px-space-md pt-space-sm text-label-sm text-outline">
-                {t('editor.panel.compareAgainst')}
+                {t("editor.panel.compareAgainst")}
                 <FilterDropdown
-                  ariaLabel={t('editor.panel.compareLabel')}
+                  ariaLabel={t("editor.panel.compareLabel")}
                   value={baseVersion.id}
                   options={[...versions].reverse().map((v) => ({
                     value: v.id,
@@ -315,7 +354,7 @@ export function PromptEditorPanel({
             <DiffView
               before={baseVersion?.content}
               after={draft.content}
-              baseLabel={baseVersion?.label ?? ''}
+              baseLabel={baseVersion?.label ?? ""}
             />
           </div>
         )}
@@ -328,5 +367,5 @@ export function PromptEditorPanel({
         values={draft.variableValues}
       />
     </section>
-  )
+  );
 }

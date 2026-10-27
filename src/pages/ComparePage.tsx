@@ -1,29 +1,34 @@
-import { Download, RotateCcw } from 'lucide-react';
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { buildCompare } from '@/features/compare/compare';
-import { CompareHeader } from '@/features/compare/components/CompareHeader';
-import { CompareSummaryCards } from '@/features/compare/components/CompareSummaryCards';
-import { DiffToolbar } from '@/features/compare/components/DiffToolbar';
-import type { DiffMode } from '@/features/compare/components/DiffToolbar';
-import { DiffViewer } from '@/features/compare/components/DiffViewer';
-import { VersionPickerBar } from '@/features/compare/components/VersionPickerBar';
-import { buildUnifiedDiffText, downloadTextFile, slugify } from '@/features/compare/exportDiff';
-import { useCompareSelection } from '@/features/compare/hooks/useCompareSelection';
-import { ConfirmDialog } from '@/components/common/ConfirmDialog';
-import { usePromptStore } from '@/stores/promptStore';
+import { Download, RotateCcw } from "lucide-react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import gsap from "gsap";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { buildCompare } from "@/features/compare/compare";
+import { CompareHeader } from "@/features/compare/components/CompareHeader";
+import { CompareSummaryCards } from "@/features/compare/components/CompareSummaryCards";
+import { DiffToolbar } from "@/features/compare/components/DiffToolbar";
+import type { DiffMode } from "@/features/compare/components/DiffToolbar";
+import { DiffViewer } from "@/features/compare/components/DiffViewer";
+import { VersionPickerBar } from "@/features/compare/components/VersionPickerBar";
+import {
+  buildUnifiedDiffText,
+  downloadTextFile,
+  slugify,
+} from "@/features/compare/exportDiff";
+import { useCompareSelection } from "@/features/compare/hooks/useCompareSelection";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { usePromptStore } from "@/stores/promptStore";
 
 export default function ComparePage() {
   const { t } = useTranslation();
-  const { selection, comparable, setPrompt, setBase, setTarget, swap } = useCompareSelection();
+  const { selection, comparable, setPrompt, setBase, setTarget, swap } =
+    useCompareSelection();
   const restoreVersion = usePromptStore((s) => s.restoreVersion);
   const rootRef = useRef<HTMLDivElement>(null);
 
   // Phones get the unified layout first: two code columns don't fit
   const [mode, setMode] = useState<DiffMode>(() =>
-    window.matchMedia('(min-width: 1024px)').matches ? 'split' : 'unified',
+    window.matchMedia("(min-width: 1024px)").matches ? "split" : "unified",
   );
   const [wrap, setWrap] = useState(true);
   const [confirmRestore, setConfirmRestore] = useState(false);
@@ -44,13 +49,20 @@ export default function ComparePage() {
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root || !hasSelection) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '[data-enter]',
+        "[data-enter]",
         { y: 16, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: 'power2.out', clearProps: 'transform,opacity' },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+          clearProps: "transform,opacity",
+        },
       );
     }, root);
     return () => ctx.revert();
@@ -59,20 +71,32 @@ export default function ComparePage() {
   const handleExport = useCallback(() => {
     if (!selection || !result) return;
     const { prompt, base, target } = selection;
-    const text = buildUnifiedDiffText(prompt.title, base.label, target.label, result.diff);
-    downloadTextFile(`${slugify(prompt.title)}-${base.label}-vs-${target.label}.diff`, text);
+    const text = buildUnifiedDiffText(
+      prompt.title,
+      base.label,
+      target.label,
+      result.diff,
+    );
+    downloadTextFile(
+      `${slugify(prompt.title)}-${base.label}-vs-${target.label}.diff`,
+      text,
+    );
   }, [selection, result]);
 
   if (!selection || !result) {
     return (
       <div className="rounded-xl border border-dashed border-border p-10 text-center">
-        <h1 className="font-heading text-xl font-semibold">{t('compare.page.emptyTitle')}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{t('compare.page.emptyBody')}</p>
+        <h1 className="font-heading text-xl font-semibold">
+          {t("compare.page.emptyTitle")}
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {t("compare.page.emptyBody")}
+        </p>
         <Link
           to="/library"
           className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary"
         >
-          {t('compare.page.goToLibrary')}
+          {t("compare.page.goToLibrary")}
         </Link>
       </div>
     );
@@ -80,14 +104,18 @@ export default function ComparePage() {
 
   const { prompt, base, target } = selection;
   // The newest version is what the editor already shows: restoring it is a no-op.
-  const baseIsCurrent = prompt.versions[prompt.versions.length - 1]?.id === base.id;
+  const baseIsCurrent =
+    prompt.versions[prompt.versions.length - 1]?.id === base.id;
 
   function handleConfirmRestore(): void {
     const created = restoreVersion(prompt.id, base.id);
     setNotice(
       created
-        ? t('compare.page.restored', { label: base.label, newLabel: created.label })
-        : t('compare.page.restoreFailed'),
+        ? t("compare.page.restored", {
+            label: base.label,
+            newLabel: created.label,
+          })
+        : t("compare.page.restoreFailed"),
     );
     setConfirmRestore(false);
   }
@@ -110,43 +138,64 @@ export default function ComparePage() {
         onSwap={swap}
       />
 
-      <DiffToolbar mode={mode} onModeChange={setMode} wrap={wrap} onWrapChange={setWrap}>
+      <DiffToolbar
+        mode={mode}
+        onModeChange={setMode}
+        wrap={wrap}
+        onWrapChange={setWrap}
+      >
         <button
           type="button"
           onClick={handleExport}
           className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3.5 py-2 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary"
         >
           <Download className="size-4" aria-hidden="true" />
-          {t('compare.page.export')}
+          {t("compare.page.export")}
         </button>
         <button
           type="button"
           onClick={() => setConfirmRestore(true)}
           disabled={baseIsCurrent}
-          title={baseIsCurrent ? t('compare.page.alreadyCurrent', { label: base.label }) : undefined}
+          title={
+            baseIsCurrent
+              ? t("compare.page.alreadyCurrent", { label: base.label })
+              : undefined
+          }
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-40"
         >
           <RotateCcw className="size-4" aria-hidden="true" />
-          {t('compare.page.restoreButton', { label: base.label })}
+          {t("compare.page.restoreButton", { label: base.label })}
         </button>
       </DiffToolbar>
 
       {notice && (
-        <p role="status" className="rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-sm text-primary">
+        <p
+          role="status"
+          className="rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-sm text-primary"
+        >
           {notice}
         </p>
       )}
 
-      <DiffViewer base={base} target={target} result={result} mode={mode} wrap={wrap} />
+      <DiffViewer
+        base={base}
+        target={target}
+        result={result}
+        mode={mode}
+        wrap={wrap}
+      />
 
       <CompareSummaryCards base={base} target={target} result={result} />
 
       {confirmRestore && (
         <ConfirmDialog
           tone="primary"
-          title={t('history.page.restoreTitle', { label: base.label })}
-          description={t('history.page.restoreBody', { title: prompt.title, label: base.label })}
-          confirmLabel={t('history.page.restoreConfirm')}
+          title={t("history.page.restoreTitle", { label: base.label })}
+          description={t("history.page.restoreBody", {
+            title: prompt.title,
+            label: base.label,
+          })}
+          confirmLabel={t("history.page.restoreConfirm")}
           onConfirm={handleConfirmRestore}
           onCancel={() => setConfirmRestore(false)}
         />

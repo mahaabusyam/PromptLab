@@ -1,1 +1,1 @@
-export { ListPagination as HistoryPagination } from '@/components/common/ListPagination'
+export { ListPagination as HistoryPagination } from "@/components/common/ListPagination";

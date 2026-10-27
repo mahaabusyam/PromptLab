@@ -1,5 +1,5 @@
-import { diffLines } from '@/features/versions/diff';
-import type { DiffLine } from '@/features/versions/diff';
+import { diffLines } from "@/features/versions/diff";
+import type { DiffLine } from "@/features/versions/diff";
 
 export interface Segment {
   text: string;
@@ -9,7 +9,7 @@ export interface Segment {
 export interface DiffCell {
   lineNo: number;
   text: string;
-  type: 'same' | 'added' | 'removed';
+  type: "same" | "added" | "removed";
   segments?: Segment[]; // word-level highlight, only for paired modified lines
 }
 
@@ -24,7 +24,7 @@ export interface UnifiedRow {
   newNo: number | null;
 }
 
-export type RowKind = 'same' | 'added' | 'removed' | 'changed';
+export type RowKind = "same" | "added" | "removed" | "changed";
 
 export interface DiffRows {
   split: SplitRow[];
@@ -32,8 +32,14 @@ export interface DiffRows {
 }
 
 /** Word-level diff: reuse diffLines by treating every word as a "line". */
-export function wordSegments(before: string, after: string): { left: Segment[]; right: Segment[] } {
-  const parts = diffLines(before.split(' ').join('\n'), after.split(' ').join('\n'));
+export function wordSegments(
+  before: string,
+  after: string,
+): { left: Segment[]; right: Segment[] } {
+  const parts = diffLines(
+    before.split(" ").join("\n"),
+    after.split(" ").join("\n"),
+  );
   const left: Segment[] = [];
   const right: Segment[] = [];
 
@@ -44,8 +50,8 @@ export function wordSegments(before: string, after: string): { left: Segment[]; 
   };
 
   for (const part of parts) {
-    if (part.type !== 'added') push(left, part.text, part.type === 'removed');
-    if (part.type !== 'removed') push(right, part.text, part.type === 'added');
+    if (part.type !== "added") push(left, part.text, part.type === "removed");
+    if (part.type !== "removed") push(right, part.text, part.type === "added");
   }
   return { left, right };
 }
@@ -61,9 +67,13 @@ export function buildDiffRows(diff: DiffLine[]): DiffRows {
     const line = diff[i];
     if (!line) break;
 
-    if (line.type === 'same') {
-      const left: DiffCell = { lineNo: oldNo++, text: line.text, type: 'same' };
-      const right: DiffCell = { lineNo: newNo++, text: line.text, type: 'same' };
+    if (line.type === "same") {
+      const left: DiffCell = { lineNo: oldNo++, text: line.text, type: "same" };
+      const right: DiffCell = {
+        lineNo: newNo++,
+        text: line.text,
+        type: "same",
+      };
       split.push({ left, right });
       unified.push({ cell: right, oldNo: left.lineNo, newNo: right.lineNo });
       i += 1;
@@ -75,13 +85,21 @@ export function buildDiffRows(diff: DiffLine[]): DiffRows {
     const added: DiffLine[] = [];
     while (i < diff.length) {
       const l = diff[i];
-      if (!l || l.type === 'same') break;
-      (l.type === 'removed' ? removed : added).push(l);
+      if (!l || l.type === "same") break;
+      (l.type === "removed" ? removed : added).push(l);
       i += 1;
     }
 
-    const removedCells: DiffCell[] = removed.map((l) => ({ lineNo: oldNo++, text: l.text, type: 'removed' }));
-    const addedCells: DiffCell[] = added.map((l) => ({ lineNo: newNo++, text: l.text, type: 'added' }));
+    const removedCells: DiffCell[] = removed.map((l) => ({
+      lineNo: oldNo++,
+      text: l.text,
+      type: "removed",
+    }));
+    const addedCells: DiffCell[] = added.map((l) => ({
+      lineNo: newNo++,
+      text: l.text,
+      type: "added",
+    }));
 
     // Pair line k of the old block with line k of the new block -> "modified"
     const pairs = Math.min(removedCells.length, addedCells.length);
@@ -96,39 +114,44 @@ export function buildDiffRows(diff: DiffLine[]): DiffRows {
 
     const rowCount = Math.max(removedCells.length, addedCells.length);
     for (let k = 0; k < rowCount; k++) {
-      split.push({ left: removedCells[k] ?? null, right: addedCells[k] ?? null });
+      split.push({
+        left: removedCells[k] ?? null,
+        right: addedCells[k] ?? null,
+      });
     }
-    for (const c of removedCells) unified.push({ cell: c, oldNo: c.lineNo, newNo: null });
-    for (const c of addedCells) unified.push({ cell: c, oldNo: null, newNo: c.lineNo });
+    for (const c of removedCells)
+      unified.push({ cell: c, oldNo: c.lineNo, newNo: null });
+    for (const c of addedCells)
+      unified.push({ cell: c, oldNo: null, newNo: c.lineNo });
   }
 
   return { split, unified };
 }
 
 export function splitRowKind(row: SplitRow): RowKind {
-  const removed = row.left?.type === 'removed';
-  const added = row.right?.type === 'added';
-  if (removed && added) return 'changed';
-  if (removed) return 'removed';
-  if (added) return 'added';
-  return 'same';
+  const removed = row.left?.type === "removed";
+  const added = row.right?.type === "added";
+  if (removed && added) return "changed";
+  if (removed) return "removed";
+  if (added) return "added";
+  return "same";
 }
 
 export interface KindBlock {
   start: number;
   end: number; // exclusive
-  kind: Exclude<RowKind, 'same'>;
+  kind: Exclude<RowKind, "same">;
 }
 
 /** Groups consecutive changed rows, used by the minimap. */
 export function groupKinds(kinds: RowKind[]): KindBlock[] {
   const blocks: KindBlock[] = [];
   kinds.forEach((kind, index) => {
-    if (kind === 'same') return;
+    if (kind === "same") return;
     const last = blocks[blocks.length - 1];
     if (last && last.end === index) {
       last.end = index + 1;
-      if (last.kind !== kind) last.kind = 'changed';
+      if (last.kind !== kind) last.kind = "changed";
     } else {
       blocks.push({ start: index, end: index + 1, kind });
     }

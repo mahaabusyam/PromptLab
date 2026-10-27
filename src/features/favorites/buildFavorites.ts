@@ -1,14 +1,14 @@
-import { modelCatalog } from '@/features/prompts/constants';
-import type { Prompt } from '@/features/prompts/types';
-import { getVersionLabel } from '@/features/prompts/utils';
-import type { TemplateListItem } from '@/features/templates/types';
-import { extractVariables } from '@/utils/promptVariables';
-import { estimateTokens } from '@/utils/tokens';
-import type { FavoriteEntry, FavoriteStats } from './types';
+import { modelCatalog } from "@/features/prompts/constants";
+import type { Prompt } from "@/features/prompts/types";
+import { getVersionLabel } from "@/features/prompts/utils";
+import type { TemplateListItem } from "@/features/templates/types";
+import { extractVariables } from "@/utils/promptVariables";
+import { estimateTokens } from "@/utils/tokens";
+import type { FavoriteEntry, FavoriteStats } from "./types";
 
 function fromPrompt(prompt: Prompt): FavoriteEntry {
   return {
-    kind: 'prompt',
+    kind: "prompt",
     key: `prompt:${prompt.id}`,
     id: prompt.id,
     title: prompt.title,
@@ -27,16 +27,22 @@ function fromPrompt(prompt: Prompt): FavoriteEntry {
   };
 }
 
-function fromTemplate({ template, variables, tokens }: TemplateListItem): FavoriteEntry {
+function fromTemplate({
+  template,
+  variables,
+  tokens,
+}: TemplateListItem): FavoriteEntry {
   return {
-    kind: 'template',
+    kind: "template",
     key: `template:${template.id}`,
     id: template.id,
     title: template.title,
     description: template.description,
     category: template.category,
     provider: template.provider,
-    modelName: modelCatalog.find((m) => m.provider === template.provider)?.name ?? template.provider,
+    modelName:
+      modelCatalog.find((m) => m.provider === template.provider)?.name ??
+      template.provider,
     tags: template.tags,
     variables,
     tokens,
@@ -55,19 +61,21 @@ export function buildFavoriteEntries(
   return [
     // archived prompts are hidden everywhere else, so they are hidden here too
     ...prompts.filter((p) => p.isFavorite && !p.isArchived).map(fromPrompt),
-    ...templateItems.filter((i) => favoriteSet.has(i.template.id)).map(fromTemplate),
+    ...templateItems
+      .filter((i) => favoriteSet.has(i.template.id))
+      .map(fromTemplate),
   ];
 }
 
 export function buildFavoriteStats(entries: FavoriteEntry[]): FavoriteStats {
-  const providerCounts = new Map<FavoriteEntry['provider'], number>();
+  const providerCounts = new Map<FavoriteEntry["provider"], number>();
   const variables = new Set<string>();
   let totalTokens = 0;
   let prompts = 0;
 
   for (const e of entries) {
     totalTokens += e.tokens;
-    if (e.kind === 'prompt') prompts += 1;
+    if (e.kind === "prompt") prompts += 1;
     e.variables.forEach((v) => variables.add(v));
     providerCounts.set(e.provider, (providerCounts.get(e.provider) ?? 0) + 1);
   }
@@ -80,6 +88,11 @@ export function buildFavoriteStats(entries: FavoriteEntry[]): FavoriteStats {
     templates: entries.length - prompts,
     totalTokens,
     distinctVariables: variables.size,
-    primaryProvider: top ? { provider: top[0], percent: Math.round((top[1] / entries.length) * 100) } : null,
+    primaryProvider: top
+      ? {
+          provider: top[0],
+          percent: Math.round((top[1] / entries.length) * 100),
+        }
+      : null,
   };
 }

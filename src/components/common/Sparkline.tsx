@@ -1,29 +1,29 @@
-import { useId } from 'react'
+import { useId } from "react";
 
 interface SparklineProps {
-  values: number[]
-  className?: string // اللون بيجي من text-* لأن الرسم بيستخدم currentColor
+  values: number[];
+  className?: string; // اللون بيجي من text-* لأن الرسم بيستخدم currentColor
 }
 
-const WIDTH = 160
-const HEIGHT = 36
-const PADDING = 4
+const WIDTH = 160;
+const HEIGHT = 36;
+const PADDING = 4;
 
-export function Sparkline({ values, className = '' }: SparklineProps) {
-  const gradientId = useId().replace(/:/g, '')
-  if (values.length < 2) return null
+export function Sparkline({ values, className = "" }: SparklineProps) {
+  const gradientId = useId().replace(/:/g, "");
+  if (values.length < 2) return null;
 
-  const min = Math.min(...values)
-  const range = Math.max(...values) - min || 1
-  const step = WIDTH / (values.length - 1)
+  const min = Math.min(...values);
+  const range = Math.max(...values) - min || 1;
+  const step = WIDTH / (values.length - 1);
 
   const points = values.map((v, i) => {
-    const x = i * step
-    const y = PADDING + (1 - (v - min) / range) * (HEIGHT - PADDING * 2)
-    return `${x.toFixed(1)} ${y.toFixed(1)}`
-  })
-  const line = `M${points.join(' L')}`
-  const area = `${line} L${WIDTH} ${HEIGHT} L0 ${HEIGHT} Z`
+    const x = i * step;
+    const y = PADDING + (1 - (v - min) / range) * (HEIGHT - PADDING * 2);
+    return `${x.toFixed(1)} ${y.toFixed(1)}`;
+  });
+  const line = `M${points.join(" L")}`;
+  const area = `${line} L${WIDTH} ${HEIGHT} L0 ${HEIGHT} Z`;
 
   return (
     <svg
@@ -49,5 +49,5 @@ export function Sparkline({ values, className = '' }: SparklineProps) {
         vectorEffect="non-scaling-stroke"
       />
     </svg>
-  )
+  );
 }

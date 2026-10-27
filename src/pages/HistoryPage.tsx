@@ -1,25 +1,29 @@
-import { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ConfirmDialog } from '@/components/common/ConfirmDialog';
-import { HistoryHeader } from '@/features/history/components/HistoryHeader';
-import { ListPagination } from '@/components/common/ListPagination';
-import { HistoryStatsGrid } from '@/features/history/components/HistoryStatsGrid';
-import { HistoryTable } from '@/features/history/components/HistoryTable';
-import { HistoryTimeline } from '@/features/history/components/HistoryTimeline';
-import { HistoryToolbar } from '@/features/history/components/HistoryToolbar';
-import { useHistoryEntries } from '@/features/history/hooks/useHistoryEntries';
-import { buildHistoryStats } from '@/features/history/buildHistory';
+import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { HistoryHeader } from "@/features/history/components/HistoryHeader";
+import { ListPagination } from "@/components/common/ListPagination";
+import { HistoryStatsGrid } from "@/features/history/components/HistoryStatsGrid";
+import { HistoryTable } from "@/features/history/components/HistoryTable";
+import { HistoryTimeline } from "@/features/history/components/HistoryTimeline";
+import { HistoryToolbar } from "@/features/history/components/HistoryToolbar";
+import { useHistoryEntries } from "@/features/history/hooks/useHistoryEntries";
+import { buildHistoryStats } from "@/features/history/buildHistory";
 import {
   DEFAULT_FILTERS,
   countByKind,
   filterHistory,
   filterWithoutKind,
-} from '@/features/history/filterHistory';
-import { paginate } from '@/features/history/paginate';
-import type { HistoryEntry, HistoryFilters, HistoryView } from '@/features/history/types';
-import { usePromptStore } from '@/stores/promptStore';
+} from "@/features/history/filterHistory";
+import { paginate } from "@/features/history/paginate";
+import type {
+  HistoryEntry,
+  HistoryFilters,
+  HistoryView,
+} from "@/features/history/types";
+import { usePromptStore } from "@/stores/promptStore";
 
-type PendingAction = { type: 'restore' | 'delete'; entry: HistoryEntry };
+type PendingAction = { type: "restore" | "delete"; entry: HistoryEntry };
 
 export default function HistoryPage() {
   const { t } = useTranslation();
@@ -28,7 +32,7 @@ export default function HistoryPage() {
   const deleteVersion = usePromptStore((s) => s.deleteVersion);
 
   const [filters, setFilters] = useState<HistoryFilters>(DEFAULT_FILTERS);
-  const [view, setView] = useState<HistoryView>('timeline');
+  const [view, setView] = useState<HistoryView>("timeline");
   const [page, setPage] = useState(1);
   const [pending, setPending] = useState<PendingAction | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -44,11 +48,11 @@ export default function HistoryPage() {
   }, []);
 
   const handleRestore = useCallback(
-    (entry: HistoryEntry) => setPending({ type: 'restore', entry }),
+    (entry: HistoryEntry) => setPending({ type: "restore", entry }),
     [],
   );
   const handleDelete = useCallback(
-    (entry: HistoryEntry) => setPending({ type: 'delete', entry }),
+    (entry: HistoryEntry) => setPending({ type: "delete", entry }),
     [],
   );
   const handleCancel = useCallback(() => setPending(null), []);
@@ -57,23 +61,26 @@ export default function HistoryPage() {
     if (!pending) return;
     const { type, entry } = pending;
 
-    if (type === 'restore') {
+    if (type === "restore") {
       const created = restoreVersion(entry.promptId, entry.id);
       setNotice(
         created
-          ? t('history.page.restored', {
+          ? t("history.page.restored", {
               label: entry.label,
               title: entry.promptTitle,
               newLabel: created.label,
             })
-          : t('history.page.restoreFailed'),
+          : t("history.page.restoreFailed"),
       );
     } else {
       const ok = deleteVersion(entry.promptId, entry.id);
       setNotice(
         ok
-          ? t('history.page.deleted', { label: entry.label, title: entry.promptTitle })
-          : t('history.page.deleteFailed'),
+          ? t("history.page.deleted", {
+              label: entry.label,
+              title: entry.promptTitle,
+            })
+          : t("history.page.deleteFailed"),
       );
     }
     setPending(null);
@@ -126,40 +133,56 @@ export default function HistoryPage() {
 
       {visible.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-          {entries.length === 0 ? t('history.page.emptyAll') : t('history.page.noMatch')}
+          {entries.length === 0
+            ? t("history.page.emptyAll")
+            : t("history.page.noMatch")}
         </div>
       ) : (
         <>
-          {view === 'timeline' ? (
-            <HistoryTimeline entries={pageResult.items} onRestore={handleRestore} onDelete={handleDelete} />
+          {view === "timeline" ? (
+            <HistoryTimeline
+              entries={pageResult.items}
+              onRestore={handleRestore}
+              onDelete={handleDelete}
+            />
           ) : (
-            <HistoryTable entries={pageResult.items} onRestore={handleRestore} onDelete={handleDelete} />
+            <HistoryTable
+              entries={pageResult.items}
+              onRestore={handleRestore}
+              onDelete={handleDelete}
+            />
           )}
-          <ListPagination result={pageResult} onPageChange={setPage} noun={t('history.page.noun')} />
+          <ListPagination
+            result={pageResult}
+            onPageChange={setPage}
+            noun={t("history.page.noun")}
+          />
         </>
       )}
 
       {pending && (
         <ConfirmDialog
-          tone={pending.type === 'delete' ? 'danger' : 'primary'}
+          tone={pending.type === "delete" ? "danger" : "primary"}
           title={
-            pending.type === 'restore'
-              ? t('history.page.restoreTitle', { label: pending.entry.label })
-              : t('history.page.deleteTitle', { label: pending.entry.label })
+            pending.type === "restore"
+              ? t("history.page.restoreTitle", { label: pending.entry.label })
+              : t("history.page.deleteTitle", { label: pending.entry.label })
           }
           description={
-            pending.type === 'restore'
-              ? t('history.page.restoreBody', {
+            pending.type === "restore"
+              ? t("history.page.restoreBody", {
                   title: pending.entry.promptTitle,
                   label: pending.entry.label,
                 })
-              : t('history.page.deleteBody', {
+              : t("history.page.deleteBody", {
                   title: pending.entry.promptTitle,
                   label: pending.entry.label,
                 })
           }
           confirmLabel={
-            pending.type === 'restore' ? t('history.page.restoreConfirm') : t('history.page.deleteConfirm')
+            pending.type === "restore"
+              ? t("history.page.restoreConfirm")
+              : t("history.page.deleteConfirm")
           }
           onConfirm={handleConfirm}
           onCancel={handleCancel}

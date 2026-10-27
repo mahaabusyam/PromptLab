@@ -1,7 +1,7 @@
-import { Cloud, KeyRound, ShieldCheck } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { SettingsCard } from './SettingsParts';
+import { Cloud, KeyRound, ShieldCheck } from "lucide-react";
+import type { ReactNode } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { SettingsCard } from "./SettingsParts";
 
 // <code> inside a sentence: keep it LTR so VITE_* / localStorage don't get mangled in Arabic.
 const codeComponent = { code: <bdi dir="ltr" className="font-mono" /> };
@@ -9,24 +9,33 @@ const codeComponent = { code: <bdi dir="ltr" className="font-mono" /> };
 export function ApiSection() {
   const { t } = useTranslation();
 
-  const tiles: { icon: typeof Cloud; label: string; value: string; hint: ReactNode }[] = [
+  const tiles: {
+    icon: typeof Cloud;
+    label: string;
+    value: string;
+    hint: ReactNode;
+  }[] = [
     {
       icon: Cloud,
-      label: t('settings.api.aiLabel'),
-      value: t('settings.api.aiValue'),
-      hint: t('settings.api.aiHint'),
+      label: t("settings.api.aiLabel"),
+      value: t("settings.api.aiValue"),
+      hint: t("settings.api.aiHint"),
     },
     {
       icon: KeyRound,
-      label: t('settings.api.keysLabel'),
-      value: t('settings.api.keysValue'),
-      hint: <Trans i18nKey="settings.api.keysHint" components={codeComponent} />,
+      label: t("settings.api.keysLabel"),
+      value: t("settings.api.keysValue"),
+      hint: (
+        <Trans i18nKey="settings.api.keysHint" components={codeComponent} />
+      ),
     },
     {
       icon: ShieldCheck,
-      label: t('settings.api.dataLabel'),
-      value: t('settings.api.dataValue'),
-      hint: <Trans i18nKey="settings.api.dataHint" components={codeComponent} />,
+      label: t("settings.api.dataLabel"),
+      value: t("settings.api.dataValue"),
+      hint: (
+        <Trans i18nKey="settings.api.dataHint" components={codeComponent} />
+      ),
     },
   ];
 
@@ -34,8 +43,8 @@ export function ApiSection() {
     <SettingsCard
       id="api"
       icon={KeyRound}
-      title={t('settings.api.title')}
-      description={t('settings.api.description')}
+      title={t("settings.api.title")}
+      description={t("settings.api.description")}
     >
       <ul className="grid grid-cols-1 gap-3 md:grid-cols-3">
         {tiles.map(({ icon: Icon, label, value, hint }) => (

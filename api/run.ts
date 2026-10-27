@@ -1,102 +1,137 @@
-import { z } from 'zod'
+import { z } from "zod";
 
-const MAX_PROMPT_CHARS = 8000
-const DEFAULT_MODEL = 'gemini-3.5-flash-lite'
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/interactions'
+const MAX_PROMPT_CHARS = 8000;
+const DEFAULT_MODEL = "gemini-3.5-flash-lite";
+const GEMINI_URL =
+  "https://generativelanguage.googleapis.com/v1beta/interactions";
 
 const bodySchema = z.object({
   prompt: z.string().trim().min(1).max(MAX_PROMPT_CHARS),
   maxTokens: z.number().int().min(256).max(4096).default(1024),
-})
+});
 
-type ErrorCode = 'bad_request' | 'rate_limited' | 'not_configured' | 'upstream_error'
+type ErrorCode =
+  "bad_request" | "rate_limited" | "not_configured" | "upstream_error";
 
-function json(status: number, body: unknown, headers: Record<string, string> = {}): Response {
+function json(
+  status: number,
+  body: unknown,
+  headers: Record<string, string> = {},
+): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...headers },
-  })
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+      ...headers,
+    },
+  });
 }
 
-function fail(status: number, code: ErrorCode, message: string, headers?: Record<string, string>) {
-  return json(status, { error: { code, message } }, headers)
+function fail(
+  status: number,
+  code: ErrorCode,
+  message: string,
+  headers?: Record<string, string>,
+) {
+  return json(status, { error: { code, message } }, headers);
 }
 
 // Best-effort per-IP limit (memory resets on cold starts)
-const WINDOW_MS = 60_000
-const MAX_REQUESTS = 10
-const hits = new Map<string, number[]>()
+const WINDOW_MS = 60_000;
+const MAX_REQUESTS = 10;
+const hits = new Map<string, number[]>();
 
 function isLimited(ip: string): boolean {
-  const now = Date.now()
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS)
-  recent.push(now)
-  hits.set(ip, recent)
-  return recent.length > MAX_REQUESTS
+  const now = Date.now();
+  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
+  recent.push(now);
+  hits.set(ip, recent);
+  return recent.length > MAX_REQUESTS;
 }
 
 interface GeminiResponse {
-  steps?: { type?: string; content?: { type?: string; text?: string }[] }[]
-  usage?: { total_input_tokens?: number; total_output_tokens?: number }
+  steps?: { type?: string; content?: { type?: string; text?: string }[] }[];
+  usage?: { total_input_tokens?: number; total_output_tokens?: number };
 }
 
 export async function POST(request: Request): Promise<Response> {
-  const apiKey = process.env.GEMINI_API_KEY
-  if (!apiKey) return fail(503, 'not_configured', 'AI service is not configured.')
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey)
+    return fail(503, "not_configured", "AI service is not configured.");
 
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
   if (isLimited(ip)) {
-    return fail(429, 'rate_limited', 'Too many requests. Try again in a minute.', { 'Retry-After': '60' })
+    return fail(
+      429,
+      "rate_limited",
+      "Too many requests. Try again in a minute.",
+      { "Retry-After": "60" },
+    );
   }
 
-  let raw: unknown
+  let raw: unknown;
   try {
-    raw = await request.json()
+    raw = await request.json();
   } catch {
-    return fail(400, 'bad_request', 'Request body must be valid JSON.')
+    return fail(400, "bad_request", "Request body must be valid JSON.");
   }
 
-  const parsed = bodySchema.safeParse(raw)
+  const parsed = bodySchema.safeParse(raw);
   if (!parsed.success) {
-    return fail(400, 'bad_request', `Invalid input. Prompt must be 1–${MAX_PROMPT_CHARS} characters.`)
+    return fail(
+      400,
+      "bad_request",
+      `Invalid input. Prompt must be 1–${MAX_PROMPT_CHARS} characters.`,
+    );
   }
-  const { prompt, maxTokens } = parsed.data
-  const model = process.env.GEMINI_MODEL ?? DEFAULT_MODEL
-  const started = Date.now()
+  const { prompt, maxTokens } = parsed.data;
+  const model = process.env.GEMINI_MODEL ?? DEFAULT_MODEL;
+  const started = Date.now();
 
   try {
     const upstream = await fetch(GEMINI_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
       body: JSON.stringify({
         model,
         input: prompt,
         generation_config: { max_output_tokens: maxTokens },
       }),
       signal: AbortSignal.timeout(20_000),
-    })
+    });
 
     if (upstream.status === 429) {
-      return fail(429, 'rate_limited', 'The AI provider is busy. Try again shortly.', { 'Retry-After': '30' })
+      return fail(
+        429,
+        "rate_limited",
+        "The AI provider is busy. Try again shortly.",
+        { "Retry-After": "30" },
+      );
     }
     if (!upstream.ok) {
-      const detail = (await upstream.text()).slice(0, 300)
-      console.error('Gemini error:', upstream.status, detail)
-      return fail(502, 'upstream_error', 'The AI provider returned an error.')
+      const detail = (await upstream.text()).slice(0, 300);
+      console.error("Gemini error:", upstream.status, detail);
+      return fail(502, "upstream_error", "The AI provider returned an error.");
     }
 
-    const data = (await upstream.json()) as GeminiResponse
+    const data = (await upstream.json()) as GeminiResponse;
     const output = (data.steps ?? [])
-      .filter((step) => step.type === 'model_output')
+      .filter((step) => step.type === "model_output")
       .flatMap((step) => step.content ?? [])
-      .filter((part) => part.type === 'text' && typeof part.text === 'string')
+      .filter((part) => part.type === "text" && typeof part.text === "string")
       .map((part) => part.text)
-      .join('')
-      .trim()
+      .join("")
+      .trim();
 
     if (!output) {
-      console.error('Gemini empty answer:', JSON.stringify(data).slice(0, 300))
-      return fail(502, 'upstream_error', 'The AI provider returned an empty answer.')
+      console.error("Gemini empty answer:", JSON.stringify(data).slice(0, 300));
+      return fail(
+        502,
+        "upstream_error",
+        "The AI provider returned an empty answer.",
+      );
     }
 
     return json(200, {
@@ -105,9 +140,12 @@ export async function POST(request: Request): Promise<Response> {
       latencyMs: Date.now() - started,
       inputTokens: data.usage?.total_input_tokens,
       outputTokens: data.usage?.total_output_tokens,
-    })
+    });
   } catch (error) {
-    console.error('Run failed:', error instanceof Error ? error.name : 'unknown')
-    return fail(502, 'upstream_error', 'Could not reach the AI provider.')
+    console.error(
+      "Run failed:",
+      error instanceof Error ? error.name : "unknown",
+    );
+    return fail(502, "upstream_error", "Could not reach the AI provider.");
   }
 }

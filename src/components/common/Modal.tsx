@@ -1,19 +1,19 @@
-import { useEffect, useRef } from 'react'
-import type { ReactNode } from 'react'
+import { useEffect, useRef } from "react";
+import type { ReactNode } from "react";
 
 interface ModalProps {
-  labelledBy: string
-  onClose: () => void
-  children: ReactNode
+  labelledBy: string;
+  onClose: () => void;
+  children: ReactNode;
 }
 
 export function Modal({ labelledBy, onClose, children }: ModalProps) {
-  const ref = useRef<HTMLDialogElement>(null)
+  const ref = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    const dialog = ref.current
-    if (dialog && !dialog.open) dialog.showModal() // showModal: حبس الـ focus + Escape مجاناً
-  }, [])
+    const dialog = ref.current;
+    if (dialog && !dialog.open) dialog.showModal(); // showModal: حبس الـ focus + Escape مجاناً
+  }, []);
 
   return (
     <dialog
@@ -25,5 +25,5 @@ export function Modal({ labelledBy, onClose, children }: ModalProps) {
     >
       {children}
     </dialog>
-  )
+  );
 }

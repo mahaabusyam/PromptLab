@@ -1,4 +1,4 @@
-import type { Prompt, PromptVersion } from '@/features/prompts/types';
+import type { Prompt, PromptVersion } from "@/features/prompts/types";
 
 export interface CompareSelection {
   prompt: Prompt;
@@ -6,7 +6,10 @@ export interface CompareSelection {
   target: PromptVersion;
 }
 
-function neighbor(versions: PromptVersion[], version: PromptVersion): PromptVersion | undefined {
+function neighbor(
+  versions: PromptVersion[],
+  version: PromptVersion,
+): PromptVersion | undefined {
   const i = versions.indexOf(version);
   return versions[i - 1] ?? versions[i + 1];
 }
@@ -25,12 +28,15 @@ export function resolveSelection(
   if (!prompt) return null;
 
   const { versions } = prompt;
-  const target = versions.find((v) => v.id === targetId) ?? versions[versions.length - 1];
+  const target =
+    versions.find((v) => v.id === targetId) ?? versions[versions.length - 1];
   if (!target) return null;
 
   const requestedBase = versions.find((v) => v.id === baseId);
   const base =
-    requestedBase && requestedBase.id !== target.id ? requestedBase : neighbor(versions, target);
+    requestedBase && requestedBase.id !== target.id
+      ? requestedBase
+      : neighbor(versions, target);
   if (!base) return null;
 
   return { prompt, base, target };
