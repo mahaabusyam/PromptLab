@@ -1,6 +1,7 @@
 import { Database, Download, RotateCcw, Upload } from 'lucide-react';
 import { useRef, useState, type DragEvent } from 'react';
-import { ConfirmDialog } from '@/components/common/ConfirmDialog'
+import { useTranslation } from 'react-i18next';
+import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { usePromptStore } from '@/stores/promptStore';
 import { useBackup, type ImportMode } from '../hooks/useBackup';
 import { SettingsCard } from './SettingsParts';
@@ -9,6 +10,7 @@ const actionButton =
   'flex w-full items-center justify-center gap-2 rounded-xl bg-muted px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-primary';
 
 export function DataSection() {
+  const { t } = useTranslation();
   const { status, pending, exportBackup, stageFile, applyPending, cancelPending } = useBackup();
   const promptCount = usePromptStore((s) => s.prompts.length);
   const resetToSeed = usePromptStore((s) => s.resetToSeed);
@@ -25,32 +27,35 @@ export function DataSection() {
     if (file) void stageFile(file);
   }
 
+  const modes = [
+    ['merge', t('settings.data.merge'), t('settings.data.mergeHint')],
+    ['replace', t('settings.data.replace'), t('settings.data.replaceHint')],
+  ] as const;
+
   return (
     <SettingsCard
       id="data"
       icon={Database}
-      title="Data Backup & Migration"
-      description="Everything lives in this browser. Export a backup to keep it safe or move it elsewhere."
+      title={t('settings.data.title')}
+      description={t('settings.data.description')}
       badge={
         <span className="rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
-          Local data
+          {t('settings.data.badge')}
         </span>
       }
     >
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="flex flex-col justify-between gap-4 rounded-xl bg-background p-4">
           <div>
-            <h3 className="font-heading font-semibold">Comprehensive JSON Backup</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Prompts with all versions, folders, imported templates, starred templates and settings, in one file.
-            </p>
+            <h3 className="font-heading font-semibold">{t('settings.data.exportTitle')}</h3>
+            <p className="mt-1 text-sm text-muted-foreground">{t('settings.data.exportBody')}</p>
           </div>
           <div className="space-y-2">
             <button type="button" onClick={() => void exportBackup()} className={actionButton}>
               <Download className="size-4 text-primary" aria-hidden="true" />
-              Export All Data (JSON)
+              {t('settings.data.exportButton')}
             </button>
-            <p className="px-1 text-[11px] text-muted-foreground">SHA-256 checksum included</p>
+            <p className="px-1 text-[11px] text-muted-foreground">{t('settings.data.checksum')}</p>
           </div>
         </div>
 
@@ -66,10 +71,8 @@ export function DataSection() {
           }`}
         >
           <div>
-            <h3 className="font-heading font-semibold">Restore or Import Backup</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Drop a PromptLab backup here. The file is validated and its checksum verified before anything changes.
-            </p>
+            <h3 className="font-heading font-semibold">{t('settings.data.importTitle')}</h3>
+            <p className="mt-1 text-sm text-muted-foreground">{t('settings.data.importBody')}</p>
           </div>
           <div className="space-y-2">
             <input
@@ -87,9 +90,9 @@ export function DataSection() {
             />
             <button type="button" onClick={() => inputRef.current?.click()} className={actionButton}>
               <Upload className="size-4 text-primary" aria-hidden="true" />
-              Import Backup File
+              {t('settings.data.importButton')}
             </button>
-            <p className="px-1 text-[11px] text-muted-foreground">Drag &amp; drop or browse · Max 5 MB</p>
+            <p className="px-1 text-[11px] text-muted-foreground">{t('settings.data.importHint')}</p>
           </div>
         </div>
       </div>
@@ -97,6 +100,7 @@ export function DataSection() {
       {status && (
         <p
           role={status.type === 'error' ? 'alert' : 'status'}
+          dir="auto"
           className={`mt-4 rounded-lg border px-4 py-2 text-sm ${
             status.type === 'error'
               ? 'border-destructive/40 bg-destructive/10 text-destructive'
@@ -110,21 +114,22 @@ export function DataSection() {
       {pending && (
         <div className="mt-4 space-y-4 rounded-xl border border-primary/30 bg-primary/5 p-4">
           <div>
-            <p className="text-sm font-semibold">Ready to import: {pending.fileName}</p>
+            <p dir="auto" className="text-sm font-semibold">
+              {t('settings.data.ready', { name: pending.fileName })}
+            </p>
             <p className="text-xs text-muted-foreground">
-              {pending.summary.prompts} prompts · {pending.summary.versions} versions · {pending.summary.folders} folders ·{' '}
-              {pending.summary.templates} templates · checksum verified
+              {t('settings.data.summary', {
+                prompts: pending.summary.prompts,
+                versions: pending.summary.versions,
+                folders: pending.summary.folders,
+                templates: pending.summary.templates,
+              })}
             </p>
           </div>
 
           <fieldset className="space-y-2">
-            <legend className="sr-only">Import mode</legend>
-            {(
-              [
-                ['merge', 'Merge', 'Add new items; items with the same id are replaced by the backup. Your settings stay.'],
-                ['replace', 'Replace everything', 'Swap all prompts, folders, templates, favorites and settings with the backup.'],
-              ] as const
-            ).map(([value, label, hint]) => (
+            <legend className="sr-only">{t('settings.data.modeLegend')}</legend>
+            {modes.map(([value, label, hint]) => (
               <label key={value} className="flex cursor-pointer items-start gap-3 text-sm">
                 <input
                   type="radio"
@@ -148,14 +153,14 @@ export function DataSection() {
               onClick={() => (mode === 'replace' ? setConfirm('replace') : applyPending('merge'))}
               className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              Import
+              {t('settings.data.import')}
             </button>
             <button
               type="button"
               onClick={cancelPending}
               className="rounded-xl bg-muted px-4 py-2 text-sm font-semibold hover:bg-accent focus-visible:outline-2 focus-visible:outline-primary"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
           </div>
         </div>
@@ -163,9 +168,9 @@ export function DataSection() {
 
       <div className="mt-5 flex flex-col justify-between gap-3 rounded-xl bg-background p-4 sm:flex-row sm:items-center">
         <div>
-          <p className="text-sm font-semibold">Reset demo data</p>
+          <p className="text-sm font-semibold">{t('settings.data.resetTitle')}</p>
           <p className="text-xs text-muted-foreground">
-            Restore the original sample prompts and folders ({promptCount} prompts stored now).
+            {t('settings.data.resetHint', { total: promptCount })}
           </p>
         </div>
         <button
@@ -174,15 +179,15 @@ export function DataSection() {
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-muted px-4 py-2 text-sm font-semibold hover:bg-accent focus-visible:outline-2 focus-visible:outline-primary"
         >
           <RotateCcw className="size-4" aria-hidden="true" />
-          Reset demo data
+          {t('settings.data.resetTitle')}
         </button>
       </div>
 
       {confirm === 'replace' && (
         <ConfirmDialog
-          title="Replace all data?"
-          description="Your current prompts, folders, imported templates, favorites and settings will be replaced by the backup. This cannot be undone."
-          confirmLabel="Replace everything"
+          title={t('settings.data.replaceDialogTitle')}
+          description={t('settings.data.replaceDialogBody')}
+          confirmLabel={t('settings.data.replace')}
           tone="danger"
           onConfirm={() => {
             setConfirm(null);
@@ -193,9 +198,9 @@ export function DataSection() {
       )}
       {confirm === 'reset' && (
         <ConfirmDialog
-          title="Reset demo data?"
-          description="Your prompts and folders will be replaced with the original demo data. Imported templates and settings are kept."
-          confirmLabel="Reset"
+          title={t('settings.data.resetDialogTitle')}
+          description={t('settings.data.resetDialogBody')}
+          confirmLabel={t('settings.data.resetConfirm')}
           tone="danger"
           onConfirm={() => {
             setConfirm(null);

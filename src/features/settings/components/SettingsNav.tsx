@@ -1,15 +1,16 @@
 import { Database, KeyRound, SlidersHorizontal, Palette, type LucideIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useActiveSection } from '../hooks/useActiveSection';
 import { useStorageUsage } from '../hooks/useStorageUsage';
 import { formatBytes, STORAGE_QUOTA_BYTES } from '../storage';
 
-const sections: { id: string; label: string; icon: LucideIcon }[] = [
-  { id: 'general', label: 'General', icon: SlidersHorizontal },
-  { id: 'appearance', label: 'Appearance', icon: Palette },
-  { id: 'data', label: 'Data Management', icon: Database },
-  { id: 'api', label: 'API & Security', icon: KeyRound },
+const sectionMeta: { id: string; key: 'general' | 'appearance' | 'data' | 'api'; icon: LucideIcon }[] = [
+  { id: 'general', key: 'general', icon: SlidersHorizontal },
+  { id: 'appearance', key: 'appearance', icon: Palette },
+  { id: 'data', key: 'data', icon: Database },
+  { id: 'api', key: 'api', icon: KeyRound },
 ];
-const SECTION_IDS = sections.map((s) => s.id);
+const SECTION_IDS = sectionMeta.map((s) => s.id);
 
 function scrollToSection(id: string): void {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -17,17 +18,18 @@ function scrollToSection(id: string): void {
 }
 
 export function SettingsNav() {
+  const { t } = useTranslation();
   const active = useActiveSection(SECTION_IDS);
   const usage = useStorageUsage();
 
   return (
     <aside data-enter className="flex flex-col gap-4 lg:sticky lg:top-20 lg:col-span-3">
-      <nav aria-label="Settings sections" className="rounded-2xl border border-border bg-card p-2">
+      <nav aria-label={t('settings.nav.label')} className="rounded-2xl border border-border bg-card p-2">
         <p className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Configuration
+          {t('settings.nav.configuration')}
         </p>
         <ul className="space-y-1">
-          {sections.map(({ id, label, icon: Icon }) => {
+          {sectionMeta.map(({ id, key, icon: Icon }) => {
             const isActive = active === id;
             return (
               <li key={id}>
@@ -42,7 +44,7 @@ export function SettingsNav() {
                   }`}
                 >
                   <Icon className="size-5" aria-hidden="true" />
-                  {label}
+                  {t(`settings.nav.${key}`)}
                 </button>
               </li>
             );
@@ -52,12 +54,14 @@ export function SettingsNav() {
 
       <div className="rounded-2xl border border-border bg-card p-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-heading text-sm font-semibold">Local Storage</h2>
-          <span className="text-xs font-semibold text-primary">{usage.percent}% used</span>
+          <h2 className="font-heading text-sm font-semibold">{t('settings.nav.storage')}</h2>
+          <span className="text-xs font-semibold text-primary">
+            {t('settings.nav.percentUsed', { percent: usage.percent })}
+          </span>
         </div>
         <div
           role="progressbar"
-          aria-label="Local storage used"
+          aria-label={t('settings.nav.progressLabel')}
           aria-valuenow={usage.percent}
           aria-valuemin={0}
           aria-valuemax={100}
@@ -65,9 +69,9 @@ export function SettingsNav() {
         >
           <div className="h-full rounded-full bg-primary" style={{ width: `${usage.percent}%` }} />
         </div>
-        <div className="mt-2 flex justify-between text-xs text-muted-foreground">
-          <span>{formatBytes(usage.bytes)} used</span>
-          <span>~{formatBytes(STORAGE_QUOTA_BYTES)} browser limit</span>
+        <div className="mt-2 flex justify-between gap-2 text-xs text-muted-foreground">
+          <span>{t('settings.nav.used', { size: formatBytes(usage.bytes) })}</span>
+          <span>{t('settings.nav.limit', { size: formatBytes(STORAGE_QUOTA_BYTES) })}</span>
         </div>
       </div>
     </aside>

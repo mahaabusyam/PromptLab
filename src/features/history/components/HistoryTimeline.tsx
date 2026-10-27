@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import gsap from 'gsap';
+import { useTranslation } from 'react-i18next';
 import { groupByDay } from '../groupByDay';
 import type { HistoryEntry } from '../types';
 import { HistoryLogCard } from './HistoryLogCard';
@@ -11,6 +12,7 @@ interface HistoryTimelineProps {
 }
 
 export function HistoryTimeline({ entries, onRestore, onDelete }: HistoryTimelineProps) {
+  const { t } = useTranslation();
   const rootRef = useRef<HTMLDivElement>(null);
   const groups = useMemo(() => groupByDay(entries), [entries]);
   // Re-run the animation only when the set of visible entries changes
@@ -48,7 +50,7 @@ export function HistoryTimeline({ entries, onRestore, onDelete }: HistoryTimelin
               {group.label}
             </h2>
             <span className="text-xs text-muted-foreground">
-              {group.entries.length} {group.entries.length === 1 ? 'commit' : 'commits'} recorded
+              {t('history.timeline.recorded', { total: group.entries.length })}
             </span>
           </div>
 

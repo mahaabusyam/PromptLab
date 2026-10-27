@@ -1,4 +1,5 @@
 import type { RefObject } from 'react';
+import { useTranslation } from 'react-i18next';
 import { groupKinds } from '../diffRows';
 import type { KindBlock, RowKind } from '../diffRows';
 
@@ -13,15 +14,16 @@ const blockTone: Record<KindBlock['kind'], string> = {
   changed: 'bg-amber-500',
 };
 
-const blockLabel: Record<KindBlock['kind'], string> = {
-  added: 'added',
-  removed: 'removed',
-  changed: 'modified',
-};
-
 export function DiffMinimap({ kinds, scrollRef }: DiffMinimapProps) {
+  const { t } = useTranslation();
   const total = Math.max(kinds.length, 1);
   const blocks = groupKinds(kinds);
+
+  const blockLabel: Record<KindBlock['kind'], string> = {
+    added: t('compare.minimap.added'),
+    removed: t('compare.minimap.removed'),
+    changed: t('compare.minimap.changed'),
+  };
 
   function jumpTo(block: KindBlock): void {
     const el = scrollRef.current;
@@ -36,8 +38,16 @@ export function DiffMinimap({ kinds, scrollRef }: DiffMinimapProps) {
           key={`${block.start}-${block.end}`}
           type="button"
           onClick={() => jumpTo(block)}
-          title={`Lines ${block.start + 1}–${block.end} (${blockLabel[block.kind]})`}
-          aria-label={`Jump to ${blockLabel[block.kind]} lines ${block.start + 1} to ${block.end}`}
+          title={t('compare.minimap.title', {
+            from: block.start + 1,
+            to: block.end,
+            kind: blockLabel[block.kind],
+          })}
+          aria-label={t('compare.minimap.jump', {
+            kind: blockLabel[block.kind],
+            from: block.start + 1,
+            to: block.end,
+          })}
           style={{
             top: `${(block.start / total) * 100}%`,
             height: `max(${((block.end - block.start) / total) * 100}%, 4px)`,

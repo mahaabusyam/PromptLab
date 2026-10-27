@@ -4,6 +4,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import NotFoundPage from '@/pages/NotFoundPage'
 import RouteErrorPage from '@/pages/RouteErrorPage'
+import { useTranslation } from 'react-i18next'
 
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'))
 const LibraryPage = lazy(() => import('@/pages/LibraryPage'))
@@ -14,13 +15,15 @@ const ComparePage = lazy(() => import('@/pages/ComparePage'))
 const HistoryPage = lazy(() => import('@/pages/HistoryPage'))
 const FavoritesPage = lazy(() => import('@/pages/FavoritesPage'))
 
+
 function PageLoader() {
+  const { t } = useTranslation()
   return (
     <div className="flex min-h-64 items-center justify-center">
       <div
         className="size-8 animate-spin rounded-full border-2 border-current border-t-transparent"
         role="status"
-        aria-label="Loading page"
+        aria-label={t('common.loadingPage')}
       />
     </div>
   )

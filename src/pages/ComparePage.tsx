@@ -1,6 +1,7 @@
 import { Download, RotateCcw } from 'lucide-react';
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { buildCompare } from '@/features/compare/compare';
 import { CompareHeader } from '@/features/compare/components/CompareHeader';
@@ -11,10 +12,11 @@ import { DiffViewer } from '@/features/compare/components/DiffViewer';
 import { VersionPickerBar } from '@/features/compare/components/VersionPickerBar';
 import { buildUnifiedDiffText, downloadTextFile, slugify } from '@/features/compare/exportDiff';
 import { useCompareSelection } from '@/features/compare/hooks/useCompareSelection';
-import { ConfirmDialog } from '@/components/common/ConfirmDialog'
+import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { usePromptStore } from '@/stores/promptStore';
 
 export default function ComparePage() {
+  const { t } = useTranslation();
   const { selection, comparable, setPrompt, setBase, setTarget, swap } = useCompareSelection();
   const restoreVersion = usePromptStore((s) => s.restoreVersion);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -64,15 +66,13 @@ export default function ComparePage() {
   if (!selection || !result) {
     return (
       <div className="rounded-xl border border-dashed border-border p-10 text-center">
-        <h1 className="font-heading text-xl font-semibold">Nothing to compare yet</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          A prompt needs at least two saved versions. Save a version from the editor, then come back.
-        </p>
+        <h1 className="font-heading text-xl font-semibold">{t('compare.page.emptyTitle')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('compare.page.emptyBody')}</p>
         <Link
           to="/library"
           className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary"
         >
-          Go to Library
+          {t('compare.page.goToLibrary')}
         </Link>
       </div>
     );
@@ -86,8 +86,8 @@ export default function ComparePage() {
     const created = restoreVersion(prompt.id, base.id);
     setNotice(
       created
-        ? `Restored ${base.label} as new version ${created.label}. Open the editor to continue from it.`
-        : 'Could not restore this version.',
+        ? t('compare.page.restored', { label: base.label, newLabel: created.label })
+        : t('compare.page.restoreFailed'),
     );
     setConfirmRestore(false);
   }
@@ -117,17 +117,17 @@ export default function ComparePage() {
           className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3.5 py-2 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary"
         >
           <Download className="size-4" aria-hidden="true" />
-          Export Diff
+          {t('compare.page.export')}
         </button>
         <button
           type="button"
           onClick={() => setConfirmRestore(true)}
           disabled={baseIsCurrent}
-          title={baseIsCurrent ? `${base.label} is already the current version` : undefined}
+          title={baseIsCurrent ? t('compare.page.alreadyCurrent', { label: base.label }) : undefined}
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-40"
         >
           <RotateCcw className="size-4" aria-hidden="true" />
-          Restore Version {base.label}
+          {t('compare.page.restoreButton', { label: base.label })}
         </button>
       </DiffToolbar>
 
@@ -144,9 +144,9 @@ export default function ComparePage() {
       {confirmRestore && (
         <ConfirmDialog
           tone="primary"
-          title={`Restore ${base.label}?`}
-          description={`"${prompt.title}" will get a new version with the content of ${base.label}. Your existing history is kept, nothing is overwritten.`}
-          confirmLabel="Restore version"
+          title={t('history.page.restoreTitle', { label: base.label })}
+          description={t('history.page.restoreBody', { title: prompt.title, label: base.label })}
+          confirmLabel={t('history.page.restoreConfirm')}
           onConfirm={handleConfirmRestore}
           onCancel={() => setConfirmRestore(false)}
         />

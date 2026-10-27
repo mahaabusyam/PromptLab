@@ -1,19 +1,41 @@
 import { Cloud, KeyRound, ShieldCheck } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { SettingsCard } from './SettingsParts';
 
-const tiles = [
-  { icon: Cloud, label: 'AI features', value: 'Optional', hint: 'Improve, Variations and Run with AI go through a secure server-side proxy. Your API key never reaches the browser.' },
-  { icon: KeyRound, label: 'API keys', value: 'None stored', hint: 'Secret keys must never live in the browser or in VITE_* variables.' },
-  { icon: ShieldCheck, label: 'Data location', value: 'This browser only', hint: 'No backend: everything is saved in localStorage.' },
-];
+// <code> inside a sentence: keep it LTR so VITE_* / localStorage don't get mangled in Arabic.
+const codeComponent = { code: <bdi dir="ltr" className="font-mono" /> };
 
 export function ApiSection() {
+  const { t } = useTranslation();
+
+  const tiles: { icon: typeof Cloud; label: string; value: string; hint: ReactNode }[] = [
+    {
+      icon: Cloud,
+      label: t('settings.api.aiLabel'),
+      value: t('settings.api.aiValue'),
+      hint: t('settings.api.aiHint'),
+    },
+    {
+      icon: KeyRound,
+      label: t('settings.api.keysLabel'),
+      value: t('settings.api.keysValue'),
+      hint: <Trans i18nKey="settings.api.keysHint" components={codeComponent} />,
+    },
+    {
+      icon: ShieldCheck,
+      label: t('settings.api.dataLabel'),
+      value: t('settings.api.dataValue'),
+      hint: <Trans i18nKey="settings.api.dataHint" components={codeComponent} />,
+    },
+  ];
+
   return (
     <SettingsCard
       id="api"
       icon={KeyRound}
-      title="API & Security"
-      description="Where your data lives and how AI features connect."
+      title={t('settings.api.title')}
+      description={t('settings.api.description')}
     >
       <ul className="grid grid-cols-1 gap-3 md:grid-cols-3">
         {tiles.map(({ icon: Icon, label, value, hint }) => (

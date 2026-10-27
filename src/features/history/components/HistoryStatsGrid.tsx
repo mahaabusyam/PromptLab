@@ -1,7 +1,9 @@
 import { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
+import type { TFunction } from 'i18next';
 import { GitCommitHorizontal, RotateCcw, Layers, Activity } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { HistoryStats } from '../types';
 
 interface HistoryStatsGridProps {
@@ -24,23 +26,24 @@ const toneClasses: Record<KpiCard['tone'], string> = {
   accent: 'bg-pink-500/10 text-pink-500',
 };
 
-function buildCards(stats: HistoryStats): KpiCard[] {
+function buildCards(stats: HistoryStats, t: TFunction): KpiCard[] {
   const trend =
     stats.commitsTrend === null
       ? null
-      : `${stats.commitsTrend >= 0 ? '+' : ''}${stats.commitsTrend}% vs previous 30 days`;
+      : t('history.stats.trend', { value: `${stats.commitsTrend >= 0 ? '+' : ''}${stats.commitsTrend}` });
 
   return [
-    { key: 'commits', label: 'Total Commits', value: String(stats.totalCommits), hint: trend, icon: GitCommitHorizontal, tone: 'primary' },
-    { key: 'rollbacks', label: 'Rollbacks Triggered', value: String(stats.rollbacks), hint: null, icon: RotateCcw, tone: 'danger' },
-    { key: 'prompts', label: 'Prompts Versioned', value: String(stats.promptsVersioned), hint: null, icon: Layers, tone: 'secondary' },
-    { key: 'daily', label: 'Avg. Daily Revisions', value: String(stats.avgDaily), hint: 'last 30 days', icon: Activity, tone: 'accent' },
+    { key: 'commits', label: t('history.stats.commits'), value: String(stats.totalCommits), hint: trend, icon: GitCommitHorizontal, tone: 'primary' },
+    { key: 'rollbacks', label: t('history.stats.rollbacks'), value: String(stats.rollbacks), hint: null, icon: RotateCcw, tone: 'danger' },
+    { key: 'prompts', label: t('history.stats.prompts'), value: String(stats.promptsVersioned), hint: null, icon: Layers, tone: 'secondary' },
+    { key: 'daily', label: t('history.stats.daily'), value: String(stats.avgDaily), hint: t('history.stats.last30'), icon: Activity, tone: 'accent' },
   ];
 }
 
 export function HistoryStatsGrid({ stats }: HistoryStatsGridProps) {
+  const { t } = useTranslation();
   const rootRef = useRef<HTMLDivElement>(null);
-  const cards = buildCards(stats);
+  const cards = buildCards(stats, t);
 
   useLayoutEffect(() => {
     const root = rootRef.current;

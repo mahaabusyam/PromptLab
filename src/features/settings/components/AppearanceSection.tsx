@@ -1,9 +1,10 @@
 import { Check, Paintbrush } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useThemeStore, type Theme } from '@/stores/themeStore';
 import { accentOptions } from '../constants';
 import { SettingsCard, Switch } from './SettingsParts';
-import { LanguageField } from './LanguageField'
+import { LanguageField } from './LanguageField';
 
 interface ThemeOption {
   id: Theme;
@@ -13,13 +14,8 @@ interface ThemeOption {
   bar: string;
 }
 
-const themeOptions: ThemeOption[] = [
-  { id: 'dark', label: 'Obsidian Dark', hint: 'High-contrast dark workspace for low-light prompt tuning.', surface: 'bg-[#0f131c]', bar: 'bg-[#31353f]' },
-  { id: 'light', label: 'Paper Light', hint: 'Bright, high-key contrast for daytime work.', surface: 'bg-[#fbf8ff]', bar: 'bg-[#e3e0ed]' },
-  { id: 'system', label: 'Match System', hint: 'Follows your operating system setting.', surface: 'bg-linear-to-r from-[#0f131c] from-50% to-[#fbf8ff] to-50%', bar: 'bg-[#908fa0]/60' },
-];
-
 export function AppearanceSection() {
+  const { t } = useTranslation();
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
   const accent = useSettingsStore((s) => s.settings.accent);
@@ -28,20 +24,30 @@ export function AppearanceSection() {
 
   const activeAccent = accentOptions.find((a) => a.id === accent);
 
+  const themeOptions: ThemeOption[] = [
+    { id: 'dark', label: t('settings.appearance.dark'), hint: t('settings.appearance.darkHint'), surface: 'bg-[#0f131c]', bar: 'bg-[#31353f]' },
+    { id: 'light', label: t('settings.appearance.light'), hint: t('settings.appearance.lightHint'), surface: 'bg-[#fbf8ff]', bar: 'bg-[#e3e0ed]' },
+    { id: 'system', label: t('settings.appearance.system'), hint: t('settings.appearance.systemHint'), surface: 'bg-linear-to-r from-[#0f131c] from-50% to-[#fbf8ff] to-50%', bar: 'bg-[#908fa0]/60' },
+  ];
+
   return (
     <SettingsCard
       id="appearance"
       icon={Paintbrush}
-      title="Appearance"
-      description="Theme, accent color and contrast. Changes apply instantly."
+      title={t('settings.appearance.title')}
+      description={t('settings.appearance.description')}
       badge={
         <span className="rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
-          Live Preview
+          {t('settings.appearance.badge')}
         </span>
       }
     >
       <div className="space-y-6">
-        <div role="radiogroup" aria-label="Theme" className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        <div
+          role="radiogroup"
+          aria-label={t('settings.appearance.themeGroup')}
+          className="grid grid-cols-1 gap-3 md:grid-cols-3"
+        >
           {themeOptions.map((opt) => {
             const selected = theme === opt.id;
             return (
@@ -70,7 +76,7 @@ export function AppearanceSection() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <span id="accent-label" className="text-xs font-semibold">Interface Accent</span>
+          <span id="accent-label" className="text-xs font-semibold">{t('settings.appearance.accent')}</span>
           <div role="radiogroup" aria-labelledby="accent-label" className="flex flex-wrap items-center gap-3">
             {accentOptions.map((opt) => {
               const selected = accent === opt.id;
@@ -92,16 +98,20 @@ export function AppearanceSection() {
                 </button>
               );
             })}
-            <span className="font-mono text-xs text-muted-foreground">{activeAccent?.label}</span>
+            <span className="text-xs text-muted-foreground">{activeAccent?.label}</span>
           </div>
         </div>
 
         <div className="flex items-center justify-between gap-4 border-t border-border pt-4">
           <div>
-            <p className="text-sm font-semibold">Higher contrast</p>
-            <p className="text-xs text-muted-foreground">Stronger borders and darker secondary text for easier reading.</p>
+            <p className="text-sm font-semibold">{t('settings.appearance.contrast')}</p>
+            <p className="text-xs text-muted-foreground">{t('settings.appearance.contrastHint')}</p>
           </div>
-          <Switch checked={highContrast} onChange={(v) => update({ highContrast: v })} label="Higher contrast" />
+          <Switch
+            checked={highContrast}
+            onChange={(v) => update({ highContrast: v })}
+            label={t('settings.appearance.contrast')}
+          />
         </div>
         <div className="border-t border-border pt-4">
           <LanguageField />

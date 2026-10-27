@@ -1,5 +1,6 @@
 import { LayoutList, Search, Table2, X } from 'lucide-react';
 import type { ChangeEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { hasActiveFilters } from '../filterHistory';
 import type { HistoryFilters, HistoryKind, HistoryRange, HistoryView } from '../types';
 
@@ -18,20 +19,6 @@ interface HistoryToolbarProps {
   onViewChange: (view: HistoryView) => void;
 }
 
-const rangeOptions: { value: HistoryRange; label: string }[] = [
-  { value: 'all', label: 'All time' },
-  { value: '7d', label: 'Last 7 days' },
-  { value: '30d', label: 'Last 30 days' },
-  { value: '90d', label: 'Last 90 days' },
-];
-
-const pills: { kind: HistoryKind; label: string; dot: string }[] = [
-  { kind: 'all', label: 'All Logs', dot: 'bg-muted-foreground' },
-  { kind: 'edit', label: 'Edits', dot: 'bg-primary' },
-  { kind: 'rollback', label: 'Rollbacks', dot: 'bg-red-500' },
-  { kind: 'initial', label: 'Created', dot: 'bg-emerald-500' },
-];
-
 const selectClass =
   'h-10 rounded-lg border border-border bg-card px-3 text-sm focus-visible:outline-2 focus-visible:outline-primary';
 
@@ -44,9 +31,25 @@ export function HistoryToolbar({
   view,
   onViewChange,
 }: HistoryToolbarProps) {
+  const { t } = useTranslation();
+
+  const rangeOptions: { value: HistoryRange; label: string }[] = [
+    { value: 'all', label: t('history.toolbar.rangeAll') },
+    { value: '7d', label: t('history.toolbar.range7d') },
+    { value: '30d', label: t('history.toolbar.range30d') },
+    { value: '90d', label: t('history.toolbar.range90d') },
+  ];
+
+  const pills: { kind: HistoryKind; label: string; dot: string }[] = [
+    { kind: 'all', label: t('history.toolbar.kindAll'), dot: 'bg-muted-foreground' },
+    { kind: 'edit', label: t('history.toolbar.kindEdit'), dot: 'bg-primary' },
+    { kind: 'rollback', label: t('history.toolbar.kindRollback'), dot: 'bg-red-500' },
+    { kind: 'initial', label: t('history.toolbar.kindInitial'), dot: 'bg-emerald-500' },
+  ];
+
   const viewButtons = [
-    { value: 'timeline' as const, label: 'Timeline', icon: LayoutList },
-    { value: 'table' as const, label: 'Table', icon: Table2 },
+    { value: 'timeline' as const, label: t('history.toolbar.timeline'), icon: LayoutList },
+    { value: 'table' as const, label: t('history.toolbar.table'), icon: Table2 },
   ];
 
   return (
@@ -62,20 +65,20 @@ export function HistoryToolbar({
             type="search"
             value={filters.query}
             onChange={(e: ChangeEvent<HTMLInputElement>) => onChange({ query: e.target.value })}
-            placeholder="Search by prompt name, commit hash or note..."
-            aria-label="Search version logs"
+            placeholder={t('history.toolbar.searchPlaceholder')}
+            aria-label={t('history.toolbar.searchLabel')}
             className="h-10 w-full rounded-lg border border-border bg-card ps-9 pe-3 text-sm placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-primary"
           />
         </div>
 
         {/* Dropdowns */}
         <select
-          aria-label="Filter by prompt"
+          aria-label={t('history.toolbar.promptLabel')}
           value={filters.promptId}
           onChange={(e) => onChange({ promptId: e.target.value })}
           className={`${selectClass} lg:max-w-56`}
         >
-          <option value="all">All prompts</option>
+          <option value="all">{t('history.toolbar.allPrompts')}</option>
           {promptOptions.map((p) => (
             <option key={p.id} value={p.id}>
               {p.title}
@@ -84,7 +87,7 @@ export function HistoryToolbar({
         </select>
 
         <select
-          aria-label="Filter by time range"
+          aria-label={t('history.toolbar.rangeLabel')}
           value={filters.range}
           onChange={(e) => onChange({ range: e.target.value as HistoryRange })}
           className={selectClass}
@@ -97,7 +100,11 @@ export function HistoryToolbar({
         </select>
 
         {/* View toggle */}
-        <div className="inline-flex rounded-lg border border-border bg-card p-1" role="group" aria-label="View mode">
+        <div
+          className="inline-flex rounded-lg border border-border bg-card p-1"
+          role="group"
+          aria-label={t('history.toolbar.viewGroup')}
+        >
           {viewButtons.map(({ value, label, icon: Icon }) => (
             <button
               key={value}
@@ -116,7 +123,7 @@ export function HistoryToolbar({
       </div>
 
       {/* Filter pills */}
-      <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by log type">
+      <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t('history.toolbar.kindGroup')}>
         {pills.map(({ kind, label, dot }) => {
           const active = filters.kind === kind;
           return (
@@ -145,7 +152,7 @@ export function HistoryToolbar({
             className="ms-auto inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-primary"
           >
             <X className="size-3.5" aria-hidden="true" />
-            Clear filters
+            {t('history.toolbar.clear')}
           </button>
         )}
       </div>

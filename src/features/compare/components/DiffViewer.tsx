@@ -1,6 +1,7 @@
 import { Check, Copy, MinusCircle, PlusCircle } from 'lucide-react';
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
+import { useTranslation } from 'react-i18next';
 import type { PromptVersion } from '@/features/prompts/types';
 import { buildDiffRows, splitRowKind } from '../diffRows';
 import type { CompareResult } from '../compare';
@@ -17,6 +18,7 @@ interface DiffViewerProps {
 }
 
 function CopyRaw({ text, label }: { text: string; label: string }) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   async function handleCopy(): Promise<void> {
@@ -33,7 +35,7 @@ function CopyRaw({ text, label }: { text: string; label: string }) {
     <button
       type="button"
       onClick={handleCopy}
-      aria-label={copied ? 'Copied' : label}
+      aria-label={copied ? t('templates.preview.copied') : label}
       title={label}
       className="rounded p-1 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary"
     >
@@ -43,6 +45,7 @@ function CopyRaw({ text, label }: { text: string; label: string }) {
 }
 
 export function DiffViewer({ base, target, result, mode, wrap }: DiffViewerProps) {
+  const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
 
@@ -69,55 +72,58 @@ export function DiffViewer({ base, target, result, mode, wrap }: DiffViewerProps
   return (
     <section
       data-enter
-      aria-label="Diff viewer"
+      aria-label={t('compare.viewer.label')}
       className="overflow-hidden rounded-2xl border border-border bg-card"
     >
-      {/* Column headers */}
+      {/* Column headers: LTR like the code below, so Base stays on the left */}
       {mode === 'split' ? (
-        <div className="grid grid-cols-1 border-b border-border bg-muted/40 text-sm sm:grid-cols-2">
+        <div dir="ltr" className="grid grid-cols-1 border-b border-border bg-muted/40 text-sm sm:grid-cols-2">
           <div className="flex items-center justify-between gap-2 px-4 py-2.5">
-            <span className="flex items-center gap-2 font-semibold">
+            <span className="flex flex-wrap items-center gap-2 font-semibold">
               <MinusCircle className="size-4 text-red-500" aria-hidden="true" />
-              {base.label} (Base)
+              <bdi>{t('compare.viewer.base', { label: base.label })}</bdi>
               <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-xs font-semibold text-red-500">
-                −{result.removed} {result.removed === 1 ? 'line' : 'lines'}
+                {t('history.card.linesRemoved', { total: result.removed })}
               </span>
             </span>
-            <CopyRaw text={base.content} label={`Copy raw ${base.label}`} />
+            <CopyRaw text={base.content} label={t('compare.viewer.copyRaw', { label: base.label })} />
           </div>
           <div className="flex items-center justify-between gap-2 px-4 py-2.5 sm:border-s sm:border-border">
-            <span className="flex items-center gap-2 font-semibold">
+            <span className="flex flex-wrap items-center gap-2 font-semibold">
               <PlusCircle className="size-4 text-primary" aria-hidden="true" />
-              {target.label} (Target)
+              <bdi>{t('compare.viewer.target', { label: target.label })}</bdi>
               <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
-                +{result.added} {result.added === 1 ? 'line' : 'lines'}
+                {t('history.card.linesAdded', { total: result.added })}
               </span>
             </span>
-            <CopyRaw text={target.content} label={`Copy raw ${target.label}`} />
+            <CopyRaw text={target.content} label={t('compare.viewer.copyRaw', { label: target.label })} />
           </div>
         </div>
       ) : (
-        <div className="flex items-center justify-between border-b border-border bg-muted/40 px-4 py-2.5 text-sm font-semibold">
+        <div
+          dir="ltr"
+          className="flex items-center justify-between border-b border-border bg-muted/40 px-4 py-2.5 text-sm font-semibold"
+        >
           <span>
             {base.label} → {target.label}
           </span>
-          <CopyRaw text={target.content} label={`Copy raw ${target.label}`} />
+          <CopyRaw text={target.content} label={t('compare.viewer.copyRaw', { label: target.label })} />
         </div>
       )}
 
-      {/* Body + minimap */}
-      <div className="flex">
+      {/* Body + minimap (always LTR: it is code) */}
+      <div dir="ltr" className="flex">
         <div
           ref={scrollRef}
           data-lenis-prevent
           tabIndex={0}
           role="region"
-          aria-label="Diff content, scrollable"
+          aria-label={t('compare.viewer.region')}
           className="max-h-[34rem] min-w-0 flex-1 overflow-auto bg-background py-2 font-mono text-[13px] leading-[22px] focus-visible:outline-2 focus-visible:outline-primary"
         >
           <div ref={bodyRef} className={wrap ? 'w-full' : 'w-max min-w-full'}>
             {result.diff.length === 0 ? (
-              <p className="p-4 text-sm text-muted-foreground">Both versions are empty.</p>
+              <p dir="auto" className="p-4 text-sm text-muted-foreground">{t('compare.viewer.empty')}</p>
             ) : mode === 'split' ? (
               <SplitBody rows={rows.split} wrap={wrap} />
             ) : (
@@ -130,13 +136,13 @@ export function DiffViewer({ base, target, result, mode, wrap }: DiffViewerProps
 
       {/* Status bar */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
-        <span>UTF-8 · Handlebars syntax</span>
-        <span className="flex items-center gap-2 font-mono">
-          <span className="font-medium text-primary">+{result.added} lines</span>
+        <span dir="ltr">UTF-8 · Handlebars syntax</span>
+        <span className="flex flex-wrap items-center gap-2 font-mono">
+          <span className="font-medium text-primary">{t('history.card.linesAdded', { total: result.added })}</span>
           <span aria-hidden="true">·</span>
-          <span className="font-medium text-red-500">−{result.removed} lines</span>
+          <span className="font-medium text-red-500">{t('history.card.linesRemoved', { total: result.removed })}</span>
           <span aria-hidden="true">·</span>
-          <span className="text-foreground">Net {net} tokens</span>
+          <span className="text-foreground">{t('compare.viewer.net', { net })}</span>
         </span>
       </div>
     </section>

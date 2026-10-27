@@ -1,5 +1,6 @@
 import { Columns2, Rows3, WrapText } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type DiffMode = 'split' | 'unified';
 
@@ -11,15 +12,21 @@ interface DiffToolbarProps {
   children?: ReactNode;
 }
 
-const modes = [
-  { value: 'split' as const, label: 'Split', icon: Columns2 },
-  { value: 'unified' as const, label: 'Unified', icon: Rows3 },
-];
-
 export function DiffToolbar({ mode, onModeChange, wrap, onWrapChange, children }: DiffToolbarProps) {
+  const { t } = useTranslation();
+
+  const modes = [
+    { value: 'split' as const, label: t('compare.toolbar.split'), icon: Columns2 },
+    { value: 'unified' as const, label: t('compare.toolbar.unified'), icon: Rows3 },
+  ];
+
   return (
     <div data-enter className="flex flex-wrap items-center gap-3">
-      <div className="inline-flex rounded-xl border border-border bg-card p-1" role="group" aria-label="Diff layout">
+      <div
+        className="inline-flex rounded-xl border border-border bg-card p-1"
+        role="group"
+        aria-label={t('compare.toolbar.layout')}
+      >
         {modes.map(({ value, label, icon: Icon }) => (
           <button
             key={value}
@@ -44,7 +51,7 @@ export function DiffToolbar({ mode, onModeChange, wrap, onWrapChange, children }
         className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary"
       >
         <WrapText className="size-4" aria-hidden="true" />
-        Word wrap: {wrap ? 'ON' : 'OFF'}
+        {wrap ? t('compare.toolbar.wrapOn') : t('compare.toolbar.wrapOff')}
       </button>
 
       <div className="ms-auto flex flex-wrap items-center gap-2">{children}</div>

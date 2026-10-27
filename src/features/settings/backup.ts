@@ -40,32 +40,52 @@ export async function buildBackup(data: BackupData, now: Date = new Date()): Pro
   };
 }
 
-export type ParseBackupResult = { ok: true; file: BackupFile } | { ok: false; error: string };
+export type BackupErrorCode = 'too_large' | 'invalid_json' | 'invalid_backup' | 'checksum';
 
-const fail = (error: string): ParseBackupResult => ({ ok: false, error });
+export type ParseBackupResult =
+  | { ok: true; file: BackupFile }
+  | {
+      ok: false;
+      code: BackupErrorCode;
+      /** English message, kept for logs and tests. The UI translates from `code`. */
+      error: string;
+      where?: string;
+      detail?: string;
+    };
+
+const fail = (
+  code: BackupErrorCode,
+  error: string,
+  extra: { where?: string; detail?: string } = {},
+): ParseBackupResult => ({ ok: false, code, error, ...extra });
 
 export async function parseBackup(text: string): Promise<ParseBackupResult> {
-  if (text.length > MAX_BACKUP_BYTES) return fail('The file is larger than 5 MB.');
+  if (text.length > MAX_BACKUP_BYTES) return fail('too_large', 'The file is larger than 5 MB.');
 
   let json: unknown;
   try {
     json = JSON.parse(text);
   } catch {
-    return fail('The file is not valid JSON.');
+    return fail('invalid_json', 'The file is not valid JSON.');
   }
 
   const parsed = backupFileSchema.safeParse(json);
   if (!parsed.success) {
     const issue = parsed.error.issues[0];
-    const where = issue && issue.path.length > 0 ? `${issue.path.join('.')}: ` : '';
-    return fail(`Not a valid PromptLab backup. ${where}${issue?.message ?? ''}`.trim());
+    const where = issue && issue.path.length > 0 ? issue.path.join('.') : undefined;
+    const detail = issue?.message;
+    return fail(
+      'invalid_backup',
+      `Not a valid PromptLab backup. ${where ? `${where}: ` : ''}${detail ?? ''}`.trim(),
+      { where, detail },
+    );
   }
 
   // Checksum is computed over the RAW data (not Zod's output, which can reorder keys)
   const rawData = typeof json === 'object' && json !== null && 'data' in json ? json.data : undefined;
   const actual = await sha256Hex(JSON.stringify(rawData));
   if (actual !== parsed.data.checksum) {
-    return fail('Checksum mismatch: the file was modified or corrupted.');
+    return fail('checksum', 'Checksum mismatch: the file was modified or corrupted.');
   }
   return { ok: true, file: parsed.data };
 }

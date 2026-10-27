@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { DiffCell, Segment, SplitRow, UnifiedRow } from '../diffRows';
 
 const cellTone: Record<DiffCell['type'], string> = {
@@ -18,7 +19,16 @@ const segmentTone: Record<'added' | 'removed', string> = {
 };
 
 const sign: Record<DiffCell['type'], string> = { same: ' ', added: '+', removed: '−' };
-const signLabel: Record<DiffCell['type'], string> = { same: '', added: 'Added: ', removed: 'Removed: ' };
+
+/** Screen-reader prefix for changed lines ("Added: " / "Removed: "), translated. */
+function useSignLabels(): Record<DiffCell['type'], string> {
+  const { t } = useTranslation();
+  return {
+    same: '',
+    added: `${t('compare.sr.added')} `,
+    removed: `${t('compare.sr.removed')} `,
+  };
+}
 
 /** Highlights {{variables}} inside a piece of text. */
 function WithVariables({ text }: { text: string }) {
@@ -55,16 +65,8 @@ function CellText({ cell }: { cell: DiffCell }) {
   return <WithVariables text={cell.text || ' '} />;
 }
 
-function CellView({
-  cell,
-  wrap,
-  showOldNo,
-}: {
-  cell: DiffCell;
-  wrap: boolean;
-  showOldNo?: never;
-}) {
-  void showOldNo;
+function CellView({ cell, wrap }: { cell: DiffCell; wrap: boolean }) {
+  const signLabel = useSignLabels();
   return (
     <div className={`flex items-start px-2 ${cellTone[cell.type]}`}>
       <span aria-hidden="true" className={`w-10 shrink-0 select-none pe-3 text-end ${gutterTone[cell.type]}`}>
@@ -73,7 +75,10 @@ function CellView({
       <span aria-hidden="true" className={`w-4 shrink-0 select-none text-center font-bold ${gutterTone[cell.type]}`}>
         {sign[cell.type]}
       </span>
-      <span className={wrap ? 'min-w-0 flex-1 whitespace-pre-wrap break-words' : 'flex-1 whitespace-pre'}>
+      <span
+        dir="auto"
+        className={wrap ? 'min-w-0 flex-1 whitespace-pre-wrap break-words' : 'flex-1 whitespace-pre'}
+      >
         <span className="sr-only">{signLabel[cell.type]}</span>
         <CellText cell={cell} />
       </span>
@@ -100,6 +105,7 @@ export function SplitBody({ rows, wrap }: { rows: SplitRow[]; wrap: boolean }) {
 }
 
 export function UnifiedBody({ rows, wrap }: { rows: UnifiedRow[]; wrap: boolean }) {
+  const signLabel = useSignLabels();
   return (
     <div>
       {rows.map((row, i) => (
@@ -113,7 +119,10 @@ export function UnifiedBody({ rows, wrap }: { rows: UnifiedRow[]; wrap: boolean 
           <span aria-hidden="true" className={`w-4 shrink-0 select-none text-center font-bold ${gutterTone[row.cell.type]}`}>
             {sign[row.cell.type]}
           </span>
-          <span className={wrap ? 'min-w-0 flex-1 whitespace-pre-wrap break-words' : 'flex-1 whitespace-pre'}>
+          <span
+            dir="auto"
+            className={wrap ? 'min-w-0 flex-1 whitespace-pre-wrap break-words' : 'flex-1 whitespace-pre'}
+          >
             <span className="sr-only">{signLabel[row.cell.type]}</span>
             <CellText cell={row.cell} />
           </span>

@@ -76,7 +76,7 @@ export function StatusScreen({
         className="relative inline-flex items-center gap-2 rounded-full bg-card px-3 py-1 font-mono text-[11px] text-muted-foreground"
       >
         <span className="size-1.5 rounded-full bg-destructive" aria-hidden="true" />
-        {badge}
+        <bdi dir="ltr">{badge}</bdi>
       </p>
 
       <div className="relative flex flex-col items-center">
@@ -87,7 +87,7 @@ export function StatusScreen({
         >
           {code}
         </p>
-        <code data-enter className="-mt-3 rounded-md bg-card px-3 py-1 font-mono text-xs text-muted-foreground">
+        <code data-enter dir="ltr" className="-mt-3 rounded-md bg-card px-3 py-1 font-mono text-xs text-muted-foreground">
           {chip}
         </code>
       </div>
@@ -110,7 +110,7 @@ export function StatusScreen({
               title={d.value}
               className={`mt-0.5 break-words font-mono text-xs ${d.tone === 'error' ? 'text-destructive' : 'text-foreground'}`}
             >
-              {d.value}
+              <bdi dir="ltr">{d.value}</bdi>
             </dd>
           </div>
         ))}

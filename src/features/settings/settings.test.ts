@@ -41,7 +41,11 @@ describe('backup', () => {
     const file = await buildBackup(data);
     const text = JSON.stringify(file).replace('"Hello"', '"Hacked"');
     const result = await parseBackup(text);
-    expect(result).toEqual({ ok: false, error: expect.stringContaining('Checksum') });
+    expect(result).toEqual({
+  ok: false,
+  code: 'checksum',
+  error: 'Checksum mismatch: the file was modified or corrupted.',
+});
   });
 
   it('rejects invalid JSON and wrong shape', async () => {

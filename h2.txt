@@ -1,0 +1,318 @@
+import { format, formatDistanceToNow } from 'date-fns';
+import { ExternalLink, GitCompareArrows, RotateCcw, Trash2} from 'lucide-react';
+import { Link } from 'react-router-dom';
+import type { HistoryEntry } from '../types';
+import { CommitHash } from './CommitHash';
+
+interface HistoryTableProps {
+  entries: HistoryEntry[];
+  onRestore: (entry: HistoryEntry) => void;
+  onDelete: (entry: HistoryEntry) => void;
+}
+
+const iconBtn =
+  'inline-flex size-8 items-center justify-center rounded-lg border border-border transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent';
+
+const th = 'px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-muted-foreground';
+
+export function HistoryTable({ entries, onRestore, onDelete }: HistoryTableProps) {
+  return (
+    <div className="overflow-x-auto rounded-xl border border-border bg-card">
+      <table className="w-full min-w-[56rem] border-collapse text-sm">
+        <caption className="sr-only">Version logs</caption>
+        <thead className="border-b border-border bg-muted/40">
+          <tr>
+            <th scope="col" className={th}>Prompt</th>
+            <th scope="col" className={th}>Version</th>
+            <th scope="col" className={th}>Hash</th>
+            <th scope="col" className={th}>Note</th>
+            <th scope="col" className={th}>Changes</th>
+            <th scope="col" className={th}>When</th>
+            <th scope="col" className={`${th} text-end`}>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {entries.map((e) => {
+            const date = new Date(e.createdAt);
+            return (
+              <tr key={e.id} className="border-b border-border last:border-0 hover:bg-muted/30">
+                <td className="px-4 py-3 font-medium">
+                  <Link to={`/editor/${e.promptId}`} className="hover:text-primary focus-visible:outline-2 focus-visible:outline-primary">
+                    {e.promptTitle}
+                  </Link>
+                </td>
+                <td className="px-4 py-3">
+                  <span className="flex items-center gap-2">
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">{e.label}</span>
+                    {e.isCurrent && <span className="text-[11px] font-semibold uppercase text-emerald-600 dark:text-emerald-400">Current</span>}
+                    {e.isRollback && <span className="text-[11px] font-semibold uppercase text-red-500">Rollback</span>}
+                  </span>
+                </td>
+                <td className="px-4 py-3"><CommitHash hash={e.hash} /></td>
+                <td className="max-w-64 truncate px-4 py-3 text-muted-foreground" title={e.note}>{e.note || '-'}</td>
+                <td className="whitespace-nowrap px-4 py-3 text-xs font-medium">
+                  <span className="text-emerald-600 dark:text-emerald-400">+{e.linesAdded}</span>{' '}
+                  <span className="text-red-600 dark:text-red-400">−{e.linesRemoved}</span>{' '}
+                  <span className="text-muted-foreground">
+                    {e.tokenDelta >= 0 ? '+' : ''}{e.tokenDelta} tok
+                  </span>
+                </td>
+                <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
+                  <time dateTime={e.createdAt} title={format(date, 'PPpp')}>
+                    {formatDistanceToNow(date, { addSuffix: true })}
+                  </time>
+                </td>
+                <td className="px-4 py-3">
+                  <span className="flex justify-end gap-1.5">
+                    <button type="button" className={iconBtn} onClick={() => onRestore(e)} disabled={e.isCurrent} aria-label={`Restore ${e.label} of ${e.promptTitle}`}>
+                      <RotateCcw className="size-3.5" aria-hidden="true" />
+                    </button>
+                    <Link to={`/editor/${e.promptId}`} className={iconBtn} aria-label={`Open ${e.promptTitle} in editor`}>
+                      <ExternalLink className="size-3.5" aria-hidden="true" />
+                    </Link>
+                    {!e.isInitial && (
+  <Link
+    to={`/compare?prompt=${e.promptId}&target=${e.id}`}
+    className={iconBtn}
+    aria-label={`Compare ${e.label} with the previous version`}
+  >
+    <GitCompareArrows className="size-3.5" aria-hidden="true" />
+  </Link>
+)}
+                    <button type="button" className={`${iconBtn} text-red-500`} onClick={() => onDelete(e)} disabled={e.isCurrent} aria-label={`Delete ${e.label} of ${e.promptTitle}`}>
+                      <Trash2 className="size-3.5" aria-hidden="true" />
+                    </button>
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}import { useLayoutEffect, useMemo, useRef } from 'react';
+import gsap from 'gsap';
+import { groupByDay } from '../groupByDay';
+import type { HistoryEntry } from '../types';
+import { HistoryLogCard } from './HistoryLogCard';
+
+interface HistoryTimelineProps {
+  entries: HistoryEntry[];
+  onRestore: (entry: HistoryEntry) => void;
+  onDelete: (entry: HistoryEntry) => void;
+}
+
+export function HistoryTimeline({ entries, onRestore, onDelete }: HistoryTimelineProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const groups = useMemo(() => groupByDay(entries), [entries]);
+  // Re-run the animation only when the set of visible entries changes
+  const idsKey = useMemo(() => entries.map((e) => e.id).join('|'), [entries]);
+
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '[data-log]',
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.45,
+          stagger: { each: 0.05, amount: 0.6 },
+          ease: 'power2.out',
+          clearProps: 'transform,opacity',
+        },
+      );
+    }, root);
+
+    return () => ctx.revert();
+  }, [idsKey]);
+
+  return (
+    <div ref={rootRef} className="space-y-10">
+      {groups.map((group) => (
+        <section key={group.key} aria-labelledby={`day-${group.key}`}>
+          <div className="mb-4 flex items-baseline gap-3">
+            <h2 id={`day-${group.key}`} className="font-heading text-lg font-semibold">
+              {group.label}
+            </h2>
+            <span className="text-xs text-muted-foreground">
+              {group.entries.length} {group.entries.length === 1 ? 'commit' : 'commits'} recorded
+            </span>
+          </div>
+
+          <ol className="relative space-y-4 ps-8 before:absolute before:bottom-2 before:start-[11px] before:top-2 before:w-px before:bg-linear-to-b before:from-primary/60 before:to-transparent">
+            {group.entries.map((entry) => (
+              <li key={entry.id} data-log className="relative">
+                <span
+                  aria-hidden="true"
+                  className={`absolute top-6 -start-[26px] size-3 rounded-full border-2 border-background ${
+                    entry.isRollback ? 'bg-red-500' : 'bg-primary'
+                  }`}
+                />
+                <HistoryLogCard entry={entry} onRestore={onRestore} onDelete={onDelete} />
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))}
+    </div>
+  );
+}import { LayoutList, Search, Table2, X } from 'lucide-react';
+import type { ChangeEvent } from 'react';
+import { hasActiveFilters } from '../filterHistory';
+import type { HistoryFilters, HistoryKind, HistoryRange, HistoryView } from '../types';
+
+interface PromptOption {
+  id: string;
+  title: string;
+}
+
+interface HistoryToolbarProps {
+  filters: HistoryFilters;
+  onChange: (patch: Partial<HistoryFilters>) => void;
+  onReset: () => void;
+  promptOptions: PromptOption[];
+  kindCounts: Record<HistoryKind, number>;
+  view: HistoryView;
+  onViewChange: (view: HistoryView) => void;
+}
+
+const rangeOptions: { value: HistoryRange; label: string }[] = [
+  { value: 'all', label: 'All time' },
+  { value: '7d', label: 'Last 7 days' },
+  { value: '30d', label: 'Last 30 days' },
+  { value: '90d', label: 'Last 90 days' },
+];
+
+const pills: { kind: HistoryKind; label: string; dot: string }[] = [
+  { kind: 'all', label: 'All Logs', dot: 'bg-muted-foreground' },
+  { kind: 'edit', label: 'Edits', dot: 'bg-primary' },
+  { kind: 'rollback', label: 'Rollbacks', dot: 'bg-red-500' },
+  { kind: 'initial', label: 'Created', dot: 'bg-emerald-500' },
+];
+
+const selectClass =
+  'h-10 rounded-lg border border-border bg-card px-3 text-sm focus-visible:outline-2 focus-visible:outline-primary';
+
+export function HistoryToolbar({
+  filters,
+  onChange,
+  onReset,
+  promptOptions,
+  kindCounts,
+  view,
+  onViewChange,
+}: HistoryToolbarProps) {
+  const viewButtons = [
+    { value: 'timeline' as const, label: 'Timeline', icon: LayoutList },
+    { value: 'table' as const, label: 'Table', icon: Table2 },
+  ];
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+        {/* Search */}
+        <div className="relative flex-1">
+          <Search
+            className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <input
+            type="search"
+            value={filters.query}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => onChange({ query: e.target.value })}
+            placeholder="Search by prompt name, commit hash or note..."
+            aria-label="Search version logs"
+            className="h-10 w-full rounded-lg border border-border bg-card ps-9 pe-3 text-sm placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-primary"
+          />
+        </div>
+
+        {/* Dropdowns */}
+        <select
+          aria-label="Filter by prompt"
+          value={filters.promptId}
+          onChange={(e) => onChange({ promptId: e.target.value })}
+          className={`${selectClass} lg:max-w-56`}
+        >
+          <option value="all">All prompts</option>
+          {promptOptions.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.title}
+            </option>
+          ))}
+        </select>
+
+        <select
+          aria-label="Filter by time range"
+          value={filters.range}
+          onChange={(e) => onChange({ range: e.target.value as HistoryRange })}
+          className={selectClass}
+        >
+          {rangeOptions.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+
+        {/* View toggle */}
+        <div className="inline-flex rounded-lg border border-border bg-card p-1" role="group" aria-label="View mode">
+          {viewButtons.map(({ value, label, icon: Icon }) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={view === value}
+              onClick={() => onViewChange(value)}
+              className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-primary ${
+                view === value ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Icon className="size-4" aria-hidden="true" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Filter pills */}
+      <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by log type">
+        {pills.map(({ kind, label, dot }) => {
+          const active = filters.kind === kind;
+          return (
+            <button
+              key={kind}
+              type="button"
+              aria-pressed={active}
+              onClick={() => onChange({ kind })}
+              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-primary ${
+                active
+                  ? 'border-primary/40 bg-primary/10 text-primary'
+                  : 'border-border bg-card text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <span className={`size-2 rounded-full ${dot}`} aria-hidden="true" />
+              {label}
+              <span className="tabular-nums opacity-70">{kindCounts[kind]}</span>
+            </button>
+          );
+        })}
+
+        {hasActiveFilters(filters) && (
+          <button
+            type="button"
+            onClick={onReset}
+            className="ms-auto inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-primary"
+          >
+            <X className="size-3.5" aria-hidden="true" />
+            Clear filters
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}

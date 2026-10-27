@@ -1,5 +1,7 @@
 import { format } from 'date-fns';
+import type { TFunction } from 'i18next';
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { downloadJson } from '@/features/prompts/services/importExport';
 import { usePromptStore } from '@/stores/promptStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -11,6 +13,7 @@ import {
   parseBackup,
   summarizeBackup,
   type BackupFile,
+  type ParseBackupResult,
 } from '../backup';
 
 export type ImportMode = 'merge' | 'replace';
@@ -26,7 +29,26 @@ export interface PendingImport {
   summary: ReturnType<typeof summarizeBackup>;
 }
 
+type BackupFailure = Extract<ParseBackupResult, { ok: false }>;
+
+/** Turns a parse failure (a code from the service) into a translated message. */
+function describeFailure(failure: BackupFailure, t: TFunction): string {
+  switch (failure.code) {
+    case 'too_large':
+      return t('settings.backup.errTooLarge');
+    case 'invalid_json':
+      return t('settings.backup.errInvalidJson');
+    case 'checksum':
+      return t('settings.backup.errChecksum');
+    case 'invalid_backup':
+      return failure.where && failure.detail
+        ? t('settings.backup.errInvalidBackupAt', { where: failure.where, detail: failure.detail })
+        : t('settings.backup.errInvalidBackup');
+  }
+}
+
 export function useBackup() {
+  const { t } = useTranslation();
   const prompts = usePromptStore((s) => s.prompts);
   const folders = usePromptStore((s) => s.folders);
   const importData = usePromptStore((s) => s.importData);
@@ -48,26 +70,32 @@ export function useBackup() {
     downloadJson(file, `promptlab-backup-${format(new Date(), 'yyyy-MM-dd')}.json`);
     setStatus({
       type: 'success',
-      message: `Exported ${prompts.length} prompts and ${customTemplates.length} imported templates.`,
+      message: t('settings.backup.exported', {
+        prompts: prompts.length,
+        templates: customTemplates.length,
+      }),
     });
-  }, [prompts, folders, customTemplates, favoriteIds, settings]);
+  }, [prompts, folders, customTemplates, favoriteIds, settings, t]);
 
   // Step 1: read + validate the file, but don't touch any store yet
-  const stageFile = useCallback(async (file: File) => {
-    if (file.size > MAX_BACKUP_BYTES) {
-      setPending(null);
-      setStatus({ type: 'error', message: 'The file is larger than 5 MB.' });
-      return;
-    }
-    const result = await parseBackup(await file.text());
-    if (!result.ok) {
-      setPending(null);
-      setStatus({ type: 'error', message: result.error });
-      return;
-    }
-    setStatus(null);
-    setPending({ fileName: file.name, file: result.file, summary: summarizeBackup(result.file.data) });
-  }, []);
+  const stageFile = useCallback(
+    async (file: File) => {
+      if (file.size > MAX_BACKUP_BYTES) {
+        setPending(null);
+        setStatus({ type: 'error', message: t('settings.backup.errTooLarge') });
+        return;
+      }
+      const result = await parseBackup(await file.text());
+      if (!result.ok) {
+        setPending(null);
+        setStatus({ type: 'error', message: describeFailure(result, t) });
+        return;
+      }
+      setStatus(null);
+      setPending({ fileName: file.name, file: result.file, summary: summarizeBackup(result.file.data) });
+    },
+    [t],
+  );
 
   // Step 2: the user confirmed → write into the stores
   const applyPending = useCallback(
@@ -93,11 +121,14 @@ export function useBackup() {
 
       setStatus({
         type: 'success',
-        message: `${mode === 'replace' ? 'Restored' : 'Merged'} ${pending.summary.prompts} prompts from ${pending.fileName}.`,
+        message: t(mode === 'replace' ? 'settings.backup.restored' : 'settings.backup.merged', {
+          prompts: pending.summary.prompts,
+          name: pending.fileName,
+        }),
       });
       setPending(null);
     },
-    [pending, importData],
+    [pending, importData, t],
   );
 
   const cancelPending = useCallback(() => setPending(null), []);
