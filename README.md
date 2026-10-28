@@ -1,5 +1,11 @@
 # PromptLab
 
+[
+
+![CI](https://github.com/mahaabusyam/PromptLab/actions/workflows/ci.yml/badge.svg)
+
+](https://github.com/mahaabusyam/PromptLab/actions/workflows/ci.yml)
+
 **A workspace for writing, organizing, versioning and comparing prompts for AI tools.**
 
 PromptLab is a local-first web app: you write prompts with dynamic `{{variables}}`, keep them in folders, save every meaningful change as a version, compare any two versions side by side, and restore old ones, all without an account or a backend. Your data lives in your browser and can be exported and restored as JSON at any time.
