@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { fail, guardRequest, json } from "./_lib/guard.js";
 
 const MAX_PROMPT_CHARS = 8000;
 const DEFAULT_MODEL = "gemini-3.5-flash-lite";
@@ -10,66 +11,18 @@ const bodySchema = z.object({
   maxTokens: z.number().int().min(256).max(4096).default(1024),
 });
 
-type ErrorCode =
-  "bad_request" | "rate_limited" | "not_configured" | "upstream_error";
-
-function json(
-  status: number,
-  body: unknown,
-  headers: Record<string, string> = {},
-): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-      ...headers,
-    },
-  });
-}
-
-function fail(
-  status: number,
-  code: ErrorCode,
-  message: string,
-  headers?: Record<string, string>,
-) {
-  return json(status, { error: { code, message } }, headers);
-}
-
-// Best-effort per-IP limit (memory resets on cold starts)
-const WINDOW_MS = 60_000;
-const MAX_REQUESTS = 10;
-const hits = new Map<string, number[]>();
-
-function isLimited(ip: string): boolean {
-  const now = Date.now();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
-  recent.push(now);
-  hits.set(ip, recent);
-  return recent.length > MAX_REQUESTS;
-}
-
 interface GeminiResponse {
   steps?: { type?: string; content?: { type?: string; text?: string }[] }[];
   usage?: { total_input_tokens?: number; total_output_tokens?: number };
 }
 
 export async function POST(request: Request): Promise<Response> {
+  const blocked = guardRequest(request, { name: "run", limit: 10 });
+  if (blocked) return blocked;
+
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey)
     return fail(503, "not_configured", "AI service is not configured.");
-
-  const ip =
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (isLimited(ip)) {
-    return fail(
-      429,
-      "rate_limited",
-      "Too many requests. Try again in a minute.",
-      { "Retry-After": "60" },
-    );
-  }
 
   let raw: unknown;
   try {

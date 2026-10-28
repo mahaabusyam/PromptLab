@@ -33,6 +33,19 @@ PromptLab is a local-first web app: you write prompts with dynamic `{{variables}
 | ![Templates](docs/screenshots/templates.png) | ![Settings](docs/screenshots/settings-light.png) |
 
 ---
+### Arabic (RTL)
+
+| Dashboard | Compare |
+|---|---|
+| 
+
+![Dashboard in Arabic](docs/screenshots/dashboard-ar.png)
+
+ | 
+
+![Compare in Arabic](docs/screenshots/compare-ar.png)
+
+ |
 
 ## Features
 
@@ -278,3 +291,7 @@ Ideas:
 ## Author
 
 Built by **[mahaabusyam](https://github.com/mahaabusyam)**.
+
+## License
+
+Released under the [MIT License](LICENSE).
