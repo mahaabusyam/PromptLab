@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://prompt-lab-ivory.vercel.app/sitemap.xml

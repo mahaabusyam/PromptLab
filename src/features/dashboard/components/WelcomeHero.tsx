@@ -12,7 +12,7 @@ export function WelcomeHero({
 }: WelcomeSummary) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const ref = useScrollReveal<HTMLElement>();
+  const ref = useScrollReveal<HTMLElement>({ fade: false, y: 12, duration: 0.5 });
 
   return (
     <section
